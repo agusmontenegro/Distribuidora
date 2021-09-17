@@ -1,4 +1,5 @@
-﻿using Distribuidora.DTOs;
+﻿using Distribuidora.Commons;
+using Distribuidora.DTOs;
 using Distribuidora.Helpers;
 using Distribuidora.Services;
 using System;
@@ -25,15 +26,7 @@ namespace Distribuidora
 
         private void txtCodigoProducto_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
-            {
-                e.Handled = true;
-            }
-
-            if ((e.KeyChar == '.') && ((sender as TextBox).Text.IndexOf('.') > -1))
-            {
-                e.Handled = true;
-            }
+            FormsCommon.OnlyNumerics(sender, e);
 
             if (e.KeyChar == (char)Keys.Return)
             {

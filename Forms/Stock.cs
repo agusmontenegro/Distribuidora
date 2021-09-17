@@ -1,4 +1,5 @@
-﻿using Distribuidora.Services;
+﻿using Distribuidora.Commons;
+using Distribuidora.Services;
 using System;
 using System.Windows.Forms;
 
@@ -29,15 +30,7 @@ namespace Distribuidora
 
         private void txtCodigoProducto_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
-            {
-                e.Handled = true;
-            }
-
-            if ((e.KeyChar == '.') && ((sender as TextBox).Text.IndexOf('.') > -1))
-            {
-                e.Handled = true;
-            }
+            FormsCommon.OnlyNumerics(sender, e);
 
             if (e.KeyChar == (char)Keys.Return)
             {
@@ -118,15 +111,7 @@ namespace Distribuidora
 
         private void txtCantidadReponer_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
-            {
-                e.Handled = true;
-            }
-
-            if ((e.KeyChar == '.') && ((sender as TextBox).Text.IndexOf('.') > -1))
-            {
-                e.Handled = true;
-            }
+            FormsCommon.OnlyNumerics(sender, e);
 
             if (e.KeyChar == (char)Keys.Return)
             {
@@ -140,12 +125,12 @@ namespace Distribuidora
 
             if (ItemValido(ref msj))
             {
-                int rowId = grdStock.Rows.Add();
-
-                grdStock.Rows[rowId].Cells[0].Value = txtCodigoProducto.Text;
-                grdStock.Rows[rowId].Cells[1].Value = txtDetalleProducto.Text;
-                grdStock.Rows[rowId].Cells[2].Value = txtCantidadActual.Text;
-                grdStock.Rows[rowId].Cells[3].Value = txtCantidadReponer.Text;
+                FormsCommon.AsignarAGrid(
+                    grdStock,
+                    txtCodigoProducto.Text,
+                    txtDetalleProducto.Text,
+                    txtCantidadActual.Text,
+                    txtCantidadReponer.Text);
 
                 LimpiarFormulario();
                 txtCodigoProducto.Focus();

@@ -1,4 +1,5 @@
-﻿using Distribuidora.DTOs;
+﻿using Distribuidora.Commons;
+using Distribuidora.DTOs;
 using Distribuidora.Services;
 using System;
 using System.Windows.Forms;
@@ -59,41 +60,17 @@ namespace Distribuidora.Producto
 
         private void txtPrecioUnitario_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
-            {
-                e.Handled = true;
-            }
-
-            if ((e.KeyChar == '.') && ((sender as TextBox).Text.IndexOf('.') > -1))
-            {
-                e.Handled = true;
-            }
+            FormsCommon.OnlyNumerics(sender, e);
         }
 
         private void txtStockMinimo_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
-            {
-                e.Handled = true;
-            }
-
-            if ((e.KeyChar == '.') && ((sender as TextBox).Text.IndexOf('.') > -1))
-            {
-                e.Handled = true;
-            }
+            FormsCommon.OnlyNumerics(sender, e);
         }
 
         private void txtCantidadComposicion_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
-            {
-                e.Handled = true;
-            }
-
-            if ((e.KeyChar == '.') && ((sender as TextBox).Text.IndexOf('.') > -1))
-            {
-                e.Handled = true;
-            }
+            FormsCommon.OnlyNumerics(sender, e);
 
             if (e.KeyChar == (char)Keys.Return)
             {
@@ -103,15 +80,7 @@ namespace Distribuidora.Producto
 
         private void txtCodigoProductoComposicion_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
-            {
-                e.Handled = true;
-            }
-
-            if ((e.KeyChar == '.') && ((sender as TextBox).Text.IndexOf('.') > -1))
-            {
-                e.Handled = true;
-            }
+            FormsCommon.OnlyNumerics(sender, e);
 
             if (e.KeyChar == (char)Keys.Return)
             {
@@ -152,11 +121,11 @@ namespace Distribuidora.Producto
 
             if (ItemValido(ref msj))
             {
-                int rowId = grdComponentes.Rows.Add();
-
-                grdComponentes.Rows[rowId].Cells[0].Value = txtCodigoProductoComposicion.Text;
-                grdComponentes.Rows[rowId].Cells[1].Value = txtDetalleProductoComposicion.Text;
-                grdComponentes.Rows[rowId].Cells[2].Value = txtCantidadComposicion.Text;
+                FormsCommon.AsignarAGrid(
+                    grdComponentes, 
+                    txtCodigoProductoComposicion.Text, 
+                    txtDetalleProductoComposicion.Text, 
+                    txtCantidadComposicion.Text);
 
                 LimpiarFormularioDeComponentes();
 
