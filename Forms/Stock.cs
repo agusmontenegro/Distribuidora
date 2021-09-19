@@ -1,4 +1,5 @@
 ﻿using Distribuidora.Commons;
+using Distribuidora.Factories;
 using Distribuidora.Services;
 using System;
 using System.Windows.Forms;
@@ -8,12 +9,25 @@ namespace Distribuidora
     public partial class Stock : Form
     {
         private int celda = -1;
-        private Menu menu;
+
+        private readonly Menu menu;
+        private readonly FormsCommon formsCommon;
+        private readonly ValidacionService validacionService;
+        private readonly ProductoService productoService;
+        private readonly ComboService comboService;
+        private readonly StockService stockService;
+        private readonly AlertaService alertaService;
 
         public Stock(Menu menu)
         {
             InitializeComponent();
             this.menu = menu;
+            formsCommon = FormsCommonFactory.Crear();
+            validacionService = ValidacionServiceFactory.Crear();
+            productoService = ProductoServiceFactory.Crear();
+            comboService = ComboServiceFactory.Crear();
+            stockService = StockServiceFactory.Crear();
+            alertaService = AlertaServiceFactory.Crear();
         }
 
         private void Stock_Load(object sender, EventArgs e)
@@ -30,7 +44,7 @@ namespace Distribuidora
 
         private void txtCodigoProducto_KeyPress(object sender, KeyPressEventArgs e)
         {
-            FormsCommon.OnlyNumerics(sender, e);
+            formsCommon.OnlyNumerics(sender, e);
 
             if (e.KeyChar == (char)Keys.Return)
             {
@@ -50,26 +64,20 @@ namespace Distribuidora
 
         private bool ProductoValido(ref string msj)
         {
-            ValidationService v = new ValidationService();
+            validacionService.AgregarValidacion(
+                productoService.CodigoProductoValido(txtCodigoProducto.Text, ref msj),
+                msj);
 
-            v.Validations.Add(new ValidationService.Validation
-            {
-                condition = ProductoService.CodigoProductoValido(txtCodigoProducto.Text, ref msj),
-                msj = msj
-            });
+            validacionService.AgregarValidacion(
+                !comboService.EsCombo(txtCodigoProducto.Text),
+                "No está permitido reponer stock de un combo, si de sus componentes");
 
-            v.Validations.Add(new ValidationService.Validation
-            {
-                condition = !ComboService.EsCombo(txtCodigoProducto.Text),
-                msj = "No está permitido reponer stock de un combo, si de sus componentes"
-            });
-
-            return v.validate(ref msj);
+            return validacionService.Validar(ref msj);
         }
 
         private void CompletarDatos(string codigo_producto)
         {
-            var producto = ProductoService.ObtenerProducto(codigo_producto);
+            var producto = productoService.ObtenerProducto(codigo_producto);
 
             txtCodigoProducto.Enabled = false;
             txtDetalleProducto.Enabled = false;
@@ -111,7 +119,7 @@ namespace Distribuidora
 
         private void txtCantidadReponer_KeyPress(object sender, KeyPressEventArgs e)
         {
-            FormsCommon.OnlyNumerics(sender, e);
+            formsCommon.OnlyNumerics(sender, e);
 
             if (e.KeyChar == (char)Keys.Return)
             {
@@ -125,7 +133,7 @@ namespace Distribuidora
 
             if (ItemValido(ref msj))
             {
-                FormsCommon.AsignarAGrid(
+                formsCommon.AsignarAGrid(
                     grdStock,
                     txtCodigoProducto.Text,
                     txtDetalleProducto.Text,
@@ -166,32 +174,25 @@ namespace Distribuidora
 
         private bool ItemValido(ref string msj)
         {
-            ValidationService v = new ValidationService();
 
             if (string.IsNullOrEmpty(txtCantidadReponer.Text))
             {
-                v.Validations.Add(new ValidationService.Validation
-                {
-                    condition = false,
-                    msj = "Debe ingresar la cantidad a reponer"
-                });
+                validacionService.AgregarValidacion(
+                    false,
+                    "Debe ingresar la cantidad a reponer");
             }
             else
             {
-                v.Validations.Add(new ValidationService.Validation
-                {
-                    condition = int.Parse(txtCantidadReponer.Text) > 0,
-                    msj = "La cantidad a reponer no puede ser 0"
-                });
+                validacionService.AgregarValidacion(
+                    int.Parse(txtCantidadReponer.Text) > 0,
+                    "La cantidad a reponer no puede ser 0");
 
-                v.Validations.Add(new ValidationService.Validation
-                {
-                    condition = !ExisteItemEnGrid(txtCodigoProducto.Text.ToString()),
-                    msj = "El producto " + txtCodigoProducto.Text.ToString() + " ya fue agregado"
-                });
+                validacionService.AgregarValidacion(
+                    !ExisteItemEnGrid(txtCodigoProducto.Text.ToString()),
+                    "El producto " + txtCodigoProducto.Text.ToString() + " ya fue agregado");
             }
 
-            return v.validate(ref msj);
+            return validacionService.Validar(ref msj);
         }
 
         private bool ExisteItemEnGrid(string codigoProducto)
@@ -221,11 +222,11 @@ namespace Distribuidora
                     var codigo_producto = grdStock.Rows[i].Cells[0].Value.ToString();
                     var cantidad_a_reponer = grdStock.Rows[i].Cells[3].Value.ToString();
 
-                    StockService.ReponerStock(codigo_producto, cantidad_a_reponer);
+                    stockService.ReponerStock(codigo_producto, cantidad_a_reponer);
 
-                    if (!ProductoService.HayQueReponer(codigo_producto))
+                    if (!productoService.HayQueReponer(codigo_producto))
                     {
-                        AlertaService.QuitarAlertaDeReposicion(codigo_producto);
+                        alertaService.QuitarAlertaDeReposicion(codigo_producto);
                         menu.CargarCantidadDeAlertas();
                     }
                 }

@@ -6,9 +6,9 @@ using System.Data.SqlClient;
 
 namespace Distribuidora.Helpers
 {
-    static class DataBaseHelper
+    public class DataBaseHelper
     {
-        public static object ExecStoredProcedure(string storedProcedure, List<SqlParameter> parameters)
+        public object ExecStoredProcedure(string storedProcedure, List<SqlParameter> parameters)
         {
             string ConnectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
             SqlConnection Connection = new SqlConnection(ConnectionString);
@@ -45,7 +45,7 @@ namespace Distribuidora.Helpers
             }
         }
 
-        public static object ExecFunction(string query)
+        public object ExecFunction(string query)
         {
             string ConnectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
             SqlConnection Connection = new SqlConnection(ConnectionString);
@@ -66,7 +66,7 @@ namespace Distribuidora.Helpers
             }
         }
 
-        public static DataTable ExecQuery(string query)
+        public DataTable ExecQuery(string query)
         {
             string ConnectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
             SqlConnection Connection = new SqlConnection(ConnectionString);
@@ -101,7 +101,7 @@ namespace Distribuidora.Helpers
             }
         }
 
-        public static void ExecScript(string query)
+        public void ExecScript(string query)
         {
             string ConnectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
             SqlConnection Connection = new SqlConnection(ConnectionString);

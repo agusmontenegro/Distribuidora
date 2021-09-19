@@ -5,9 +5,9 @@ using System.Data.SqlClient;
 
 namespace Distribuidora.Services
 {
-    public static class RubroService
+    public class RubroService
     {
-        public static List<Rubro> ObtenerRubros()
+        public List<Rubro> ObtenerRubros()
         {
             var rubros = new List<Rubro>();
             var query = "select * from dbo.Rubro";

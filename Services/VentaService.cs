@@ -1,4 +1,5 @@
-﻿using Distribuidora.Helpers;
+﻿using Distribuidora.Factories;
+using Distribuidora.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -6,9 +7,16 @@ using System.Data.SqlClient;
 
 namespace Distribuidora.Services
 {
-    public static class VentaService
+    public class VentaService
     {
-        public static int GuardarVenta(string precioTotal)
+        private readonly DataBaseHelper dataBaseHelper;
+
+        public VentaService()
+        {
+            dataBaseHelper = DataBaseHelperFactory.Crear();
+        }
+
+        public int GuardarVenta(string precioTotal)
         {
             List<SqlParameter> parameters = new List<SqlParameter>();
 
@@ -21,12 +29,12 @@ namespace Distribuidora.Services
             parameters.Add(precioTotalParameter);
             parameters.Add(codigoOuput);
 
-            DataBaseHelper.ExecStoredProcedure("dbo.InsertarVenta", parameters);
+            dataBaseHelper.ExecStoredProcedure("dbo.InsertarVenta", parameters);
 
             return Convert.ToInt32(parameters[1].Value.ToString());
         }
 
-        public static void GuardarItem(int codigoVenta, int producto, decimal precioUnitario, int cantidad)
+        public void GuardarItem(int codigoVenta, int producto, decimal precioUnitario, int cantidad)
         {
             List<SqlParameter> parameters = new List<SqlParameter>();
 
@@ -47,7 +55,7 @@ namespace Distribuidora.Services
             parameters.Add(precioUnitarioParameter);
             parameters.Add(cantidadParameter);
 
-            DataBaseHelper.ExecStoredProcedure("dbo.InsertarItem", parameters);
+            dataBaseHelper.ExecStoredProcedure("dbo.InsertarItem", parameters);
         }
     }
 }

@@ -4,7 +4,7 @@ namespace Distribuidora.Commons
 {
     public class FormsCommon
     {
-        public static void OnlyNumerics(object sender, KeyPressEventArgs e)
+        public void OnlyNumerics(object sender, KeyPressEventArgs e)
         {
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
             {
@@ -17,7 +17,7 @@ namespace Distribuidora.Commons
             }
         }
 
-        public static void AsignarAGrid(DataGridView dataGridView, params string[] campos)
+        public void AsignarAGrid(DataGridView dataGridView, params string[] campos)
         {
             int rowId = dataGridView.Rows.Add();
 

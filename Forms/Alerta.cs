@@ -1,20 +1,23 @@
-﻿using Distribuidora.Services;
+﻿using Distribuidora.Factories;
+using Distribuidora.Services;
 using System.Windows.Forms;
 
 namespace Distribuidora.Forms
 {
     public partial class Alerta : Form
     {
+        private readonly AlertaService alertaService;
         private int celda = -1;
 
         public Alerta()
         {
             InitializeComponent();
+            alertaService = AlertaServiceFactory.Crear();
         }
 
         private void Alerta_Load(object sender, System.EventArgs e)
         {
-            var alertas = AlertaService.ObtenerAlertas();
+            var alertas = alertaService.ObtenerAlertas();
 
             foreach (var alerta in alertas)
             {

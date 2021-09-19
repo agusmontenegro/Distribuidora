@@ -1,4 +1,6 @@
-﻿using Distribuidora.DTOs;
+﻿using Distribuidora.Commons;
+using Distribuidora.DTOs;
+using Distribuidora.Factories;
 using Distribuidora.Helpers;
 using Distribuidora.Services;
 using System;
@@ -11,9 +13,16 @@ namespace Distribuidora
 {
     public partial class Estadistica : Form
     {
+        private readonly RubroService rubroService;
+        private readonly DataBaseHelper dataBaseHelper;
+        private readonly FormsCommon formsCommon;
+
         public Estadistica()
         {
             InitializeComponent();
+            rubroService = RubroServiceFactory.Crear();
+            dataBaseHelper = DataBaseHelperFactory.Crear();
+            formsCommon = FormsCommonFactory.Crear();
         }
 
         private void Estadistica_Load(object sender, EventArgs e)
@@ -24,7 +33,7 @@ namespace Distribuidora
 
         private void CargarCombos()
         {
-            cboRubros.Items.AddRange(RubroService.ObtenerRubros().ToArray());
+            cboRubros.Items.AddRange(rubroService.ObtenerRubros().ToArray());
             cboRubros.DisplayMember = "Detalle";
             cboRubros.ValueMember = "Codigo";
 
@@ -92,7 +101,7 @@ namespace Distribuidora
 
             query += " order by sum(i.item_cantidad) desc";
 
-            CargarGrid(DataBaseHelper.ExecQuery(query));
+            CargarGrid(dataBaseHelper.ExecQuery(query));
 
             if (grdEstadisticas.Rows.Count == 0)
             {

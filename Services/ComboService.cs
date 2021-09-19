@@ -1,4 +1,5 @@
-﻿using Distribuidora.Helpers;
+﻿using Distribuidora.Factories;
+using Distribuidora.Helpers;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -6,17 +7,24 @@ using System.Data.SqlClient;
 
 namespace Distribuidora.Services
 {
-    public static class ComboService
+    public class ComboService
     {
-        public static bool EsCombo(string codigoProducto)
+        private readonly DataBaseHelper dataBaseHelper;
+
+        public ComboService()
+        {
+            dataBaseHelper = DataBaseHelperFactory.Crear();
+        }
+
+        public bool EsCombo(string codigoProducto)
         {
             var query = "select comb_codigo from dbo.Combo where comb_codigo = " + codigoProducto;
-            var result = DataBaseHelper.ExecQuery(query);
+            var result = dataBaseHelper.ExecQuery(query);
 
             return result.Rows.Count > 0;
         }
 
-        public static DTOs.Combo ObtenerCombo(string codigoProducto)
+        public DTOs.Combo ObtenerCombo(string codigoProducto)
         {
             string query = "select * from dbo.Combo_View where Producto = " + codigoProducto;
             string ConnectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
@@ -62,13 +70,13 @@ namespace Distribuidora.Services
             }
         }
 
-        public static void EliminarComponentes(string codigoProductoEditar)
+        public void EliminarComponentes(string codigoProductoEditar)
         {
             var query = "delete from dbo.Combo where comb_codigo = " + codigoProductoEditar;
-            DataBaseHelper.ExecScript(query);
+            dataBaseHelper.ExecScript(query);
         }
 
-        public static void GuardarComponente(int codigoProducto, string codigoComponente, string cantidad)
+        public void GuardarComponente(int codigoProducto, string codigoComponente, string cantidad)
         {
             List<SqlParameter> parameters = new List<SqlParameter>();
 
@@ -85,7 +93,7 @@ namespace Distribuidora.Services
             parameters.Add(codigoComponenteParameter);
             parameters.Add(cantidadParameter);
 
-            DataBaseHelper.ExecStoredProcedure("dbo.InsertarComponente", parameters);
+            dataBaseHelper.ExecStoredProcedure("dbo.InsertarComponente", parameters);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Distribuidora.DTOs;
+using Distribuidora.Factories;
 using Distribuidora.Helpers;
 using System.Collections.Generic;
 using System.Configuration;
@@ -7,9 +8,16 @@ using System.Data.SqlClient;
 
 namespace Distribuidora.Services
 {
-    public static class AlertaService
+    public class AlertaService
     {
-        public static void EmitirAlertaDeReposicion(string codigo_producto)
+        private readonly DataBaseHelper dataBaseHelper;
+
+        public AlertaService()
+        {
+            dataBaseHelper = DataBaseHelperFactory.Crear();
+        }
+
+        public void EmitirAlertaDeReposicion(string codigo_producto)
         {
             List<SqlParameter> parameters = new List<SqlParameter>();
 
@@ -18,10 +26,10 @@ namespace Distribuidora.Services
 
             parameters.Add(codigoProductoParameter);
 
-            DataBaseHelper.ExecStoredProcedure("dbo.EmitirAlertaDeReposicion", parameters);
+            dataBaseHelper.ExecStoredProcedure("dbo.EmitirAlertaDeReposicion", parameters);
         }
 
-        public static void QuitarAlertaDeReposicion(string codigo_producto)
+        public void QuitarAlertaDeReposicion(string codigo_producto)
         {
             List<SqlParameter> parameters = new List<SqlParameter>();
 
@@ -30,18 +38,18 @@ namespace Distribuidora.Services
 
             parameters.Add(codigoProductoParameter);
 
-            DataBaseHelper.ExecStoredProcedure("dbo.QuitarAlertaDeReposicion", parameters);
+            dataBaseHelper.ExecStoredProcedure("dbo.QuitarAlertaDeReposicion", parameters);
         }
 
-        public static int ObtenerCantidadDeAlertas()
+        public int ObtenerCantidadDeAlertas()
         {
             var query = "select * from alerta";
-            var result = DataBaseHelper.ExecQuery(query);
+            var result = dataBaseHelper.ExecQuery(query);
 
             return result.Rows.Count;
         }
 
-        public static List<Alerta> ObtenerAlertas()
+        public List<Alerta> ObtenerAlertas()
         {
             string query = "select * from dbo.Alerta a join dbo.Tipo_Alerta ta on a.aler_tipo = ta.tale_codigo";
             string ConnectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;

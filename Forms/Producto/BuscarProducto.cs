@@ -1,5 +1,6 @@
 ﻿using Distribuidora.Commons;
 using Distribuidora.DTOs;
+using Distribuidora.Factories;
 using Distribuidora.Helpers;
 using Distribuidora.Services;
 using System;
@@ -12,9 +13,20 @@ namespace Distribuidora
     {
         public int celda = 0;
 
+        private readonly FormsCommon formsCommon;
+        private readonly RubroService rubroService;
+        private readonly DataBaseHelper dataBaseHelper;
+        private readonly ValidacionService validacionService;
+        private readonly ProductoService productoService;
+
         public BuscarProducto()
         {
             InitializeComponent();
+            formsCommon = FormsCommonFactory.Crear();
+            rubroService = RubroServiceFactory.Crear();
+            dataBaseHelper = DataBaseHelperFactory.Crear();
+            validacionService = ValidacionServiceFactory.Crear();
+            productoService = ProductoServiceFactory.Crear();
         }
 
         private void Producto_Load(object sender, EventArgs e)
@@ -26,7 +38,7 @@ namespace Distribuidora
 
         private void txtCodigoProducto_KeyPress(object sender, KeyPressEventArgs e)
         {
-            FormsCommon.OnlyNumerics(sender, e);
+            formsCommon.OnlyNumerics(sender, e);
 
             if (e.KeyChar == (char)Keys.Return)
             {
@@ -44,7 +56,7 @@ namespace Distribuidora
 
         private void CargarCombos()
         {
-            cboRubros.Items.AddRange(RubroService.ObtenerRubros().ToArray());
+            cboRubros.Items.AddRange(rubroService.ObtenerRubros().ToArray());
             cboRubros.DisplayMember = "detalle";
             cboRubros.ValueMember = "codigo";
         }
@@ -96,7 +108,7 @@ namespace Distribuidora
                 if (cboRubros.SelectedIndex != -1)
                     query += "and prod_rubro = " + ((Rubro)cboRubros.SelectedItem).Codigo;
 
-                CargarGrid(DataBaseHelper.ExecQuery(query));
+                CargarGrid(dataBaseHelper.ExecQuery(query));
                 btnEliminarProducto.Enabled = true;
                 btnEditarProducto.Enabled = true;
 
@@ -116,17 +128,13 @@ namespace Distribuidora
 
         private bool BusquedaValida(ref string msj)
         {
-            ValidationService v = new ValidationService();
+            validacionService.AgregarValidacion(
+                !string.IsNullOrEmpty(txtCodigoProducto.Text) ||
+                !string.IsNullOrEmpty(txtDetalleProducto.Text) ||
+                cboRubros.SelectedIndex != -1,
+                "Ingrese algún criterio de búsqueda");
 
-            v.Validations.Add(new ValidationService.Validation
-            {
-                condition = !string.IsNullOrEmpty(txtCodigoProducto.Text) ||
-                            !string.IsNullOrEmpty(txtDetalleProducto.Text) ||
-                            cboRubros.SelectedIndex != -1,
-                msj = "Ingrese algún criterio de búsqueda"
-            });
-
-            return v.validate(ref msj);
+            return validacionService.Validar(ref msj);
         }
 
         private void CargarGrid(DataTable result)
@@ -161,7 +169,7 @@ namespace Distribuidora
                 {
                     try
                     {
-                        ProductoService.EliminarProducto(codigoProducto);
+                        productoService.EliminarProducto(codigoProducto);
                         grdResult.Rows.RemoveAt(celda);
                         celda = -1;
                         MessageBox.Show("Se ha eliminado el producto exitosamente");

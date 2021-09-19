@@ -1,13 +1,21 @@
-﻿using Distribuidora.Helpers;
+﻿using Distribuidora.Factories;
+using Distribuidora.Helpers;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
 namespace Distribuidora.Services
 {
-    public static class StockService
+    public class StockService
     {
-        public static void ReponerStock(string codigoProducto, string cantidadAReponer)
+        private readonly DataBaseHelper dataBaseHelper;
+
+        public StockService()
+        {
+            dataBaseHelper = DataBaseHelperFactory.Crear();
+        }
+
+        public void ReponerStock(string codigoProducto, string cantidadAReponer)
         {
             List<SqlParameter> parameters = new List<SqlParameter>();
 
@@ -20,7 +28,7 @@ namespace Distribuidora.Services
             parameters.Add(codigoProductoParameter);
             parameters.Add(cantidadParameter);
 
-            DataBaseHelper.ExecStoredProcedure("dbo.ReponerStock", parameters);
+            dataBaseHelper.ExecStoredProcedure("dbo.ReponerStock", parameters);
         }
     }
 }

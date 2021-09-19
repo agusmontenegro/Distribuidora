@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Aspose.PDF, Version=21.9.0.0, Culture=neutral, PublicKeyToken=f0262d67fe233d63, processorArchitecture=MSIL">
+      <HintPath>packages\Aspose.PDF.21.9.0\lib\net4.0\Aspose.PDF.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.ConfigurationManager, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -73,6 +76,15 @@
     <Compile Include="DTOs\Rubro.cs" />
     <Compile Include="DTOs\Stock.cs" />
     <Compile Include="DTOs\TipoAlerta.cs" />
+    <Compile Include="Factories\AlertaServiceFactory.cs" />
+    <Compile Include="Factories\ComboServiceFactory.cs" />
+    <Compile Include="Factories\DataBaseHelperFactory.cs" />
+    <Compile Include="Factories\FormsCommonFactory.cs" />
+    <Compile Include="Factories\ProductoServiceFactory.cs" />
+    <Compile Include="Factories\RubroServiceFactory.cs" />
+    <Compile Include="Factories\StockServiceFactory.cs" />
+    <Compile Include="Factories\ValidacionServiceFactory.cs" />
+    <Compile Include="Factories\VentaServiceFactory.cs" />
     <Compile Include="Forms\Alerta.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -112,7 +124,7 @@
     <Compile Include="Services\ProductoService.cs" />
     <Compile Include="Services\RubroService.cs" />
     <Compile Include="Services\StockService.cs" />
-    <Compile Include="Services\ValidationService.cs" />
+    <Compile Include="Services\ValidacionService.cs" />
     <Compile Include="Services\VentaService.cs" />
     <Compile Include="Forms\Stock.cs">
       <SubType>Form</SubType>

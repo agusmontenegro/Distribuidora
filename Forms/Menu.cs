@@ -1,4 +1,5 @@
-﻿using Distribuidora.Forms;
+﻿using Distribuidora.Factories;
+using Distribuidora.Forms;
 using Distribuidora.Services;
 using System;
 using System.Drawing;
@@ -8,9 +9,12 @@ namespace Distribuidora
 {
     public partial class Menu : Form
     {
+        private readonly AlertaService alertaService;
+
         public Menu()
         {
             InitializeComponent();
+            alertaService = AlertaServiceFactory.Crear();
         }
 
         private void btnSale_Click(object sender, EventArgs e)
@@ -50,7 +54,7 @@ namespace Distribuidora
 
         public void CargarCantidadDeAlertas()
         {
-            var cantidadDeAlertas = AlertaService.ObtenerCantidadDeAlertas();
+            var cantidadDeAlertas = alertaService.ObtenerCantidadDeAlertas();
 
             if (cantidadDeAlertas > 0)
             {

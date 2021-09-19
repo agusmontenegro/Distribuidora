@@ -1,4 +1,5 @@
-﻿using Distribuidora.Helpers;
+﻿using Distribuidora.Factories;
+using Distribuidora.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -7,17 +8,26 @@ using System.Data.SqlClient;
 
 namespace Distribuidora.Services
 {
-    public static class ProductoService
+    public class ProductoService
     {
-        public static bool ExisteProducto(string codigoProducto)
+        private readonly DataBaseHelper dataBaseHelper;
+        private readonly ValidacionService validacionService;
+
+        public ProductoService()
+        {
+            dataBaseHelper = DataBaseHelperFactory.Crear();
+            validacionService = ValidacionServiceFactory.Crear();
+        }
+
+        public bool ExisteProducto(string codigoProducto)
         {
             var query = "select prod_codigo from dbo.Producto_View where prod_codigo = " + codigoProducto;
-            var result = DataBaseHelper.ExecQuery(query);
+            var result = dataBaseHelper.ExecQuery(query);
 
             return result.Rows.Count == 1;
         }
 
-        public static DTOs.Producto ObtenerProducto(string codigoProducto)
+        public DTOs.Producto ObtenerProducto(string codigoProducto)
         {
             string query = "select * from dbo.Producto_View where prod_codigo = " + codigoProducto;
             string ConnectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
@@ -54,26 +64,31 @@ namespace Distribuidora.Services
             return null;
         }
 
-        public static bool CodigoProductoValido(string codigoProducto, ref string msj)
+        public bool CodigoProductoValido(string codigoProducto, ref string msj)
         {
-            ValidationService v = new ValidationService();
-
-            v.Validations.Add(new ValidationService.Validation
+            if (string.IsNullOrEmpty(codigoProducto))
             {
-                condition = ExisteProducto(codigoProducto),
-                msj = "No existe un producto activo con el código ingresado."
-            });
+                validacionService.AgregarValidacion(
+                    false,
+                    "Debe ingresar un código de producto.");
+            }
+            else
+            {
+                validacionService.AgregarValidacion(
+                    ExisteProducto(codigoProducto),
+                    "No existe un producto activo con el código ingresado.");
+            }
 
-            return v.validate(ref msj);
+            return validacionService.Validar(ref msj);
         }
 
-        public static void EliminarProducto(string codigoProducto)
+        public void EliminarProducto(string codigoProducto)
         {
             var query = "update dbo.Producto set prod_activo = 0 where prod_codigo = " + codigoProducto;
-            DataBaseHelper.ExecScript(query);
+            dataBaseHelper.ExecScript(query);
         }
 
-        public static int GuardarProducto(string detalleProducto, string precioUnitario, string codigoRubro, string stockMinimo)
+        public int GuardarProducto(string detalleProducto, string precioUnitario, string codigoRubro, string stockMinimo)
         {
             List<SqlParameter> parameters = new List<SqlParameter>();
 
@@ -98,12 +113,12 @@ namespace Distribuidora.Services
             parameters.Add(stockMinimoParameter);
             parameters.Add(codigoProductoOuput);
 
-            DataBaseHelper.ExecStoredProcedure("dbo.InsertarProducto", parameters);
+            dataBaseHelper.ExecStoredProcedure("dbo.InsertarProducto", parameters);
 
             return Convert.ToInt32(parameters[4].Value.ToString());
         }
 
-        public static void ActualizarProducto(string codigoProductoEditar, string detalleProducto, string precioUnitario, string codigoRubro, string stockMinimo)
+        public void ActualizarProducto(string codigoProductoEditar, string detalleProducto, string precioUnitario, string codigoRubro, string stockMinimo)
         {
             List<SqlParameter> parameters = new List<SqlParameter>();
 
@@ -128,23 +143,23 @@ namespace Distribuidora.Services
             parameters.Add(codigoRubroParameter);
             parameters.Add(stockMinimoParameter);
 
-            DataBaseHelper.ExecStoredProcedure("dbo.ActualizarProducto", parameters);
+            dataBaseHelper.ExecStoredProcedure("dbo.ActualizarProducto", parameters);
         }
 
-        public static bool HayStock(string codigoProducto, string cantidad)
+        public bool HayStock(string codigoProducto, string cantidad)
         {
             var query = "SELECT dbo.HayStockDisponible(" + codigoProducto + "," + cantidad + ");";
-            var result = DataBaseHelper.ExecFunction(query);
+            var result = dataBaseHelper.ExecFunction(query);
 
             return Convert.ToBoolean(result.ToString());
         }
 
-        public static bool HayQueReponer(string codigoProducto)
+        public bool HayQueReponer(string codigoProducto)
         {
             var query = "SELECT dbo.LlegoAPuntoDeReposicion(" + codigoProducto + ");";
-            var result = DataBaseHelper.ExecFunction(query);
+            var result = dataBaseHelper.ExecFunction(query);
 
             return Convert.ToBoolean(result.ToString());
-        }        
+        }
     }
 }
