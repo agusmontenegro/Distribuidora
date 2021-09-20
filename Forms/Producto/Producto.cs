@@ -208,7 +208,11 @@ namespace Distribuidora.Producto
                     if (!string.IsNullOrEmpty(codigoProductoEditar)) // update
                     {
                         productoService.ActualizarProducto(
-                            codigoProductoEditar, txtDetalleProducto.Text, txtPrecioUnitario.Text, ((Rubro)cboRubros.SelectedItem).Codigo, txtStockMinimo.Text);
+                            codigoProductoEditar, 
+                            txtDetalleProducto.Text, 
+                            txtPrecioUnitario.Text, 
+                            ((Rubro)cboRubros.SelectedItem).Codigo, 
+                            txtStockMinimo.Text);
 
                         if (grdComponentes.Rows.Count > 0)
                         {
@@ -216,21 +220,28 @@ namespace Distribuidora.Producto
                             for (int i = 0;i < grdComponentes.Rows.Count;++i)
                             {
                                 comboService.GuardarComponente(
-                                    int.Parse(codigoProductoEditar), grdComponentes.Rows[i].Cells[0].Value.ToString(), grdComponentes.Rows[i].Cells[2].Value.ToString());
+                                    int.Parse(codigoProductoEditar), 
+                                    grdComponentes.Rows[i].Cells[0].Value.ToString(), 
+                                    grdComponentes.Rows[i].Cells[2].Value.ToString());
                             }
                         }
                     }
                     else // insert
                     {
                         var codigoProducto = productoService.GuardarProducto(
-                            txtDetalleProducto.Text, txtPrecioUnitario.Text, ((Rubro)cboRubros.SelectedItem).Codigo, txtStockMinimo.Text);
+                            txtDetalleProducto.Text, 
+                            txtPrecioUnitario.Text, 
+                            ((Rubro)cboRubros.SelectedItem).Codigo, 
+                            txtStockMinimo.Text);
 
                         if (grdComponentes.Rows.Count > 0)
                         {
                             for (int i = 0;i < grdComponentes.Rows.Count;++i)
                             {
                                 comboService.GuardarComponente(
-                                    codigoProducto, grdComponentes.Rows[i].Cells[0].Value.ToString(), grdComponentes.Rows[i].Cells[2].Value.ToString());
+                                    codigoProducto, 
+                                    grdComponentes.Rows[i].Cells[0].Value.ToString(), 
+                                    grdComponentes.Rows[i].Cells[2].Value.ToString());
                             }
                         }
                     }
@@ -238,7 +249,7 @@ namespace Distribuidora.Producto
                     MessageBox.Show("El producto ha sido guardado exitosamente");
                     Close();
                 }
-                catch (Exception)
+                catch
                 {
                     throw new Exception("Hubo un error al intentar guardar el producto");
                 }

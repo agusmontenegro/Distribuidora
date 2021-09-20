@@ -281,7 +281,7 @@ namespace Distribuidora
                     }
                 }
             }
-            catch (Exception)
+            catch
             {
                 throw new Exception("Hubo un error al intentar procesar la venta");
             }
@@ -304,7 +304,7 @@ namespace Distribuidora
                 {
                     // Imprimir
                 }
-                catch (Exception)
+                catch
                 {
                     throw new Exception("Hubo un error al querer imprimir la venta");
                 }

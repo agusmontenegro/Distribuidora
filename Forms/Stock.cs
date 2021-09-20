@@ -65,12 +65,10 @@ namespace Distribuidora
         private bool ProductoValido(ref string msj)
         {
             validacionService.AgregarValidacion(
-                productoService.CodigoProductoValido(txtCodigoProducto.Text, ref msj),
-                msj);
+                productoService.CodigoProductoValido(txtCodigoProducto.Text, ref msj), msj);
 
             validacionService.AgregarValidacion(
-                !comboService.EsCombo(txtCodigoProducto.Text),
-                "No está permitido reponer stock de un combo, si de sus componentes");
+                !comboService.EsCombo(txtCodigoProducto.Text), "No está permitido reponer stock de un combo, si de sus componentes");
 
             return validacionService.Validar(ref msj);
         }
@@ -177,19 +175,15 @@ namespace Distribuidora
 
             if (string.IsNullOrEmpty(txtCantidadReponer.Text))
             {
-                validacionService.AgregarValidacion(
-                    false,
-                    "Debe ingresar la cantidad a reponer");
+                validacionService.AgregarValidacion(false, "Debe ingresar la cantidad a reponer");
             }
             else
             {
                 validacionService.AgregarValidacion(
-                    int.Parse(txtCantidadReponer.Text) > 0,
-                    "La cantidad a reponer no puede ser 0");
+                    int.Parse(txtCantidadReponer.Text) > 0, "La cantidad a reponer no puede ser 0");
 
                 validacionService.AgregarValidacion(
-                    !ExisteItemEnGrid(txtCodigoProducto.Text.ToString()),
-                    "El producto " + txtCodigoProducto.Text.ToString() + " ya fue agregado");
+                    !ExisteItemEnGrid(txtCodigoProducto.Text.ToString()), "El producto " + txtCodigoProducto.Text.ToString() + " ya fue agregado");
             }
 
             return validacionService.Validar(ref msj);
@@ -231,7 +225,7 @@ namespace Distribuidora
                     }
                 }
             }
-            catch (Exception)
+            catch
             {
                 throw new Exception("Hubo un error al intentar reponer stock");
             }
@@ -253,7 +247,7 @@ namespace Distribuidora
                 {
                     // Imprimir
                 }
-                catch (Exception)
+                catch
                 {
                     throw new Exception("Hubo un error al querer imprimir la reposición de stock");
                 }

@@ -143,7 +143,8 @@ namespace Distribuidora
 
             for (int i = 0;i < result.Rows.Count;i++)
             {
-                grdResult.Rows.Add(
+                formsCommon.AsignarAGrid(
+                    grdResult,
                     result.Rows[i][0].ToString(),
                     result.Rows[i][1].ToString(),
                     result.Rows[i][2].ToString(),
@@ -180,7 +181,7 @@ namespace Distribuidora
                             btnEditarProducto.Enabled = false;
                         }
                     }
-                    catch (Exception)
+                    catch
                     {
                         throw new Exception("Hubo un error al querer eliminar el producto");
                     }

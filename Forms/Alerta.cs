@@ -1,4 +1,5 @@
-﻿using Distribuidora.Factories;
+﻿using Distribuidora.Commons;
+using Distribuidora.Factories;
 using Distribuidora.Services;
 using System.Windows.Forms;
 
@@ -6,13 +7,15 @@ namespace Distribuidora.Forms
 {
     public partial class Alerta : Form
     {
-        private readonly AlertaService alertaService;
         private int celda = -1;
+        private readonly AlertaService alertaService;
+        private readonly FormsCommon formsCommon;
 
         public Alerta()
         {
             InitializeComponent();
             alertaService = AlertaServiceFactory.Crear();
+            formsCommon = FormsCommonFactory.Crear();
         }
 
         private void Alerta_Load(object sender, System.EventArgs e)
@@ -21,11 +24,11 @@ namespace Distribuidora.Forms
 
             foreach (var alerta in alertas)
             {
-                int rowId = grdAlertas.Rows.Add();
-
-                grdAlertas.Rows[rowId].Cells[0].Value = alerta.Codigo;
-                grdAlertas.Rows[rowId].Cells[1].Value = alerta.Detalle;
-                grdAlertas.Rows[rowId].Cells[2].Value = alerta.TipoAlerta.Detalle;
+                formsCommon.AsignarAGrid(
+                    grdAlertas,
+                    alerta.Codigo,
+                    alerta.Detalle,
+                    alerta.TipoAlerta.Detalle);
             }
         }
 
