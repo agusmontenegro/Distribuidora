@@ -1,5 +1,4 @@
 ﻿using Distribuidora.DTOs;
-using Distribuidora.Factories;
 using Distribuidora.Helpers;
 using System.Collections.Generic;
 using System.Configuration;
@@ -14,7 +13,7 @@ namespace Distribuidora.Services
 
         public AlertaService()
         {
-            dataBaseHelper = DataBaseHelperFactory.Crear();
+            dataBaseHelper = new DataBaseHelper();
         }
 
         public void EmitirAlertaDeReposicion(string codigo_producto)
@@ -63,7 +62,7 @@ namespace Distribuidora.Services
                     var alertas = new List<Alerta>();
 
                     while (reader.Read())
-                    {                        
+                    {
                         var alerta = new Alerta
                         {
                             Codigo = reader["aler_codigo"].ToString(),
@@ -74,7 +73,7 @@ namespace Distribuidora.Services
                             {
                                 Codigo = reader["tale_codigo"].ToString(),
                                 Detalle = reader["tale_detalle"].ToString()
-                            }                            
+                            }
                         };
 
                         alertas.Add(alerta);

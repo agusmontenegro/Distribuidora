@@ -1,5 +1,4 @@
-﻿using Distribuidora.Factories;
-using Distribuidora.Helpers;
+﻿using Distribuidora.Helpers;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -13,7 +12,7 @@ namespace Distribuidora.Services
 
         public ComboService()
         {
-            dataBaseHelper = DataBaseHelperFactory.Crear();
+            dataBaseHelper = new DataBaseHelper();
         }
 
         public bool EsCombo(string codigoProducto)

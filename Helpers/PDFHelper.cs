@@ -2,9 +2,9 @@
 
 namespace Distribuidora.Helpers
 {
-    public static class PDFHelper
+    public class PDFHelper
     {
-        public static Document ImprimirDetalleDeVenta()
+        public Document ImprimirDetalleDeVenta()
         {
             var document = new Document();
             ArmarEncabezado(document);
@@ -20,7 +20,7 @@ namespace Distribuidora.Helpers
             return document;
         }
 
-        private static void ArmarEncabezado(Document document)
+        private void ArmarEncabezado(Document document)
         {
 
         }

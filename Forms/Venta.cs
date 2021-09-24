@@ -1,5 +1,4 @@
 ﻿using Distribuidora.Commons;
-using Distribuidora.Factories;
 using Distribuidora.Services;
 using System;
 using System.Windows.Forms;
@@ -23,12 +22,12 @@ namespace Distribuidora
         {
             InitializeComponent();
             this.menu = menu;
-            formsCommon = FormsCommonFactory.Crear();
-            productoService = ProductoServiceFactory.Crear();
-            comboService = ComboServiceFactory.Crear();
-            validacionService = ValidacionServiceFactory.Crear();
-            alertaService = AlertaServiceFactory.Crear();
-            ventaService = VentaServiceFactory.Crear();
+            formsCommon = new FormsCommon();
+            productoService = new ProductoService();
+            comboService = new ComboService();
+            validacionService = new ValidacionService();
+            alertaService = new AlertaService();
+            ventaService = new VentaService();
         }
 
         private void Venta_Load(object sender, EventArgs e)

@@ -1,5 +1,4 @@
-﻿using Distribuidora.Factories;
-using Distribuidora.Helpers;
+﻿using Distribuidora.Helpers;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -12,7 +11,7 @@ namespace Distribuidora.Services
 
         public StockService()
         {
-            dataBaseHelper = DataBaseHelperFactory.Crear();
+            dataBaseHelper = new DataBaseHelper();
         }
 
         public void ReponerStock(string codigoProducto, string cantidadAReponer)

@@ -76,15 +76,6 @@
     <Compile Include="DTOs\Rubro.cs" />
     <Compile Include="DTOs\Stock.cs" />
     <Compile Include="DTOs\TipoAlerta.cs" />
-    <Compile Include="Factories\AlertaServiceFactory.cs" />
-    <Compile Include="Factories\ComboServiceFactory.cs" />
-    <Compile Include="Factories\DataBaseHelperFactory.cs" />
-    <Compile Include="Factories\FormsCommonFactory.cs" />
-    <Compile Include="Factories\ProductoServiceFactory.cs" />
-    <Compile Include="Factories\RubroServiceFactory.cs" />
-    <Compile Include="Factories\StockServiceFactory.cs" />
-    <Compile Include="Factories\ValidacionServiceFactory.cs" />
-    <Compile Include="Factories\VentaServiceFactory.cs" />
     <Compile Include="Forms\Alerta.cs">
       <SubType>Form</SubType>
     </Compile>

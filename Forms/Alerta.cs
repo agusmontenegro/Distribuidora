@@ -1,5 +1,4 @@
 ﻿using Distribuidora.Commons;
-using Distribuidora.Factories;
 using Distribuidora.Services;
 using System.Windows.Forms;
 
@@ -14,8 +13,8 @@ namespace Distribuidora.Forms
         public Alerta()
         {
             InitializeComponent();
-            alertaService = AlertaServiceFactory.Crear();
-            formsCommon = FormsCommonFactory.Crear();
+            alertaService = new AlertaService();
+            formsCommon = new FormsCommon();
         }
 
         private void Alerta_Load(object sender, System.EventArgs e)

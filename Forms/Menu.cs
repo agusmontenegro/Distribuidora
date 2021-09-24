@@ -1,5 +1,4 @@
-﻿using Distribuidora.Factories;
-using Distribuidora.Forms;
+﻿using Distribuidora.Forms;
 using Distribuidora.Services;
 using System;
 using System.Drawing;
@@ -14,7 +13,7 @@ namespace Distribuidora
         public Menu()
         {
             InitializeComponent();
-            alertaService = AlertaServiceFactory.Crear();
+            alertaService = new AlertaService();
         }
 
         private void btnSale_Click(object sender, EventArgs e)

@@ -1,5 +1,4 @@
-﻿using Distribuidora.Factories;
-using Distribuidora.Helpers;
+﻿using Distribuidora.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -15,8 +14,8 @@ namespace Distribuidora.Services
 
         public ProductoService()
         {
-            dataBaseHelper = DataBaseHelperFactory.Crear();
-            validacionService = ValidacionServiceFactory.Crear();
+            dataBaseHelper = new DataBaseHelper();
+            validacionService = new ValidacionService();
         }
 
         public bool ExisteProducto(string codigoProducto)

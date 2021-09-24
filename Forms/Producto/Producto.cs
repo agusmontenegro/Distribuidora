@@ -1,6 +1,5 @@
 ﻿using Distribuidora.Commons;
 using Distribuidora.DTOs;
-using Distribuidora.Factories;
 using Distribuidora.Services;
 using System;
 using System.Windows.Forms;
@@ -22,11 +21,11 @@ namespace Distribuidora.Producto
         {
             InitializeComponent();
             this.codigoProductoEditar = codigoProductoEditar;
-            rubroService = RubroServiceFactory.Crear();
-            productoService = ProductoServiceFactory.Crear();
-            comboService = ComboServiceFactory.Crear();
-            formsCommon = FormsCommonFactory.Crear();
-            validacionService = ValidacionServiceFactory.Crear();
+            rubroService = new RubroService();
+            productoService = new ProductoService();
+            comboService = new ComboService();
+            formsCommon = new FormsCommon();
+            validacionService = new ValidacionService();
         }
 
         private void AltaProducto_Load(object sender, EventArgs e)
@@ -208,10 +207,10 @@ namespace Distribuidora.Producto
                     if (!string.IsNullOrEmpty(codigoProductoEditar)) // update
                     {
                         productoService.ActualizarProducto(
-                            codigoProductoEditar, 
-                            txtDetalleProducto.Text, 
-                            txtPrecioUnitario.Text, 
-                            ((Rubro)cboRubros.SelectedItem).Codigo, 
+                            codigoProductoEditar,
+                            txtDetalleProducto.Text,
+                            txtPrecioUnitario.Text,
+                            ((Rubro)cboRubros.SelectedItem).Codigo,
                             txtStockMinimo.Text);
 
                         if (grdComponentes.Rows.Count > 0)
@@ -220,8 +219,8 @@ namespace Distribuidora.Producto
                             for (int i = 0;i < grdComponentes.Rows.Count;++i)
                             {
                                 comboService.GuardarComponente(
-                                    int.Parse(codigoProductoEditar), 
-                                    grdComponentes.Rows[i].Cells[0].Value.ToString(), 
+                                    int.Parse(codigoProductoEditar),
+                                    grdComponentes.Rows[i].Cells[0].Value.ToString(),
                                     grdComponentes.Rows[i].Cells[2].Value.ToString());
                             }
                         }
@@ -229,9 +228,9 @@ namespace Distribuidora.Producto
                     else // insert
                     {
                         var codigoProducto = productoService.GuardarProducto(
-                            txtDetalleProducto.Text, 
-                            txtPrecioUnitario.Text, 
-                            ((Rubro)cboRubros.SelectedItem).Codigo, 
+                            txtDetalleProducto.Text,
+                            txtPrecioUnitario.Text,
+                            ((Rubro)cboRubros.SelectedItem).Codigo,
                             txtStockMinimo.Text);
 
                         if (grdComponentes.Rows.Count > 0)
@@ -239,8 +238,8 @@ namespace Distribuidora.Producto
                             for (int i = 0;i < grdComponentes.Rows.Count;++i)
                             {
                                 comboService.GuardarComponente(
-                                    codigoProducto, 
-                                    grdComponentes.Rows[i].Cells[0].Value.ToString(), 
+                                    codigoProducto,
+                                    grdComponentes.Rows[i].Cells[0].Value.ToString(),
                                     grdComponentes.Rows[i].Cells[2].Value.ToString());
                             }
                         }

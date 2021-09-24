@@ -1,6 +1,5 @@
 ﻿using Distribuidora.Commons;
 using Distribuidora.DTOs;
-using Distribuidora.Factories;
 using Distribuidora.Helpers;
 using Distribuidora.Services;
 using System;
@@ -22,11 +21,11 @@ namespace Distribuidora
         public BuscarProducto()
         {
             InitializeComponent();
-            formsCommon = FormsCommonFactory.Crear();
-            rubroService = RubroServiceFactory.Crear();
-            dataBaseHelper = DataBaseHelperFactory.Crear();
-            validacionService = ValidacionServiceFactory.Crear();
-            productoService = ProductoServiceFactory.Crear();
+            formsCommon = new FormsCommon();
+            rubroService = new RubroService();
+            dataBaseHelper = new DataBaseHelper();
+            validacionService = new ValidacionService();
+            productoService = new ProductoService();
         }
 
         private void Producto_Load(object sender, EventArgs e)

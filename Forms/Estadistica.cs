@@ -1,6 +1,5 @@
 ﻿using Distribuidora.Commons;
 using Distribuidora.DTOs;
-using Distribuidora.Factories;
 using Distribuidora.Helpers;
 using Distribuidora.Services;
 using System;
@@ -20,9 +19,9 @@ namespace Distribuidora
         public Estadistica()
         {
             InitializeComponent();
-            rubroService = RubroServiceFactory.Crear();
-            dataBaseHelper = DataBaseHelperFactory.Crear();
-            formsCommon = FormsCommonFactory.Crear();
+            rubroService = new RubroService();
+            dataBaseHelper = new DataBaseHelper();
+            formsCommon = new FormsCommon();
         }
 
         private void Estadistica_Load(object sender, EventArgs e)

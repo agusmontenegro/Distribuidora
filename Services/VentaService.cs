@@ -1,5 +1,4 @@
-﻿using Distribuidora.Factories;
-using Distribuidora.Helpers;
+﻿using Distribuidora.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -13,7 +12,7 @@ namespace Distribuidora.Services
 
         public VentaService()
         {
-            dataBaseHelper = DataBaseHelperFactory.Crear();
+            dataBaseHelper = new DataBaseHelper();
         }
 
         public int GuardarVenta(string precioTotal)
