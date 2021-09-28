@@ -16,28 +16,16 @@ namespace Distribuidora.Services
             dataBaseHelper = new DataBaseHelper();
         }
 
-        public void EmitirAlertaDeReposicion(string codigo_producto)
+        public void EmitirAlertaDeReposicion(string codigoProducto)
         {
-            List<SqlParameter> parameters = new List<SqlParameter>();
-
-            SqlParameter codigoProductoParameter = new SqlParameter("@producto", SqlDbType.Int);
-            codigoProductoParameter.Value = int.Parse(codigo_producto);
-
-            parameters.Add(codigoProductoParameter);
-
-            dataBaseHelper.ExecStoredProcedure("dbo.EmitirAlertaDeReposicion", parameters);
+            dataBaseHelper.AgregarParametroEntrada(codigoProducto, "@producto", SqlDbType.Int);
+            _ = dataBaseHelper.ExecStoredProcedure("dbo.EmitirAlertaDeReposicion");
         }
 
-        public void QuitarAlertaDeReposicion(string codigo_producto)
+        public void QuitarAlertaDeReposicion(string codigoProducto)
         {
-            List<SqlParameter> parameters = new List<SqlParameter>();
-
-            SqlParameter codigoProductoParameter = new SqlParameter("@producto", SqlDbType.Int);
-            codigoProductoParameter.Value = int.Parse(codigo_producto);
-
-            parameters.Add(codigoProductoParameter);
-
-            dataBaseHelper.ExecStoredProcedure("dbo.QuitarAlertaDeReposicion", parameters);
+            dataBaseHelper.AgregarParametroEntrada(codigoProducto, "@producto", SqlDbType.Int);
+            _ = dataBaseHelper.ExecStoredProcedure("dbo.QuitarAlertaDeReposicion");
         }
 
         public int ObtenerCantidadDeAlertas()

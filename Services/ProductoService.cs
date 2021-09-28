@@ -1,6 +1,5 @@
 ﻿using Distribuidora.Helpers;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
@@ -89,60 +88,26 @@ namespace Distribuidora.Services
 
         public int GuardarProducto(string detalleProducto, string precioUnitario, string codigoRubro, string stockMinimo)
         {
-            List<SqlParameter> parameters = new List<SqlParameter>();
+            dataBaseHelper.AgregarParametroEntrada(detalleProducto, "@detalle", SqlDbType.NVarChar);
+            dataBaseHelper.AgregarParametroEntrada(precioUnitario, "@precioUnitario", SqlDbType.Decimal);
+            dataBaseHelper.AgregarParametroEntrada(codigoRubro, "@rubro", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroEntrada(stockMinimo, "@stockMinimo", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroSalida("@codigoProducto", SqlDbType.Int);
 
-            SqlParameter detalleProductoParameter = new SqlParameter("@detalle", SqlDbType.NVarChar);
-            detalleProductoParameter.Value = detalleProducto;
+            var salidas = dataBaseHelper.ExecStoredProcedure("dbo.InsertarProducto");
 
-            SqlParameter precioUnitarioParameter = new SqlParameter("@precioUnitario", SqlDbType.Decimal);
-            precioUnitarioParameter.Value = decimal.Parse(precioUnitario);
-
-            SqlParameter codigoRubroParameter = new SqlParameter("@rubro", SqlDbType.Int);
-            codigoRubroParameter.Value = int.Parse(codigoRubro);
-
-            SqlParameter stockMinimoParameter = new SqlParameter("@stockMinimo", SqlDbType.Int);
-            stockMinimoParameter.Value = int.Parse(stockMinimo);
-
-            SqlParameter codigoProductoOuput = new SqlParameter("@codigoProducto", SqlDbType.Int);
-            codigoProductoOuput.Direction = ParameterDirection.Output;
-
-            parameters.Add(detalleProductoParameter);
-            parameters.Add(precioUnitarioParameter);
-            parameters.Add(codigoRubroParameter);
-            parameters.Add(stockMinimoParameter);
-            parameters.Add(codigoProductoOuput);
-
-            dataBaseHelper.ExecStoredProcedure("dbo.InsertarProducto", parameters);
-
-            return Convert.ToInt32(parameters[4].Value.ToString());
+            return int.Parse(salidas[0]);
         }
 
         public void ActualizarProducto(string codigoProductoEditar, string detalleProducto, string precioUnitario, string codigoRubro, string stockMinimo)
         {
-            List<SqlParameter> parameters = new List<SqlParameter>();
+            dataBaseHelper.AgregarParametroEntrada(codigoProductoEditar, "@codigo", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroEntrada(detalleProducto, "@detalle", SqlDbType.NVarChar);
+            dataBaseHelper.AgregarParametroEntrada(precioUnitario, "@precioUnitario", SqlDbType.Decimal);
+            dataBaseHelper.AgregarParametroEntrada(codigoRubro, "@rubro", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroEntrada(stockMinimo, "@stockMinimo", SqlDbType.Int);
 
-            SqlParameter codigoProductoEditarParameter = new SqlParameter("@codigo", SqlDbType.Int);
-            codigoProductoEditarParameter.Value = int.Parse(codigoProductoEditar);
-
-            SqlParameter detalleProductoParameter = new SqlParameter("@detalle", SqlDbType.NVarChar);
-            detalleProductoParameter.Value = detalleProducto;
-
-            SqlParameter precioUnitarioParameter = new SqlParameter("@precioUnitario", SqlDbType.Decimal);
-            precioUnitarioParameter.Value = decimal.Parse(precioUnitario);
-
-            SqlParameter codigoRubroParameter = new SqlParameter("@rubro", SqlDbType.Int);
-            codigoRubroParameter.Value = int.Parse(codigoRubro);
-
-            SqlParameter stockMinimoParameter = new SqlParameter("@stockMinimo", SqlDbType.Int);
-            stockMinimoParameter.Value = int.Parse(stockMinimo);
-
-            parameters.Add(codigoProductoEditarParameter);
-            parameters.Add(detalleProductoParameter);
-            parameters.Add(precioUnitarioParameter);
-            parameters.Add(codigoRubroParameter);
-            parameters.Add(stockMinimoParameter);
-
-            dataBaseHelper.ExecStoredProcedure("dbo.ActualizarProducto", parameters);
+            _ = dataBaseHelper.ExecStoredProcedure("dbo.ActualizarProducto");
         }
 
         public bool HayStock(string codigoProducto, string cantidad)

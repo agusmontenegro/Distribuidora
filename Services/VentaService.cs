@@ -1,8 +1,5 @@
 ﻿using Distribuidora.Helpers;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 
 namespace Distribuidora.Services
 {
@@ -17,44 +14,22 @@ namespace Distribuidora.Services
 
         public int GuardarVenta(string precioTotal)
         {
-            List<SqlParameter> parameters = new List<SqlParameter>();
+            dataBaseHelper.AgregarParametroEntrada(precioTotal, "@precioTotal", SqlDbType.Decimal);
+            dataBaseHelper.AgregarParametroSalida("@codigo", SqlDbType.Int);
 
-            SqlParameter precioTotalParameter = new SqlParameter("@precioTotal", SqlDbType.Decimal);
-            precioTotalParameter.Value = decimal.Parse(precioTotal);
+            var salidas = dataBaseHelper.ExecStoredProcedure("dbo.InsertarVenta");
 
-            SqlParameter codigoOuput = new SqlParameter("@codigo", SqlDbType.Int);
-            codigoOuput.Direction = ParameterDirection.Output;
-
-            parameters.Add(precioTotalParameter);
-            parameters.Add(codigoOuput);
-
-            dataBaseHelper.ExecStoredProcedure("dbo.InsertarVenta", parameters);
-
-            return Convert.ToInt32(parameters[1].Value.ToString());
+            return int.Parse(salidas[0]);
         }
 
         public void GuardarItem(int codigoVenta, int producto, decimal precioUnitario, int cantidad)
         {
-            List<SqlParameter> parameters = new List<SqlParameter>();
+            dataBaseHelper.AgregarParametroEntrada(codigoVenta.ToString(), "@codigoVenta", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroEntrada(producto.ToString(), "@producto", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroEntrada(precioUnitario.ToString(), "@precioUnitario", SqlDbType.Decimal);
+            dataBaseHelper.AgregarParametroEntrada(cantidad.ToString(), "@cantidad", SqlDbType.Int);
 
-            SqlParameter codigoVentaParameter = new SqlParameter("@codigoVenta", SqlDbType.Int);
-            codigoVentaParameter.Value = codigoVenta;
-
-            SqlParameter productoParameter = new SqlParameter("@producto", SqlDbType.Int);
-            productoParameter.Value = producto;
-
-            SqlParameter precioUnitarioParameter = new SqlParameter("@precioUnitario", SqlDbType.Decimal);
-            precioUnitarioParameter.Value = precioUnitario;
-
-            SqlParameter cantidadParameter = new SqlParameter("@cantidad", SqlDbType.Int);
-            cantidadParameter.Value = cantidad;
-
-            parameters.Add(codigoVentaParameter);
-            parameters.Add(productoParameter);
-            parameters.Add(precioUnitarioParameter);
-            parameters.Add(cantidadParameter);
-
-            dataBaseHelper.ExecStoredProcedure("dbo.InsertarItem", parameters);
+            _ = dataBaseHelper.ExecStoredProcedure("dbo.InsertarItem");
         }
     }
 }

@@ -77,22 +77,11 @@ namespace Distribuidora.Services
 
         public void GuardarComponente(int codigoProducto, string codigoComponente, string cantidad)
         {
-            List<SqlParameter> parameters = new List<SqlParameter>();
+            dataBaseHelper.AgregarParametroEntrada(codigoProducto.ToString(), "@codigoProducto", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroEntrada(codigoComponente, "@codigoComponente", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroEntrada(cantidad, "@cantidad", SqlDbType.Int);
 
-            SqlParameter codigoProductoParameter = new SqlParameter("@codigoProducto", SqlDbType.Int);
-            codigoProductoParameter.Value = codigoProducto;
-
-            SqlParameter codigoComponenteParameter = new SqlParameter("@codigoComponente", SqlDbType.Int);
-            codigoComponenteParameter.Value = int.Parse(codigoComponente);
-
-            SqlParameter cantidadParameter = new SqlParameter("@cantidad", SqlDbType.Int);
-            cantidadParameter.Value = int.Parse(cantidad);
-
-            parameters.Add(codigoProductoParameter);
-            parameters.Add(codigoComponenteParameter);
-            parameters.Add(cantidadParameter);
-
-            dataBaseHelper.ExecStoredProcedure("dbo.InsertarComponente", parameters);
+            _ = dataBaseHelper.ExecStoredProcedure("dbo.InsertarComponente");
         }
     }
 }

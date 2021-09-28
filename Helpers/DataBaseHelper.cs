@@ -3,36 +3,72 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace Distribuidora.Helpers
 {
     public class DataBaseHelper
     {
-        public object ExecStoredProcedure(string storedProcedure, List<SqlParameter> parameters)
-        {
-            string ConnectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
-            SqlConnection Connection = new SqlConnection(ConnectionString);
-            Connection.ConnectionString = ConnectionString;
-            Connection.Open();
-            SqlCommand sqlCommand = Connection.CreateCommand();
+        public List<SqlParameter> Parametros { get; set; }
+        public string ConnectionString { get; set; }
 
-            sqlCommand.Connection = Connection;
+        public DataBaseHelper()
+        {
+            Parametros = new List<SqlParameter>();
+            ConnectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
+        }
+
+        public void AgregarParametroEntrada(string parametro, string parametroSQL, SqlDbType sqlDbType)
+        {
+            var codigoProductoParameter = new SqlParameter(parametroSQL, sqlDbType);
+
+            switch (sqlDbType)
+            {
+                case SqlDbType.Decimal:
+                    codigoProductoParameter.Value = decimal.Parse(parametro);
+                    break;
+                case SqlDbType.Int:
+                    codigoProductoParameter.Value = int.Parse(parametro);
+                    break;
+                case SqlDbType.NVarChar:
+                    codigoProductoParameter.Value = parametro;
+                    break;
+            }
+
+            Parametros.Add(codigoProductoParameter);
+        }
+
+        public void AgregarParametroSalida(string parametroSQL, SqlDbType sqlDbType)
+        {
+            var codigoProductoParameter = new SqlParameter(parametroSQL, sqlDbType);
+            codigoProductoParameter.Direction = ParameterDirection.Output;
+
+            Parametros.Add(codigoProductoParameter);
+        }
+
+        public List<string> ExecStoredProcedure(string storedProcedure)
+        {
+            var parametrosOut = new List<string>();
+            var Connection = AbrirConexion();
+            var sqlCommand = Connection.CreateCommand();
 
             try
             {
-                object result = null;
-
                 sqlCommand.CommandText = storedProcedure;
                 sqlCommand.CommandType = CommandType.StoredProcedure;
 
-                foreach (SqlParameter sqlPrm in parameters)
+                foreach (var sqlPrm in Parametros)
                 {
                     sqlCommand.Parameters.Add(sqlPrm);
                 }
 
-                result = sqlCommand.ExecuteScalar();
+                var result = sqlCommand.ExecuteScalar();
+                var parametrosSalida = Parametros.Where(p => p.Direction == ParameterDirection.Output).ToList();
 
-                return result;
+                foreach (var parametro in parametrosSalida)
+                {
+                    parametrosOut.Add(parametro.Value.ToString());
+                }
             }
             catch (Exception ex)
             {
@@ -42,22 +78,20 @@ namespace Distribuidora.Helpers
             {
                 sqlCommand.Dispose();
                 Connection.Close();
+                Parametros.Clear();
             }
+
+            return parametrosOut;
         }
 
         public object ExecFunction(string query)
         {
-            string ConnectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
-            SqlConnection Connection = new SqlConnection(ConnectionString);
-            Connection.ConnectionString = ConnectionString;
-            Connection.Open();
-            SqlCommand sqlCommand = Connection.CreateCommand();
-            sqlCommand.Connection = Connection;
+            var Connection = AbrirConexion();
+            var sqlCommand = Connection.CreateCommand();
 
             try
             {
                 sqlCommand.CommandText = query;
-
                 return sqlCommand.ExecuteScalar();
             }
             catch (Exception ex)
@@ -68,23 +102,16 @@ namespace Distribuidora.Helpers
 
         public DataTable ExecQuery(string query)
         {
-            string ConnectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
-            SqlConnection Connection = new SqlConnection(ConnectionString);
-            Connection.ConnectionString = ConnectionString;
-            Connection.Open();
-            SqlCommand sqlCommand = Connection.CreateCommand();
-            SqlDataAdapter sqlAdapter = new SqlDataAdapter(sqlCommand);
-
-            sqlCommand.Connection = Connection;
+            var Connection = AbrirConexion();
+            var sqlCommand = Connection.CreateCommand();
+            var sqlAdapter = new SqlDataAdapter(sqlCommand);
 
             try
             {
-                DataSet dataSet = new DataSet();
+                var dataSet = new DataSet();
 
                 sqlCommand.CommandText = query;
                 sqlCommand.CommandType = CommandType.Text;
-
-
                 sqlAdapter.Fill(dataSet);
 
                 return dataSet.Tables[0];
@@ -103,12 +130,8 @@ namespace Distribuidora.Helpers
 
         public void ExecScript(string query)
         {
-            string ConnectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
-            SqlConnection Connection = new SqlConnection(ConnectionString);
-            Connection.ConnectionString = ConnectionString;
-            Connection.Open();
-            SqlCommand sqlCommand = Connection.CreateCommand();
-            sqlCommand.Connection = Connection;
+            var Connection = AbrirConexion();
+            var sqlCommand = Connection.CreateCommand();
 
             try
             {
@@ -119,6 +142,14 @@ namespace Distribuidora.Helpers
             {
                 throw ex;
             }
+        }
+
+        private SqlConnection AbrirConexion()
+        {
+            var Connection = new SqlConnection(ConnectionString);
+            Connection.ConnectionString = ConnectionString;
+            Connection.Open();
+            return Connection;
         }
     }
 }
