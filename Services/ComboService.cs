@@ -1,8 +1,7 @@
-﻿using Distribuidora.Helpers;
+﻿using Distribuidora.DTOs;
+using Distribuidora.Helpers;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
-using System.Data.SqlClient;
 
 namespace Distribuidora.Services
 {
@@ -23,50 +22,49 @@ namespace Distribuidora.Services
             return result.Rows.Count > 0;
         }
 
-        public DTOs.Combo ObtenerCombo(string codigoProducto)
+        public Combo ObtenerCombo(string codigoProducto)
         {
             string query = "select * from dbo.Combo_View where Producto = " + codigoProducto;
-            string ConnectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
-            SqlConnection Connection = new SqlConnection(ConnectionString);
-            using (Connection)
+            var result = dataBaseHelper.ExecQuery(query);
+
+            var combo = MapearCombo(result.Rows);
+
+            return combo;
+        }
+
+        private Combo MapearCombo(DataRowCollection rows)
+        {
+            var combo = new Combo();
+            combo.Componentes = new List<Componente>();
+            bool flag = true;
+
+            foreach (DataRow row in rows)
             {
-                Connection.Open();
-                using (var cmd = new SqlCommand(query, Connection))
+                if (flag)
                 {
-                    var reader = cmd.ExecuteReader();
-                    var combo = new DTOs.Combo();
-                    combo.Componentes = new List<DTOs.Componente>();
-                    bool flag = true;
-
-                    while (reader.Read())
+                    combo.Producto = new DTOs.Producto
                     {
-                        if (flag)
-                        {
-                            combo.Producto = new DTOs.Producto
-                            {
-                                Codigo = reader["Producto"].ToString(),
-                                Detalle = reader["Detalle"].ToString(),
-                                PrecioUnitario = decimal.Parse(reader["Precio"].ToString())
-                            };
+                        Codigo = row["Producto"].ToString(),
+                        Detalle = row["Detalle"].ToString(),
+                        PrecioUnitario = decimal.Parse(row["Precio"].ToString())
+                    };
 
-                            flag = false;
-                        }
-                        var componente = new DTOs.Componente
-                        {
-                            Producto = new DTOs.Producto
-                            {
-                                Codigo = reader["CodigoComponente"].ToString(),
-                                Detalle = reader["DetalleComponente"].ToString()
-                            },
-                            Cantidad = reader["CantidadComponente"].ToString()
-                        };
-
-                        combo.Componentes.Add(componente);
-                    }
-
-                    return combo;
+                    flag = false;
                 }
+                var componente = new Componente
+                {
+                    Producto = new DTOs.Producto
+                    {
+                        Codigo = row["CodigoComponente"].ToString(),
+                        Detalle = row["DetalleComponente"].ToString()
+                    },
+                    Cantidad = row["CantidadComponente"].ToString()
+                };
+
+                combo.Componentes.Add(componente);
             }
+
+            return combo;
         }
 
         public void EliminarComponentes(string codigoProductoEditar)

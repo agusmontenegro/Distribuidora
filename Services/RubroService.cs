@@ -1,33 +1,40 @@
 ﻿using Distribuidora.DTOs;
+using Distribuidora.Helpers;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data.SqlClient;
+using System.Data;
 
 namespace Distribuidora.Services
 {
     public class RubroService
     {
+        private readonly DataBaseHelper dataBaseHelper;
+
+        public RubroService()
+        {
+            dataBaseHelper = new DataBaseHelper();
+        }
+
         public List<Rubro> ObtenerRubros()
         {
-            var rubros = new List<Rubro>();
             var query = "select * from dbo.Rubro";
-            string ConnectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
-            SqlConnection Connection = new SqlConnection(ConnectionString);
-            using (Connection)
+            var result = dataBaseHelper.ExecQuery(query);
+
+            var producto = MapearRubros(result.Rows);
+
+            return producto;
+        }
+
+        private List<Rubro> MapearRubros(DataRowCollection rows)
+        {
+            var rubros = new List<Rubro>();
+
+            foreach (DataRow row in rows)
             {
-                Connection.Open();
-                using (var cmd = new SqlCommand(query, Connection))
+                rubros.Add(new Rubro
                 {
-                    var reader = cmd.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        rubros.Add(new Rubro
-                        {
-                            Codigo = reader["rubr_codigo"].ToString(),
-                            Detalle = reader["rubr_detalle"].ToString(),
-                        });
-                    }
-                }
+                    Codigo = row["rubr_codigo"].ToString(),
+                    Detalle = row["rubr_detalle"].ToString(),
+                });
             }
 
             return rubros;

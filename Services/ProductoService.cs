@@ -1,8 +1,6 @@
 ﻿using Distribuidora.Helpers;
 using System;
-using System.Configuration;
 using System.Data;
-using System.Data.SqlClient;
 
 namespace Distribuidora.Services
 {
@@ -28,38 +26,36 @@ namespace Distribuidora.Services
         public DTOs.Producto ObtenerProducto(string codigoProducto)
         {
             string query = "select * from dbo.Producto_View where prod_codigo = " + codigoProducto;
-            string ConnectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
-            SqlConnection Connection = new SqlConnection(ConnectionString);
-            using (Connection)
+            var result = dataBaseHelper.ExecQuery(query);
+
+            var producto = MapearProducto(result.Rows);
+
+            return producto;
+        }
+
+        private DTOs.Producto MapearProducto(DataRowCollection rows)
+        {
+            var producto = new DTOs.Producto();
+
+            foreach (DataRow row in rows)
             {
-                Connection.Open();
-                using (var cmd = new SqlCommand(query, Connection))
+                producto.Codigo = row["prod_codigo"].ToString();
+                producto.Detalle = row["prod_detalle"].ToString();
+                producto.PrecioUnitario = (decimal)row["prod_precio"];
+                producto.Rubro = new DTOs.Rubro
                 {
-                    var reader = cmd.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        return new DTOs.Producto()
-                        {
-                            Codigo = reader["prod_codigo"].ToString(),
-                            Detalle = reader["prod_detalle"].ToString(),
-                            PrecioUnitario = (decimal)reader["prod_precio"],
-                            Rubro = new DTOs.Rubro
-                            {
-                                Codigo = reader["rubr_codigo"].ToString(),
-                                Detalle = reader["rubr_detalle"].ToString()
-                            },
-                            Stock = new DTOs.Stock
-                            {
-                                CantidadActual = reader["stoc_cantidad_actual"].ToString(),
-                                CantidadMinima = reader["stoc_cantidad_minima"].ToString(),
-                                UltimaReposicion = reader["stoc_ultima_reposicion"].ToString()
-                            }
-                        };
-                    }
-                }
+                    Codigo = row["rubr_codigo"].ToString(),
+                    Detalle = row["rubr_detalle"].ToString()
+                };
+                producto.Stock = new DTOs.Stock
+                {
+                    CantidadActual = row["stoc_cantidad_actual"].ToString(),
+                    CantidadMinima = row["stoc_cantidad_minima"].ToString(),
+                    UltimaReposicion = row["stoc_ultima_reposicion"].ToString()
+                };
             }
 
-            return null;
+            return producto;
         }
 
         public bool CodigoProductoValido(string codigoProducto, ref string msj)

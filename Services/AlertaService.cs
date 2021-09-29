@@ -1,9 +1,7 @@
 ﻿using Distribuidora.DTOs;
 using Distribuidora.Helpers;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
-using System.Data.SqlClient;
 
 namespace Distribuidora.Services
 {
@@ -39,37 +37,36 @@ namespace Distribuidora.Services
         public List<Alerta> ObtenerAlertas()
         {
             string query = "select * from dbo.Alerta a join dbo.Tipo_Alerta ta on a.aler_tipo = ta.tale_codigo";
-            string ConnectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
-            SqlConnection Connection = new SqlConnection(ConnectionString);
-            using (Connection)
+            var result = dataBaseHelper.ExecQuery(query);
+
+            var alertas = MapearAlertas(result.Rows);
+
+            return alertas;
+        }
+
+        private List<Alerta> MapearAlertas(DataRowCollection rows)
+        {
+            var alertas = new List<Alerta>();
+
+            foreach (DataRow row in rows)
             {
-                Connection.Open();
-                using (var cmd = new SqlCommand(query, Connection))
+                var alerta = new Alerta
                 {
-                    var reader = cmd.ExecuteReader();
-                    var alertas = new List<Alerta>();
-
-                    while (reader.Read())
+                    Codigo = row["aler_codigo"].ToString(),
+                    Detalle = row["aler_detalle"].ToString(),
+                    Fecha = row["aler_fecha"].ToString(),
+                    Objeto = row["aler_objeto"].ToString(),
+                    TipoAlerta = new TipoAlerta
                     {
-                        var alerta = new Alerta
-                        {
-                            Codigo = reader["aler_codigo"].ToString(),
-                            Detalle = reader["aler_detalle"].ToString(),
-                            Fecha = reader["aler_fecha"].ToString(),
-                            Objeto = reader["aler_objeto"].ToString(),
-                            TipoAlerta = new TipoAlerta
-                            {
-                                Codigo = reader["tale_codigo"].ToString(),
-                                Detalle = reader["tale_detalle"].ToString()
-                            }
-                        };
-
-                        alertas.Add(alerta);
+                        Codigo = row["tale_codigo"].ToString(),
+                        Detalle = row["tale_detalle"].ToString()
                     }
+                };
 
-                    return alertas;
-                }
+                alertas.Add(alerta);
             }
+
+            return alertas;
         }
     }
 }
