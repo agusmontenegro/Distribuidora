@@ -8,7 +8,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Distribuidora
+namespace Distribuidora.Forms
 {
     public partial class Estadistica : Form
     {

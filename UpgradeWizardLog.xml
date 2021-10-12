@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="_UpgradeWizard_Files\UpgradeWizardLog.xslt"?>
+<log>
+  <event>Get project references.</event>
+  <event action="Analyze" type="Success" name="Assembly References" path="D:\Users\RYZEN\source\repos\Distribuidora\Distribuidora.csproj" />
+  <event action="Analyze" type="Success" name="Assembly References" path="D:\Users\RYZEN\source\repos\Distribuidora\App.config" />
+  <event action="Analyze" type="Success" name="Http Handlers" path="D:\Users\RYZEN\source\repos\Distribuidora\App.config" />
+  <event action="Analyze" type="Success" name="Handlers (IIS7+)" path="D:\Users\RYZEN\source\repos\Distribuidora\App.config" />
+  <event action="Analyze" type="Success" name="Config Sections" path="D:\Users\RYZEN\source\repos\Distribuidora\App.config" />
+  <event action="Analyze" type="Success" name="Render Extensions" path="D:\Users\RYZEN\source\repos\Distribuidora\App.config" />
+  <event action="Analyze" type="Success" name="Session State Providers" path="D:\Users\RYZEN\source\repos\Distribuidora\App.config" />
+  <event action="Analyze" type="Success" name="App.config" path="D:\Users\RYZEN\source\repos\Distribuidora\App.config" />
+  <event action="Analyze" type="Success" name="Alerta.resx" path="D:\Users\RYZEN\source\repos\Distribuidora\Forms\Alerta.resx" />
+  <event action="Analyze" type="Success" name="Estadistica.resx" path="D:\Users\RYZEN\source\repos\Distribuidora\Forms\Estadistica.resx" />
+  <event action="Analyze" type="Success" name="Menu.resx" path="D:\Users\RYZEN\source\repos\Distribuidora\Forms\Menu.resx" />
+  <event action="Analyze" type="Success" name="BuscarProducto.resx" path="D:\Users\RYZEN\source\repos\Distribuidora\Forms\Producto\BuscarProducto.resx" />
+  <event action="Analyze" type="Success" name="Producto.resx" path="D:\Users\RYZEN\source\repos\Distribuidora\Forms\Producto\Producto.resx" />
+  <event action="Analyze" type="Success" name="Stock.resx" path="D:\Users\RYZEN\source\repos\Distribuidora\Forms\Stock.resx" />
+  <event action="Analyze" type="Success" name="Venta.resx" path="D:\Users\RYZEN\source\repos\Distribuidora\Forms\Venta.resx" />
+  <event action="Analyze" type="Success" name="Assembly References" path="D:\Users\RYZEN\source\repos\Distribuidora\packages.config" />
+  <event action="Analyze" type="Success" name="Http Handlers" path="D:\Users\RYZEN\source\repos\Distribuidora\packages.config" />
+  <event action="Analyze" type="Success" name="Handlers (IIS7+)" path="D:\Users\RYZEN\source\repos\Distribuidora\packages.config" />
+  <event action="Analyze" type="Success" name="Config Sections" path="D:\Users\RYZEN\source\repos\Distribuidora\packages.config" />
+  <event action="Analyze" type="Success" name="Render Extensions" path="D:\Users\RYZEN\source\repos\Distribuidora\packages.config" />
+  <event action="Analyze" type="Success" name="Session State Providers" path="D:\Users\RYZEN\source\repos\Distribuidora\packages.config" />
+  <event action="Analyze" type="Success" name="packages.config" path="D:\Users\RYZEN\source\repos\Distribuidora\packages.config" />
+  <event action="Analyze" type="Success" name="Resources.resx" path="D:\Users\RYZEN\source\repos\Distribuidora\Properties\Resources.resx" />
+  <event action="Analyze" type="Success" name="Distribuidora" path="D:\Users\RYZEN\source\repos\Distribuidora\Distribuidora.csproj" />
+  <event action="Analyze" type="Success" name="Distribuidora" path="D:\Users\RYZEN\source\repos\Distribuidora\Distribuidora.sln" />
+  <event action="Backup" type="Success" name="Distribuidora" path="D:\Users\RYZEN\source\repos\Distribuidora\Distribuidora.csproj" />
+  <event action="Upgrade" type="Success" name="Assembly References" path="D:\Users\RYZEN\source\repos\Distribuidora\Distribuidora.csproj" />
+  <event action="Upgrade" type="Success" name="Distribuidora" path="D:\Users\RYZEN\source\repos\Distribuidora\Distribuidora.csproj" />
+  <event action="Upgrade" type="Success" name="Distribuidora" path="D:\Users\RYZEN\source\repos\Distribuidora\Distribuidora.sln" />
+</log>

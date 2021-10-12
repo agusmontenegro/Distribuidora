@@ -1,5 +1,4 @@
-﻿using Distribuidora.Helpers;
-using System;
+﻿using System;
 using System.Windows.Forms;
 
 namespace Distribuidora
@@ -12,10 +11,9 @@ namespace Distribuidora
         [STAThread]
         static void Main()
         {
-            //PDFHelper.ImprimirDetalleDeVenta();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Menu());
+            Application.Run(new Forms.Menu());
         }
     }
 }

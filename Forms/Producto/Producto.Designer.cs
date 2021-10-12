@@ -1,5 +1,5 @@
 ﻿
-namespace Distribuidora.Producto
+namespace Distribuidora.Forms.Producto
 {
     partial class Producto
     {

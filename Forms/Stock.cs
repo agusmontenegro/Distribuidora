@@ -3,7 +3,7 @@ using Distribuidora.Services;
 using System;
 using System.Windows.Forms;
 
-namespace Distribuidora
+namespace Distribuidora.Forms
 {
     public partial class Stock : Form
     {

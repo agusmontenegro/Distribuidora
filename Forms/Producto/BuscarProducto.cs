@@ -6,7 +6,7 @@ using System;
 using System.Data;
 using System.Windows.Forms;
 
-namespace Distribuidora
+namespace Distribuidora.Forms.Producto
 {
     public partial class BuscarProducto : Form
     {
@@ -198,7 +198,7 @@ namespace Distribuidora
         private void btnNuevoProducto_Click(object sender, EventArgs e)
         {
             LimpiarBusqueda();
-            var altaProducto = new Producto.Producto();
+            var altaProducto = new Producto();
             altaProducto.ShowDialog();
         }
 
@@ -207,7 +207,7 @@ namespace Distribuidora
             if (celda != -1)
             {
                 var codigoProducto = grdResult.Rows[celda].Cells[0].Value.ToString();
-                var editarProducto = new Producto.Producto(codigoProducto);
+                var editarProducto = new Producto(codigoProducto);
                 LimpiarBusqueda();
                 editarProducto.ShowDialog();
             }

@@ -4,7 +4,7 @@ using Distribuidora.Services;
 using System;
 using System.Windows.Forms;
 
-namespace Distribuidora.Producto
+namespace Distribuidora.Forms.Producto
 {
     public partial class Producto : Form
     {

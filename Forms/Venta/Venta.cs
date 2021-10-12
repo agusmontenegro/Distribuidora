@@ -1,9 +1,10 @@
 ﻿using Distribuidora.Commons;
+using Distribuidora.Forms.Venta;
 using Distribuidora.Services;
 using System;
 using System.Windows.Forms;
 
-namespace Distribuidora
+namespace Distribuidora.Forms.Venta
 {
     public partial class Venta : Form
     {
@@ -261,10 +262,9 @@ namespace Distribuidora
 
         private void btnGuardarVenta_Click(object sender, EventArgs e)
         {
+            var codigoVenta = ventaService.GuardarVenta(txtPrecioTotal.Text);
             try
             {
-                var codigoVenta = ventaService.GuardarVenta(txtPrecioTotal.Text);
-
                 for (int i = 0;i < grdVentas.Rows.Count;++i)
                 {
                     var producto = grdVentas.Rows[i].Cells[0].Value.ToString();
@@ -301,7 +301,8 @@ namespace Distribuidora
             {
                 try
                 {
-                    // Imprimir
+                    var reporte = new ReporteVenta(codigoVenta.ToString());
+                    reporte.ShowDialog();
                 }
                 catch
                 {

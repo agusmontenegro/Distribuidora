@@ -1,4 +1,6 @@
-﻿using Distribuidora.Helpers;
+﻿using Distribuidora.DTOs.Reportes;
+using Distribuidora.Helpers;
+using System.Collections.Generic;
 using System.Data;
 
 namespace Distribuidora.Services
@@ -30,6 +32,37 @@ namespace Distribuidora.Services
             dataBaseHelper.AgregarParametroEntrada(cantidad.ToString(), "@cantidad", SqlDbType.Int);
 
             _ = dataBaseHelper.ExecStoredProcedure("dbo.InsertarItem");
+        }
+
+        public Venta ObtenerVenta(string codigoVenta)
+        {
+            string query = "select * from dbo.Venta_View where Codigo = " + codigoVenta;
+            var result = dataBaseHelper.ExecQuery(query);
+
+            var venta = MapearVenta(result.Rows);
+
+            return venta;
+        }
+
+        private Venta MapearVenta(DataRowCollection rows)
+        {
+            var venta = new Venta();
+            venta.Items = new List<ItemVenta>();
+
+            foreach (DataRow row in rows)
+            {
+                var item = new ItemVenta();
+
+                item.Producto = row["Producto"].ToString();
+                item.Detalle = row["Detalle"].ToString();
+                item.PrecioUnitario = (decimal)row["Precio"];
+                item.Cantidad = (int)row["Cantidad"];
+                item.Subtotal = (decimal)row["Subtotal"];
+
+                venta.Items.Add(item);
+            }
+
+            return venta;
         }
     }
 }

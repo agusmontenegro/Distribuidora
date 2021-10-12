@@ -35,6 +35,9 @@ if object_id('Producto_View', 'V') is not null
 if object_id('Combo_View', 'V') is not null
 	drop view Combo_View;	
 
+if object_id('Venta_View', 'V') is not null
+	drop view Venta_View;
+
 if object_id('HayStockDisponible', 'FN') is not null
 	drop function HayStockDisponible;	
 
@@ -218,6 +221,20 @@ as
 	join Combo c on c.comb_codigo = p.prod_codigo
 	join Producto p2 on p2.prod_codigo = c.comb_componente
 	where p.prod_activo = 1
+go
+
+create view Venta_View 
+as
+	select p.prod_codigo Producto, 
+		   p.prod_detalle Detalle, 
+		   i.item_precio Precio, 
+		   i.item_cantidad Cantidad,
+		   i.item_precio * i.item_cantidad Subtotal,
+		   v.vent_codigo Codigo
+
+	from Venta v
+	join Item_Venta i on i.item_venta = v.vent_codigo
+	join Producto p on p.prod_codigo = i.item_producto
 go
 
 /*---------------------------------------------------*/

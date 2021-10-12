@@ -1,10 +1,10 @@
-﻿using Distribuidora.Forms;
+﻿using Distribuidora.Forms.Producto;
 using Distribuidora.Services;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Distribuidora
+namespace Distribuidora.Forms
 {
     public partial class Menu : Form
     {
@@ -18,7 +18,7 @@ namespace Distribuidora
 
         private void btnSale_Click(object sender, EventArgs e)
         {
-            var venta = new Venta(this);
+            var venta = new Venta.Venta(this);
             venta.ShowDialog();
         }
 
