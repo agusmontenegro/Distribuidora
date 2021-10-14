@@ -1,5 +1,5 @@
 ﻿
-namespace Distribuidora.Forms
+namespace Distribuidora.Forms.Stock
 {
     partial class Stock
     {

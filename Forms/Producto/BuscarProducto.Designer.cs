@@ -48,6 +48,7 @@ namespace Distribuidora.Forms.Producto
             this.btnNuevoProducto = new System.Windows.Forms.Button();
             this.btnEliminarProducto = new System.Windows.Forms.Button();
             this.btnEditarProducto = new System.Windows.Forms.Button();
+            this.btnInfoProductos = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdResult)).BeginInit();
             this.SuspendLayout();
@@ -226,11 +227,22 @@ namespace Distribuidora.Forms.Producto
             this.btnEditarProducto.UseVisualStyleBackColor = true;
             this.btnEditarProducto.Click += new System.EventHandler(this.btnEditarProducto_Click);
             // 
+            // btnInfoProductos
+            // 
+            this.btnInfoProductos.Location = new System.Drawing.Point(407, 466);
+            this.btnInfoProductos.Name = "btnInfoProductos";
+            this.btnInfoProductos.Size = new System.Drawing.Size(127, 59);
+            this.btnInfoProductos.TabIndex = 5;
+            this.btnInfoProductos.Text = "Lista Productos";
+            this.btnInfoProductos.UseVisualStyleBackColor = true;
+            this.btnInfoProductos.Click += new System.EventHandler(this.btnInfoProductos_Click);
+            // 
             // BuscarProducto
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(801, 537);
+            this.Controls.Add(this.btnInfoProductos);
             this.Controls.Add(this.btnEditarProducto);
             this.Controls.Add(this.btnEliminarProducto);
             this.Controls.Add(this.btnNuevoProducto);
@@ -270,5 +282,6 @@ namespace Distribuidora.Forms.Producto
         private System.Windows.Forms.DataGridViewTextBoxColumn StockActual;
         private System.Windows.Forms.DataGridViewTextBoxColumn FechaUltimaReposicion;
         private System.Windows.Forms.Button btnEditarProducto;
+        private System.Windows.Forms.Button btnInfoProductos;
     }
 }

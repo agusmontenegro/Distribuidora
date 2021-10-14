@@ -20,7 +20,9 @@ namespace Distribuidora.Forms.Venta
         {
             var reporte = new Reportes.VentaReport();
             var venta = ventaService.ObtenerVenta(codigoVenta);
-            reporte.tblVenta.DataSource = venta;
+            reporte.txtFechaParametro.Value = venta.Fecha;
+            reporte.txtTotalParametro.Value = venta.Total.ToString();
+            reporte.tblVenta.DataSource = venta.Items;
             rptVenta.Report = reporte;
             rptVenta.RefreshReport();
         }

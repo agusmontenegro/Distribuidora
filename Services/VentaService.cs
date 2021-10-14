@@ -47,6 +47,8 @@ namespace Distribuidora.Services
         private Venta MapearVenta(DataRowCollection rows)
         {
             var venta = new Venta();
+            venta.Fecha = rows[0]["Fecha"].ToString();
+            venta.Total = (decimal)rows[0]["Total"];
             venta.Items = new List<ItemVenta>();
 
             foreach (DataRow row in rows)

@@ -3,7 +3,7 @@ using Distribuidora.Services;
 using System;
 using System.Windows.Forms;
 
-namespace Distribuidora.Forms
+namespace Distribuidora.Forms.Stock
 {
     public partial class Stock : Form
     {
@@ -64,7 +64,7 @@ namespace Distribuidora.Forms
         private bool ProductoValido(ref string msj)
         {
             validacionService.AgregarValidacion(
-                productoService.CodigoProductoValido(txtCodigoProducto.Text, ref msj), msj);
+                productoService.CodigoProductoValido(txtCodigoProducto.Text, ref msj), null);
 
             validacionService.AgregarValidacion(
                 !comboService.EsCombo(txtCodigoProducto.Text), "No está permitido reponer stock de un combo, si de sus componentes");
@@ -208,18 +208,19 @@ namespace Distribuidora.Forms
 
         private void ReponerStock()
         {
+            var reposicionCodigo = stockService.GuardarReposicion();
             try
             {
                 for (int i = 0;i < grdStock.Rows.Count;++i)
                 {
-                    var codigo_producto = grdStock.Rows[i].Cells[0].Value.ToString();
-                    var cantidad_a_reponer = grdStock.Rows[i].Cells[3].Value.ToString();
+                    var codigoProducto = grdStock.Rows[i].Cells[0].Value.ToString();
+                    var cantidadAReponer = grdStock.Rows[i].Cells[3].Value.ToString();
 
-                    stockService.ReponerStock(codigo_producto, cantidad_a_reponer);
+                    stockService.ReponerStock(reposicionCodigo, codigoProducto, cantidadAReponer);
 
-                    if (!productoService.HayQueReponer(codigo_producto))
+                    if (!productoService.HayQueReponer(codigoProducto))
                     {
-                        alertaService.QuitarAlertaDeReposicion(codigo_producto);
+                        alertaService.QuitarAlertaDeReposicion(codigoProducto);
                         menu.CargarCantidadDeAlertas();
                     }
                 }
@@ -244,7 +245,8 @@ namespace Distribuidora.Forms
             {
                 try
                 {
-                    // Imprimir
+                    var reporte = new ReporteStock(reposicionCodigo.ToString());
+                    reporte.ShowDialog();
                 }
                 catch
                 {

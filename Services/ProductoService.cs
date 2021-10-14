@@ -1,5 +1,6 @@
 ﻿using Distribuidora.Helpers;
 using System;
+using System.Collections.Generic;
 using System.Data;
 
 namespace Distribuidora.Services
@@ -17,45 +18,59 @@ namespace Distribuidora.Services
 
         public bool ExisteProducto(string codigoProducto)
         {
-            var query = "select prod_codigo from dbo.Producto_View where prod_codigo = " + codigoProducto;
+            var query = "select Codigo from dbo.Producto_View where Codigo = " + codigoProducto;
             var result = dataBaseHelper.ExecQuery(query);
 
             return result.Rows.Count == 1;
         }
 
-        public DTOs.Producto ObtenerProducto(string codigoProducto)
+        public List<DTOs.Producto> ObtenerProductos()
         {
-            string query = "select * from dbo.Producto_View where prod_codigo = " + codigoProducto;
+            string query = "select * from dbo.Producto_View";
             var result = dataBaseHelper.ExecQuery(query);
 
-            var producto = MapearProducto(result.Rows);
+            var productos = MapearProductos(result.Rows);
 
-            return producto;
+            return productos;
         }
 
-        private DTOs.Producto MapearProducto(DataRowCollection rows)
+        public DTOs.Producto ObtenerProducto(string codigoProducto)
         {
-            var producto = new DTOs.Producto();
+            string query = "select * from dbo.Producto_View where Codigo = " + codigoProducto;
+            var result = dataBaseHelper.ExecQuery(query);
+
+            var productos = MapearProductos(result.Rows);
+
+            return productos[0];
+        }
+
+        private List<DTOs.Producto> MapearProductos(DataRowCollection rows)
+        {
+            var productos = new List<DTOs.Producto>();
 
             foreach (DataRow row in rows)
             {
-                producto.Codigo = row["prod_codigo"].ToString();
-                producto.Detalle = row["prod_detalle"].ToString();
-                producto.PrecioUnitario = (decimal)row["prod_precio"];
+                var producto = new DTOs.Producto();
+
+                producto.Codigo = row["Codigo"].ToString();
+                producto.Detalle = row["Detalle"].ToString();
+                producto.PrecioUnitario = (decimal)row["Precio"];
                 producto.Rubro = new DTOs.Rubro
                 {
-                    Codigo = row["rubr_codigo"].ToString(),
-                    Detalle = row["rubr_detalle"].ToString()
+                    Codigo = row["RubroCodigo"].ToString(),
+                    Detalle = row["RubroDetalle"].ToString()
                 };
                 producto.Stock = new DTOs.Stock
                 {
-                    CantidadActual = row["stoc_cantidad_actual"].ToString(),
-                    CantidadMinima = row["stoc_cantidad_minima"].ToString(),
-                    UltimaReposicion = row["stoc_ultima_reposicion"].ToString()
+                    CantidadActual = row["StockActual"].ToString(),
+                    CantidadMinima = row["PtoReposicion"].ToString(),
+                    UltimaReposicion = row["UltimaReposicion"].ToString()
                 };
+
+                productos.Add(producto);
             }
 
-            return producto;
+            return productos;
         }
 
         public bool CodigoProductoValido(string codigoProducto, ref string msj)

@@ -14,6 +14,12 @@ if object_id('Stock','U') is not null
 if object_id('Item_Venta','U') is not null
 	drop table Item_Venta;
 
+if object_id('Reposicion_Producto','U') is not null
+	drop table Reposicion_Producto;
+
+if object_id('Reposicion','U') is not null
+	drop table Reposicion;
+
 if object_id('Producto','U') is not null
 	drop table Producto;
 
@@ -37,6 +43,9 @@ if object_id('Combo_View', 'V') is not null
 
 if object_id('Venta_View', 'V') is not null
 	drop view Venta_View;
+
+if object_id('Reposicion_View', 'V') is not null
+	drop view Reposicion_View;	
 
 if object_id('HayStockDisponible', 'FN') is not null
 	drop function HayStockDisponible;	
@@ -69,7 +78,10 @@ if object_id('EmitirAlertaDeReposicion', 'P') is not null
 	drop procedure EmitirAlertaDeReposicion;	
 	
 if object_id('QuitarAlertaDeReposicion', 'P') is not null
-	drop procedure QuitarAlertaDeReposicion;			
+	drop procedure QuitarAlertaDeReposicion;
+	
+if object_id('GuardarReposicion', 'P') is not null
+	drop procedure GuardarReposicion;				
 
 /*---------------------------------------------------*/
 /*----------------CREACIÓN DE TABLAS-----------------*/
@@ -123,9 +135,21 @@ create table Alerta (
 	aler_fecha smalldatetime not null
 );
 
-create table Tipo_Alerta(
+create table Tipo_Alerta (
 	tale_codigo int not null identity(1,1),
 	tale_detalle text not null
+);
+
+create table Reposicion (
+	repo_codigo int not null identity(1,1),
+	repo_fecha smalldatetime not null
+);
+
+create table Reposicion_Producto (
+	rpro_reposicion int not null,
+	rpro_producto int not null,
+	rpro_cantidad_vieja int,
+	rpro_cantidad_nueva int
 );
 
 go
@@ -157,6 +181,12 @@ add constraint Alerta_PK primary key (aler_codigo);
 
 alter table Tipo_Alerta
 add constraint Tipo_Alerta_PK primary key (tale_codigo);
+
+alter table Reposicion
+add constraint Reposicion_PK primary key (repo_codigo);
+
+alter table Reposicion_Producto
+add constraint Reposicion_Producto_PK primary key (rpro_reposicion, rpro_producto);
 
 go
 
@@ -193,6 +223,14 @@ alter table Alerta
 add constraint Alerta_TipoAlerta foreign key (aler_tipo)
 references Tipo_Alerta (tale_codigo);
 
+alter table Reposicion_Producto
+add constraint ReposicionProducto_Reposicion foreign key (rpro_reposicion)
+references Reposicion (repo_codigo);
+
+alter table Reposicion_Producto
+add constraint ReposicionProducto_Producto foreign key (rpro_producto)
+references Producto (prod_codigo);
+
 go
 
 /*---------------------------------------------------------*/
@@ -201,7 +239,15 @@ go
 
 create view Producto_View 
 as
-	select prod_codigo, prod_detalle, prod_precio, rubr_codigo, rubr_detalle, stoc_cantidad_actual, stoc_cantidad_minima, stoc_ultima_reposicion
+	select prod_codigo Codigo, 
+		   prod_detalle Detalle, 
+		   prod_precio Precio, 
+		   rubr_codigo RubroCodigo, 
+		   rubr_detalle RubroDetalle, 
+		   stoc_cantidad_actual StockActual, 
+		   stoc_cantidad_minima PtoReposicion, 
+		   stoc_ultima_reposicion UltimaReposicion
+
 	from Producto
 	join Rubro on rubr_codigo = prod_rubro
 	join Stock on stoc_producto = prod_codigo
@@ -230,11 +276,27 @@ as
 		   i.item_precio Precio, 
 		   i.item_cantidad Cantidad,
 		   i.item_precio * i.item_cantidad Subtotal,
-		   v.vent_codigo Codigo
+		   v.vent_codigo Codigo,
+		   v.vent_fecha Fecha,
+		   v.vent_precio_total Total
 
 	from Venta v
 	join Item_Venta i on i.item_venta = v.vent_codigo
 	join Producto p on p.prod_codigo = i.item_producto
+go
+
+create view Reposicion_View 
+as
+	select p.prod_codigo Producto, 
+		   p.prod_detalle Detalle, 
+		   rp.rpro_cantidad_vieja CantidadAnterior, 
+		   rp.rpro_cantidad_nueva CantidadActual,
+		   r.repo_fecha Fecha,
+		   rp.rpro_reposicion Codigo
+
+	from Reposicion r
+	join Reposicion_Producto rp on rp.rpro_reposicion = r.repo_codigo
+	join Producto p on p.prod_codigo = rp.rpro_producto
 go
 
 /*---------------------------------------------------*/
@@ -318,6 +380,21 @@ go
 /*---------------------------------------------------*/
 /*----------------CREACIÓN DE STORED PROCEDURES------*/
 /*---------------------------------------------------*/
+
+create procedure GuardarReposicion (@codigo int output) as
+begin
+
+	declare @fecha smalldatetime;
+	set @fecha = (select GETDATE());
+
+	insert into Reposicion values (
+		@fecha
+	);
+
+	set @codigo = (select top 1 repo_codigo from Reposicion where repo_fecha = @fecha);
+
+end
+go
 
 create procedure InsertarVenta (@precioTotal decimal(12,2), @codigo int output) as
 begin
@@ -469,12 +546,21 @@ begin
 end
 go
 
-create procedure ReponerStock (@codigoProducto int, @cantidadAReponer int) as
+create procedure ReponerStock (@reposicion int, @codigoProducto int, @cantidadAReponer int) as
 begin
+
+	declare @cantidad_vieja int;
+
+	set @cantidad_vieja = (select top 1 stoc_cantidad_actual
+						   from Stock
+						   where stoc_producto = @codigoProducto);
 
 	update Stock
 	set stoc_cantidad_actual = stoc_cantidad_actual + @cantidadAReponer, stoc_ultima_reposicion = (select GETDATE())
 	where stoc_producto = @codigoProducto;
+
+	insert into Reposicion_Producto values
+	(@reposicion, @codigoProducto, @cantidad_vieja, @cantidad_vieja + @cantidadAReponer)
 
 end
 go
@@ -549,29 +635,3 @@ insert into Rubro values
 
 insert into Tipo_Alerta values
 ('Reposición de stock');
-
-/*insert into Producto values
-('Coca Cola Light 2.25L', 3, 150, 1),
-('Coca Cola 2.25L', 3, 180, 1),
-('Coca Cola 3L', 3, 200, 1),
-('Fernet Branca 1L', 4, 800, 1),
-('Smirnoff 850 mL', 4, 550, 1),
-('Speed (lata chica)', 3, 60, 1),
-('Speed (lata grande)', 3, 100, 1),
-('Manaos 2.25L', 3, 120, 1),
-('Absolut 1L', 4, 1200, 1),
-('Harina 4 ceros', 5, 150, 1),
-('Quilmes (lata grande)', 5, 90, 1);
-
-insert into Stock values
-(1, 152, 50, (select GETDATE())),
-(2, 89, 70, (select GETDATE())),
-(3, 170, 40, (select GETDATE())),
-(5, 100, 15, (select GETDATE())),
-(4, 120, 20, (select GETDATE())),
-(6, 130, 30, (select GETDATE())),
-(7, 105, 20, (select GETDATE())),
-(8, 251, 70, (select GETDATE())),
-(9, 40, 10, (select GETDATE())),
-(10, 80, 25, (select GETDATE())),
-(11, 82, 25, (select GETDATE()));*/

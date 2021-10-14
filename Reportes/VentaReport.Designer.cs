@@ -28,6 +28,7 @@ namespace Distribuidora.Reportes
             this.picInstagram = new Telerik.Reporting.PictureBox();
             this.txtInstagram = new Telerik.Reporting.TextBox();
             this.txtFecha = new Telerik.Reporting.TextBox();
+            this.txtFechaParametro = new Telerik.Reporting.TextBox();
             this.detail = new Telerik.Reporting.DetailSection();
             this.tblVenta = new Telerik.Reporting.Table();
             this.textBox3 = new Telerik.Reporting.TextBox();
@@ -36,7 +37,6 @@ namespace Distribuidora.Reportes
             this.textBox9 = new Telerik.Reporting.TextBox();
             this.txtAclaracion = new Telerik.Reporting.TextBox();
             this.txtTotal = new Telerik.Reporting.TextBox();
-            this.txtFechaParametro = new Telerik.Reporting.TextBox();
             this.txtTotalParametro = new Telerik.Reporting.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this)).BeginInit();
             // 
@@ -158,12 +158,22 @@ namespace Distribuidora.Reportes
             // 
             // txtFecha
             // 
-            this.txtFecha.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Cm(11.45D), Telerik.Reporting.Drawing.Unit.Cm(3.856D));
+            this.txtFecha.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Cm(11.238D), Telerik.Reporting.Drawing.Unit.Cm(3.856D));
             this.txtFecha.Name = "txtFecha";
-            this.txtFecha.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Cm(1.138D), Telerik.Reporting.Drawing.Unit.Cm(0.556D));
+            this.txtFecha.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Cm(1.35D), Telerik.Reporting.Drawing.Unit.Cm(0.556D));
             this.txtFecha.Style.Font.Name = "Malgun Gothic";
             this.txtFecha.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(10D);
             this.txtFecha.Value = "Fecha:";
+            // 
+            // txtFechaParametro
+            // 
+            this.txtFechaParametro.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Cm(12.588D), Telerik.Reporting.Drawing.Unit.Cm(3.856D));
+            this.txtFechaParametro.Name = "txtFechaParametro";
+            this.txtFechaParametro.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Cm(3.612D), Telerik.Reporting.Drawing.Unit.Cm(0.556D));
+            this.txtFechaParametro.Style.Font.Name = "Malgun Gothic";
+            this.txtFechaParametro.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(10D);
+            this.txtFechaParametro.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Right;
+            this.txtFechaParametro.Value = "=Fields.Fecha";
             // 
             // detail
             // 
@@ -263,15 +273,6 @@ namespace Distribuidora.Reportes
             this.txtTotal.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(14D);
             this.txtTotal.Value = "TOTAL: $ ";
             // 
-            // txtFechaParametro
-            // 
-            this.txtFechaParametro.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Cm(12.588D), Telerik.Reporting.Drawing.Unit.Cm(3.856D));
-            this.txtFechaParametro.Name = "txtFechaParametro";
-            this.txtFechaParametro.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Cm(3.612D), Telerik.Reporting.Drawing.Unit.Cm(0.556D));
-            this.txtFechaParametro.Style.Font.Name = "Malgun Gothic";
-            this.txtFechaParametro.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(10D);
-            this.txtFechaParametro.Value = "=Fields.Fecha";
-            // 
             // txtTotalParametro
             // 
             this.txtTotalParametro.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Cm(12.8D), Telerik.Reporting.Drawing.Unit.Cm(2.288D));
@@ -279,6 +280,7 @@ namespace Distribuidora.Reportes
             this.txtTotalParametro.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Cm(3.4D), Telerik.Reporting.Drawing.Unit.Cm(0.556D));
             this.txtTotalParametro.Style.Font.Name = "Malgun Gothic";
             this.txtTotalParametro.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(14D);
+            this.txtTotalParametro.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Right;
             this.txtTotalParametro.Value = "=Fields.Total";
             // 
             // VentaReport
@@ -313,17 +315,17 @@ namespace Distribuidora.Reportes
         private Telerik.Reporting.TextBox txtInstagram;
         private Telerik.Reporting.TextBox txtFecha;
         private Telerik.Reporting.TextBox txtAclaracion;
-        private Telerik.Reporting.TextBox textBox3;
-        private Telerik.Reporting.TextBox textBox5;
-        private Telerik.Reporting.TextBox textBox7;
         private Telerik.Reporting.TextBox textBox2;
         private Telerik.Reporting.TextBox textBox4;
         private Telerik.Reporting.TextBox textBox6;
-        private Telerik.Reporting.TextBox textBox9;
         private Telerik.Reporting.TextBox textBox8;
         public Telerik.Reporting.Table tblVenta;
         private Telerik.Reporting.TextBox txtTotal;
-        private Telerik.Reporting.TextBox txtFechaParametro;
-        private Telerik.Reporting.TextBox txtTotalParametro;
+        public Telerik.Reporting.TextBox textBox3;
+        public Telerik.Reporting.TextBox textBox5;
+        public Telerik.Reporting.TextBox textBox7;
+        public Telerik.Reporting.TextBox textBox9;
+        public Telerik.Reporting.TextBox txtFechaParametro;
+        public Telerik.Reporting.TextBox txtTotalParametro;
     }
 }

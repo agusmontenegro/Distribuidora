@@ -108,7 +108,9 @@
     <Compile Include="DTOs\Combo.cs" />
     <Compile Include="DTOs\Componente.cs" />
     <Compile Include="DTOs\Producto.cs" />
+    <Compile Include="DTOs\Reportes\ItemReposicion.cs" />
     <Compile Include="DTOs\Reportes\ItemVenta.cs" />
+    <Compile Include="DTOs\Reportes\Reposicion.cs" />
     <Compile Include="DTOs\Rubro.cs" />
     <Compile Include="DTOs\Stock.cs" />
     <Compile Include="DTOs\TipoAlerta.cs" />
@@ -124,6 +126,18 @@
     </Compile>
     <Compile Include="Forms\Estadistica.Designer.cs">
       <DependentUpon>Estadistica.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Producto\ReporteInfoProductos.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Producto\ReporteInfoProductos.Designer.cs">
+      <DependentUpon>ReporteInfoProductos.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Stock\ReporteStock.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Stock\ReporteStock.Designer.cs">
+      <DependentUpon>ReporteStock.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Venta\ReporteVenta.cs">
       <SubType>Form</SubType>
@@ -177,10 +191,10 @@
     <Compile Include="Services\StockService.cs" />
     <Compile Include="Services\ValidacionService.cs" />
     <Compile Include="Services\VentaService.cs" />
-    <Compile Include="Forms\Stock.cs">
+    <Compile Include="Forms\Stock\Stock.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\Stock.Designer.cs">
+    <Compile Include="Forms\Stock\Stock.Designer.cs">
       <DependentUpon>Stock.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Venta\Venta.cs">
@@ -204,6 +218,12 @@
     <EmbeddedResource Include="Forms\Producto\BuscarProducto.resx">
       <DependentUpon>BuscarProducto.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Producto\ReporteInfoProductos.resx">
+      <DependentUpon>ReporteInfoProductos.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Stock\ReporteStock.resx">
+      <DependentUpon>ReporteStock.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Venta\ReporteVenta.resx">
       <DependentUpon>ReporteVenta.cs</DependentUpon>
     </EmbeddedResource>
@@ -217,7 +237,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Forms\Stock.resx">
+    <EmbeddedResource Include="Forms\Stock\Stock.resx">
       <DependentUpon>Stock.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Venta\Venta.resx">
@@ -232,7 +252,6 @@
     <EmbeddedResource Include="Reportes\VentaReport.resx">
       <DependentUpon>VentaReport.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="Distribuidora_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

@@ -24,7 +24,7 @@ namespace Distribuidora.Forms
 
         private void btnStock_Click(object sender, EventArgs e)
         {
-            var stock = new Stock(this);
+            var stock = new Stock.Stock(this);
             stock.ShowDialog();
         }
 

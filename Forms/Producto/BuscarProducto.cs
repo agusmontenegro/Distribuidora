@@ -214,5 +214,11 @@ namespace Distribuidora.Forms.Producto
             else
                 MessageBox.Show("Seleccione un producto");
         }
+
+        private void btnInfoProductos_Click(object sender, EventArgs e)
+        {
+            var reporte = new ReporteInfoProductos();
+            reporte.ShowDialog();
+        }
     }
 }
