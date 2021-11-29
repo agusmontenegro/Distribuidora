@@ -51,13 +51,13 @@ namespace Distribuidora.Forms.Venta
 
             if (e.KeyChar == (char)Keys.Return)
             {
-                var codigo_producto = txtCodigoProducto.Text;
+                var codigoProducto = txtCodigoProducto.Text;
                 string msj = string.Empty;
 
-                if (productoService.CodigoProductoValido(codigo_producto, ref msj))
+                if (CodigoProductoValido(codigoProducto, ref msj))
                 {
-                    CompletarItem(codigo_producto);
-                    ObtenerStock(codigo_producto);
+                    CompletarItem(codigoProducto);
+                    ObtenerStock(codigoProducto);
                     txtCantidad.Focus();
                 }
                 else
@@ -65,6 +65,24 @@ namespace Distribuidora.Forms.Venta
                     MessageBox.Show(msj);
                 }
             }
+        }
+
+        private bool CodigoProductoValido(string codigoProducto, ref string msj)
+        {
+            if (string.IsNullOrEmpty(codigoProducto))
+            {
+                validacionService.AgregarValidacion(
+                    false,
+                    "Debe ingresar un código de producto.");
+            }
+            else
+            {
+                validacionService.AgregarValidacion(
+                    productoService.ExisteProducto(codigoProducto),
+                    "No existe un producto activo con el código ingresado.");
+            }
+
+            return validacionService.Validar(ref msj);
         }
 
         private void btnCancelarItem_Click(object sender, EventArgs e)
@@ -124,9 +142,9 @@ namespace Distribuidora.Forms.Venta
             }
         }
 
-        private void CompletarItem(string codigo_producto)
+        private void CompletarItem(string codigoProducto)
         {
-            var producto = productoService.ObtenerProducto(codigo_producto);
+            var producto = productoService.ObtenerProducto(codigoProducto);
 
             txtCodigoProducto.Enabled = false;
             txtDetalleProducto.Enabled = false;
@@ -137,12 +155,12 @@ namespace Distribuidora.Forms.Venta
             txtPrecioUnitario.Text = producto.PrecioUnitario.ToString();
         }
 
-        private void ObtenerStock(string codigo_producto)
+        private void ObtenerStock(string codigoProducto)
         {
             // Se podría consultar igual el stock actual segun el stock actual de los componentes cuántos combos se pueden armar
-            if (!comboService.EsCombo(codigo_producto))
+            if (!comboService.EsCombo(codigoProducto))
             {
-                var producto = productoService.ObtenerProducto(codigo_producto);
+                var producto = productoService.ObtenerProducto(codigoProducto);
 
                 txtStockActual.Text = producto.Stock.CantidadActual.ToString();
                 Stock = producto.Stock;

@@ -73,24 +73,6 @@ namespace Distribuidora.Services
             return productos;
         }
 
-        public bool CodigoProductoValido(string codigoProducto, ref string msj)
-        {
-            if (string.IsNullOrEmpty(codigoProducto))
-            {
-                validacionService.AgregarValidacion(
-                    false,
-                    "Debe ingresar un código de producto.");
-            }
-            else
-            {
-                validacionService.AgregarValidacion(
-                    ExisteProducto(codigoProducto),
-                    "No existe un producto activo con el código ingresado.");
-            }
-
-            return validacionService.Validar(ref msj);
-        }
-
         public void EliminarProducto(string codigoProducto)
         {
             var query = "update dbo.Producto set prod_activo = 0 where prod_codigo = " + codigoProducto;

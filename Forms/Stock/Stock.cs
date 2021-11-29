@@ -63,18 +63,28 @@ namespace Distribuidora.Forms.Stock
 
         private bool ProductoValido(ref string msj)
         {
-            validacionService.AgregarValidacion(
-                productoService.CodigoProductoValido(txtCodigoProducto.Text, ref msj), null);
+            if (string.IsNullOrEmpty(txtCodigoProducto.Text))
+            {
+                validacionService.AgregarValidacion(
+                    false,
+                    "Debe ingresar un código de producto.");
+            }
+            else
+            {
+                validacionService.AgregarValidacion(
+                    productoService.ExisteProducto(txtCodigoProducto.Text),
+                    "No existe un producto activo con el código ingresado.");
 
-            validacionService.AgregarValidacion(
-                !comboService.EsCombo(txtCodigoProducto.Text), "No está permitido reponer stock de un combo, si de sus componentes");
+                validacionService.AgregarValidacion(
+                    !comboService.EsCombo(txtCodigoProducto.Text), "No está permitido reponer stock de un combo, si de sus componentes");
+            }
 
             return validacionService.Validar(ref msj);
         }
 
-        private void CompletarDatos(string codigo_producto)
+        private void CompletarDatos(string codigoProducto)
         {
-            var producto = productoService.ObtenerProducto(codigo_producto);
+            var producto = productoService.ObtenerProducto(codigoProducto);
 
             txtCodigoProducto.Enabled = false;
             txtDetalleProducto.Enabled = false;

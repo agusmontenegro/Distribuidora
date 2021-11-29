@@ -95,12 +95,12 @@ namespace Distribuidora.Forms.Producto
 
             if (e.KeyChar == (char)Keys.Return)
             {
-                var codigo_producto = txtCodigoProductoComposicion.Text;
+                var codigoProducto = txtCodigoProductoComposicion.Text;
                 string msj = string.Empty;
 
-                if (productoService.CodigoProductoValido(codigo_producto, ref msj))
+                if (CodigoProductoValido(codigoProducto, ref msj))
                 {
-                    CompletarItem(codigo_producto);
+                    CompletarItem(codigoProducto);
                     txtCantidadComposicion.Focus();
                     btnAgregarComponente.Enabled = true;
                 }
@@ -111,9 +111,27 @@ namespace Distribuidora.Forms.Producto
             }
         }
 
-        private void CompletarItem(string codigo_producto)
+        private bool CodigoProductoValido(string codigoProducto, ref string msj)
         {
-            var producto = productoService.ObtenerProducto(codigo_producto);
+            if (string.IsNullOrEmpty(codigoProducto))
+            {
+                validacionService.AgregarValidacion(
+                    false,
+                    "Debe ingresar un código de producto.");
+            }
+            else
+            {
+                validacionService.AgregarValidacion(
+                    productoService.ExisteProducto(codigoProducto),
+                    "No existe un producto activo con el código ingresado.");
+            }
+
+            return validacionService.Validar(ref msj);
+        }
+
+        private void CompletarItem(string codigoProducto)
+        {
+            var producto = productoService.ObtenerProducto(codigoProducto);
 
             txtCodigoProductoComposicion.Enabled = false;
             txtDetalleProductoComposicion.Enabled = false;
