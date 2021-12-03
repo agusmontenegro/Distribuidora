@@ -42,7 +42,7 @@ namespace Distribuidora.Services
             {
                 if (flag)
                 {
-                    combo.Producto = new DTOs.Producto
+                    combo.Producto = new Producto
                     {
                         Codigo = row["Producto"].ToString(),
                         Detalle = row["Detalle"].ToString(),
@@ -53,7 +53,7 @@ namespace Distribuidora.Services
                 }
                 var componente = new Componente
                 {
-                    Producto = new DTOs.Producto
+                    Producto = new Producto
                     {
                         Codigo = row["CodigoComponente"].ToString(),
                         Detalle = row["DetalleComponente"].ToString()
