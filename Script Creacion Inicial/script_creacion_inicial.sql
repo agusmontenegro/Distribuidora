@@ -50,6 +50,9 @@ if object_id('Reposicion_View', 'V') is not null
 if object_id('HayStockDisponible', 'FN') is not null
 	drop function HayStockDisponible;	
 
+if object_id('InformarStockFaltante', 'FN') is not null
+	drop function InformarStockFaltante;
+
 if object_id('LlegoAPuntoDeReposicion', 'FN') is not null
 	drop function LlegoAPuntoDeReposicion;	
 
@@ -88,7 +91,8 @@ if object_id('GuardarReposicion', 'P') is not null
 /*---------------------------------------------------*/
 
 create table Producto (
-	prod_codigo int not null identity(1,1),
+	prod_id int not null identity(1,1),
+	prod_codigo nvarchar(5) not null,
 	prod_detalle nvarchar(255) not null,
 	prod_rubro int not null,
 	prod_precio decimal(12,2),
@@ -101,7 +105,7 @@ create table Rubro (
 );
 
 create table Combo (
-	comb_codigo int not null,
+	comb_id int not null,
 	comb_componente int not null,
 	comb_cantidad int not null
 );
@@ -159,10 +163,10 @@ go
 /*---------------------------------------------------------*/
 
 alter table Combo
-add constraint Combo_PK primary key (comb_codigo, comb_componente);
+add constraint Combo_PK primary key (comb_id, comb_componente);
 
 alter table Producto
-add constraint Producto_PK primary key (prod_codigo);
+add constraint Producto_PK primary key (prod_id);
 
 alter table Rubro
 add constraint Rubro_PK primary key (rubr_codigo);
@@ -196,12 +200,12 @@ go
 
 
 alter table Combo
-add constraint ComboProducto_Producto foreign key (comb_codigo)
-references Producto (prod_codigo);
+add constraint ComboProducto_Producto foreign key (comb_id)
+references Producto (prod_id);
 
 alter table Combo
 add constraint ComboComponente_Producto foreign key (comb_componente)
-references Producto (prod_codigo);
+references Producto (prod_id);
 
 alter table Item_Venta
 add constraint ItemVenta_Venta foreign key (item_venta)
@@ -209,7 +213,7 @@ references Venta (vent_codigo);
 
 alter table Item_Venta
 add constraint ItemVenta_Producto foreign key (item_producto)
-references Producto (prod_codigo);
+references Producto (prod_id);
 
 alter table Producto
 add constraint Producto_Rubro foreign key (prod_rubro)
@@ -217,7 +221,7 @@ references Rubro (rubr_codigo);
 
 alter table Stock
 add constraint Stock_Producto foreign key (stoc_producto)
-references Producto (prod_codigo);
+references Producto (prod_id);
 
 alter table Alerta
 add constraint Alerta_TipoAlerta foreign key (aler_tipo)
@@ -229,7 +233,7 @@ references Reposicion (repo_codigo);
 
 alter table Reposicion_Producto
 add constraint ReposicionProducto_Producto foreign key (rpro_producto)
-references Producto (prod_codigo);
+references Producto (prod_id);
 
 go
 
@@ -239,7 +243,8 @@ go
 
 create view Producto_View 
 as
-	select prod_codigo Codigo, 
+	select prod_id Id,
+		   prod_codigo Codigo, 
 		   prod_detalle Detalle, 
 		   prod_precio Precio, 
 		   rubr_codigo RubroCodigo, 
@@ -250,28 +255,30 @@ as
 
 	from Producto
 	join Rubro on rubr_codigo = prod_rubro
-	join Stock on stoc_producto = prod_codigo
+	join Stock on stoc_producto = prod_id
 	where prod_activo = 1
 go
 
 create view Combo_View 
 as
-	select p.prod_codigo Producto, 
+	select p.prod_id Id,
+		   p.prod_codigo Codigo, 
 		   p.prod_detalle Detalle, 
 		   p.prod_precio Precio, 
-		   c.comb_componente CodigoComponente,
+		   c.comb_componente IdComponente,
 		   p2.prod_detalle DetalleComponente,
-		   c.comb_cantidad CantidadComponente
+		   c.comb_cantidad CantidadComponente,
+		   p2.prod_codigo CodigoComponente
 
 	from Producto p
-	join Combo c on c.comb_codigo = p.prod_codigo
-	join Producto p2 on p2.prod_codigo = c.comb_componente
+	join Combo c on c.comb_id = p.prod_id
+	join Producto p2 on p2.prod_id = c.comb_componente
 	where p.prod_activo = 1
 go
 
 create view Venta_View 
 as
-	select p.prod_codigo Producto, 
+	select p.prod_id Producto, 
 		   p.prod_detalle Detalle, 
 		   i.item_precio Precio, 
 		   i.item_cantidad Cantidad,
@@ -282,12 +289,12 @@ as
 
 	from Venta v
 	join Item_Venta i on i.item_venta = v.vent_codigo
-	join Producto p on p.prod_codigo = i.item_producto
+	join Producto p on p.prod_id = i.item_producto
 go
 
 create view Reposicion_View 
 as
-	select p.prod_codigo Producto, 
+	select p.prod_id Producto, 
 		   p.prod_detalle Detalle, 
 		   rp.rpro_cantidad_vieja CantidadAnterior, 
 		   rp.rpro_cantidad_nueva CantidadActual,
@@ -296,60 +303,60 @@ as
 
 	from Reposicion r
 	join Reposicion_Producto rp on rp.rpro_reposicion = r.repo_codigo
-	join Producto p on p.prod_codigo = rp.rpro_producto
+	join Producto p on p.prod_id = rp.rpro_producto
 go
 
 /*---------------------------------------------------*/
 /*----------------CREACIÓN DE FUNCIONES--------------*/
 /*---------------------------------------------------*/
 
-create function LlegoAPuntoDeReposicion (@producto int)
+create function [dbo].[LlegoAPuntoDeReposicion] (@producto int)
 returns bit
 begin
 
-	if(select count(*) from Combo where comb_codigo = @producto) > 0
-	begin
-		declare @comb_componente char(8)
-		declare @llego_a_punto_de_reposicion bit
-		declare componentesCursor cursor for select comb_componente
-											 from Combo
-											 where comb_codigo = @producto
+	--if(select count(*) from Combo where comb_id = @producto) > 0
+	--begin
+	--	declare @comb_componente char(8)
+	--	declare @llego_a_punto_de_reposicion bit
+	--	declare componentesCursor cursor for select comb_componente
+	--										 from Combo
+	--										 where comb_id = @producto
 
-		open componentesCursor
-		fetch next from componentesCursor into @comb_componente
-		set @llego_a_punto_de_reposicion = 1
+	--	open componentesCursor
+	--	fetch next from componentesCursor into @comb_componente
+	--	set @llego_a_punto_de_reposicion = 1
 
-		while @@fetch_status = 0​
-		begin
-			set @llego_a_punto_de_reposicion = @llego_a_punto_de_reposicion & dbo.LlegoAPuntoDeReposicion(@comb_componente)
+	--	while @@fetch_status = 0​
+	--	begin
+	--		set @llego_a_punto_de_reposicion = @llego_a_punto_de_reposicion & dbo.LlegoAPuntoDeReposicion(@comb_componente)
 
-			fetch next from componentesCursor into @comb_componente
-		end
+	--		fetch next from componentesCursor into @comb_componente
+	--	end
 		
-		close componentesCursor​
-		deallocate componentesCursor
+	--	close componentesCursor​
+	--	deallocate componentesCursor
 
-		return @llego_a_punto_de_reposicion	
-	end
+	--	return @llego_a_punto_de_reposicion	
+	--end
 	if (select count(*) from Stock where stoc_producto = @producto and stoc_cantidad_actual <= stoc_cantidad_minima) > 0
 		return 1
 
 	return 0
 end
-go
 
-create function HayStockDisponible (@producto int, @cantidad int)
+create function [dbo].[HayStockDisponible] (@producto int, @cantidad int)
 returns bit
 begin
 
-	if(select count(*) from Combo where comb_codigo = @producto) > 0
+	if(select count(*) from Combo where comb_id = @producto) > 0
 	begin
 		declare @comb_componente char(8)
 		declare @comb_cantidad int
 		declare @hay_stock bit
-		declare componentesCursor cursor for select comb_componente, comb_cantidad
-											 from Combo
-											 where comb_codigo = @producto
+		declare componentesCursor cursor for select c.comb_componente, c.comb_cantidad
+											 from Combo c
+											 join Producto p on c.comb_id = p.prod_id
+											 where p.prod_id = @producto
 
 		open componentesCursor
 		fetch next from componentesCursor into @comb_componente, @comb_cantidad
@@ -359,9 +366,7 @@ begin
 		begin
 			declare @cantAcum int
 			set @cantAcum = @comb_cantidad * @cantidad;
-
 			set @hay_stock = @hay_stock & dbo.HayStockDisponible(@comb_componente, @cantAcum)
-
 			fetch next from componentesCursor into @comb_componente, @comb_cantidad
 		end
 		
@@ -370,12 +375,80 @@ begin
 
 		return @hay_stock	
 	end
-	if (select count(*) from Stock where stoc_producto = @producto and stoc_cantidad_actual >= @cantidad) > 0
+	if (select count(*) 
+	    from Stock s
+		join Producto p on p.prod_id = s.stoc_producto
+		where p.prod_id = @producto and s.stoc_cantidad_actual >= @cantidad) > 0
 		return 1
 
 	return 0
 end
-go
+
+GO
+
+USE [DISTRIBUIDORA]
+GO
+
+/****** Object:  UserDefinedFunction [dbo].[HayStockDisponible]    Script Date: 26/12/2022 17:39:56 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+create function [dbo].[InformarStockFaltante] (@producto int, @cantidad int)
+returns varchar(max)
+begin	
+
+	declare @codigoProducto nvarchar(5)
+	declare @detalleProducto varchar(max)
+	declare @cantidadFaltante int
+
+	if(select count(*) from Combo where comb_id = @producto) > 0
+	begin
+		declare @comb_componente char(8)
+		declare @comb_cantidad int
+		declare @texto varchar(max)
+		declare componentesCursor cursor for select c.comb_componente, c.comb_cantidad
+											 from Combo c
+											 join Producto p on c.comb_id = p.prod_id
+											 where p.prod_id = @producto
+
+		open componentesCursor
+		fetch next from componentesCursor into @comb_componente, @comb_cantidad
+		set @texto = ''
+
+		while @@fetch_status = 0​
+		begin
+			declare @cantAcum int
+			set @cantAcum = @comb_cantidad * @cantidad;
+			set @texto = @texto + dbo.InformarStockFaltante (@comb_componente, @cantAcum)
+			fetch next from componentesCursor into @comb_componente, @comb_cantidad
+		end
+		
+		close componentesCursor​
+		deallocate componentesCursor
+
+		return @texto	
+	end
+
+	select @cantidadFaltante = @cantidad - s.stoc_cantidad_actual, 
+		   @codigoProducto = p.prod_codigo,
+		   @detalleProducto = p.prod_detalle
+
+	from Stock s
+	join Producto p on p.prod_id = s.stoc_producto
+	where p.prod_id = @producto
+
+	if (@cantidadFaltante) > 0
+		return 'Se debe reponer el producto ' + 
+		(select cast(@codigoProducto as varchar(max))) + ' - ' + 
+		(select cast(@detalleProducto as varchar(max))) + '. Cantidad faltante: ' + (select cast(@cantidadFaltante as varchar(max)))
+
+	return ''
+end
+
+GO
 
 /*---------------------------------------------------*/
 /*----------------CREACIÓN DE STORED PROCEDURES------*/
@@ -412,15 +485,15 @@ begin
 end
 go
 
-create procedure EmitirAlertaDeReposicion (@producto int) as
+create procedure [dbo].[EmitirAlertaDeReposicion] (@producto int) as
 begin
 
-	if(select count(*) from Combo where comb_codigo = @producto) > 0
+	if(select count(*) from Combo where comb_id = @producto) > 0
 	begin
 		declare @comb_componente char(8)
 		declare componentesCursor cursor for select comb_componente
 											 from Combo
-											 where comb_codigo = @producto
+											 where comb_id = @producto
 
 		open componentesCursor
 		fetch next from componentesCursor into @comb_componente
@@ -442,49 +515,53 @@ begin
 		begin
 			declare @texto varchar(max)
 			declare @detalle_producto varchar(max)
+			declare @codigo_producto nvarchar(5)
 			declare @cant_actual int
 			declare @punto_reposicion int
 
-			select @detalle_producto = p.prod_detalle, @cant_actual = s.stoc_cantidad_actual, @punto_reposicion = s.stoc_cantidad_minima
-			from Producto p
-			join Stock s on s.stoc_producto = p.prod_codigo
-			where p.prod_codigo = @producto;
+			select @detalle_producto = p.prod_detalle, 
+				   @cant_actual = s.stoc_cantidad_actual, 
+				   @punto_reposicion = s.stoc_cantidad_minima,
+				   @codigo_producto = p.prod_codigo
 
-			set @texto = 'Se debe reponer el producto ' + (select cast(@producto as varchar(max))) + ' - ' 
-						 + @detalle_producto + '. Stock actual: ' + (select cast(@cant_actual as varchar(max))) 
-						 + ', punto de reposición: ' + (select cast(@punto_reposicion as varchar(max)));
+			from Producto p
+			join Stock s on s.stoc_producto = p.prod_id
+			where p.prod_id = @producto;
+
+			set @texto = 'Se debe reponer el producto ' + (select cast(@codigo_producto as varchar(max))) + ' - ' 
+						 + (select cast(@detalle_producto as varchar(max))) + '. Stock actual: ' + (select cast(@cant_actual as varchar(max))) 
+						 + ', Stock mínimo: ' + (select cast(@punto_reposicion as varchar(max)));
 
 			insert into Alerta values (@producto, @texto, 1, (select GETDATE()));
 		end		
 	end
 end
-go
 
-create procedure QuitarAlertaDeReposicion (@producto int) as
+create procedure [dbo].[QuitarAlertaDeReposicion] (@producto int) as
 begin
 
-	if(select count(*) from Combo where comb_codigo = @producto) > 0
-	begin
-		declare @comb_componente char(8)
-		declare componentesCursor cursor for select comb_componente
-											 from Combo
-											 where comb_codigo = @producto
+	--if(select count(*) from Combo where comb_id = @producto) > 0
+	--begin
+	--	declare @comb_componente char(8)
+	--	declare componentesCursor cursor for select comb_componente
+	--										 from Combo
+	--										 where comb_id = @producto
 
-		open componentesCursor
-		fetch next from componentesCursor into @comb_componente
+	--	open componentesCursor
+	--	fetch next from componentesCursor into @comb_componente
 
-		while @@fetch_status = 0​
-		begin
-			exec dbo.QuitarAlertaDeReposicion @comb_componente;
+	--	while @@fetch_status = 0​
+	--	begin
+	--		exec dbo.QuitarAlertaDeReposicion @comb_componente;
 
-			fetch next from componentesCursor into @comb_componente
-		end
+	--		fetch next from componentesCursor into @comb_componente
+	--	end
 		
-		close componentesCursor​
-		deallocate componentesCursor	
-	end
+	--	close componentesCursor​
+	--	deallocate componentesCursor	
+	--end
 
-	if (select count(*) from Stock where stoc_producto = @producto and stoc_cantidad_actual > stoc_cantidad_minima) > 0
+	if (select count(*) from Stock where stoc_producto = @producto and stoc_cantidad_actual >= stoc_cantidad_minima) > 0
 	begin
 		if (select count(*) from Alerta where aler_objeto = @producto) > 0
 		begin
@@ -492,19 +569,18 @@ begin
 		end		
 	end
 end
-go
 
-create procedure ActualizarStock (@codigo int, @cantidad int) as
+create procedure [dbo].[ActualizarStock] (@codigo int, @cantidad int) as
 begin
 
-	if(select count(*) from Combo where comb_codigo = @codigo) > 0
+	if(select count(*) from Combo where comb_id = @codigo) > 0
 	begin
 		declare @comb_componente int;
 		declare @comb_cantidad int;
 
 		declare componentesCursor cursor local for select comb_componente, comb_cantidad
 												   from Combo
-												   where comb_codigo = @codigo;
+												   where comb_id = @codigo;
 
 		open componentesCursor;
 		fetch next from componentesCursor into @comb_componente, @comb_cantidad;
@@ -513,9 +589,7 @@ begin
 		begin
 			declare @cantAcum int;
 			set @cantAcum = @comb_cantidad * @cantidad;
-
 			exec ActualizarStock @comb_componente, @cantAcum;
-
 			fetch next from componentesCursor into @comb_componente, @comb_cantidad;
 		end
 
@@ -529,9 +603,8 @@ begin
 		where stoc_producto = @codigo;
 	end
 end
-go
 
-create procedure InsertarItem (@codigoVenta int, @producto int, @precioUnitario decimal(12,2), @cantidad int) as
+create procedure [dbo].[InsertarItem] (@codigoVenta int, @producto int, @precioUnitario decimal(12,2), @cantidad int) as
 begin
 
 	insert into Item_Venta values (
@@ -544,78 +617,74 @@ begin
 	exec ActualizarStock @producto, @cantidad;
 
 end
-go
 
-create procedure ReponerStock (@reposicion int, @codigoProducto int, @cantidadAReponer int) as
+create procedure [dbo].[ReponerStock] (@reposicion int, @idProducto int, @cantidadAReponer int) as
 begin
 
 	declare @cantidad_vieja int;
 
 	set @cantidad_vieja = (select top 1 stoc_cantidad_actual
 						   from Stock
-						   where stoc_producto = @codigoProducto);
+						   where stoc_producto = @idProducto);
 
 	update Stock
 	set stoc_cantidad_actual = stoc_cantidad_actual + @cantidadAReponer, stoc_ultima_reposicion = (select GETDATE())
-	where stoc_producto = @codigoProducto;
+	where stoc_producto = @idProducto;
 
 	insert into Reposicion_Producto values
-	(@reposicion, @codigoProducto, @cantidad_vieja, @cantidad_vieja + @cantidadAReponer)
+	(@reposicion, @idProducto, @cantidad_vieja, @cantidad_vieja + @cantidadAReponer)
 
 end
-go
 
-create procedure InsertarProducto (@detalle nvarchar(255), @precioUnitario decimal(12,2), @rubro int, @stockMinimo int, @codigoProducto int output) as
+create procedure [dbo].[InsertarProducto] (@codigo nvarchar(5), @detalle nvarchar(255), @precioUnitario decimal(12,2), @rubro int, @stockMinimo int, @id int output) as
 begin
 
-	insert into Producto values (
+	insert into Producto values (		
 		@detalle,
 		@rubro,
 		@precioUnitario,
-		1
+		1,
+		@codigo
 	);
 
-	set @codigoProducto = (select top 1 prod_codigo 
-						   from Producto 
-						   where prod_detalle = @detalle and
-								 prod_precio = @precioUnitario and
+	set @id = (select top 1 prod_id 
+			   from Producto 
+			   where prod_detalle = @detalle and
+					 prod_precio = @precioUnitario and
 								 prod_rubro = @rubro);
 
 	insert into Stock values (
-		@codigoProducto,
+		@id,
 		0,
 		@stockMinimo,
 		null
 	);	
 
 end
-go
 
-create procedure ActualizarProducto (@codigo int, @detalle nvarchar(255), @precioUnitario decimal(12,2), @rubro int, @stockMinimo int) as
+create procedure [dbo].[ActualizarProducto] (@id int, @codigo nvarchar(5), @detalle nvarchar(255), @precioUnitario decimal(12,2), @rubro int, @stockMinimo int) as
 begin
 
 	update Producto
-	set prod_detalle = @detalle, prod_precio = @precioUnitario, prod_rubro = @rubro
-	where prod_codigo = @codigo;
+	set prod_detalle = @detalle, prod_precio = @precioUnitario, prod_rubro = @rubro, prod_codigo = @codigo
+	where prod_id = @id;
 
 	update Stock
 	set stoc_cantidad_minima = @stockMinimo
-	where stoc_producto = @codigo;
+	where stoc_producto = @id;
 
 end
-go
 
-create procedure InsertarComponente (@codigoProducto int, @codigoComponente int, @cantidad int) as
+create procedure [dbo].[InsertarComponente] (@idProducto int, @idComponente int, @cantidad int) as
 begin
 
 	insert into Combo values (
-		@codigoProducto,
-		@codigoComponente,
+		@idProducto,
+		@idComponente,
 		@cantidad
 	);
 
 end
-go
 
 /*---------------------------------------------------*/
 /*----------------INSERCIÓN DE DATOS-----------------*/
