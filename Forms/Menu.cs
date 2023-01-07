@@ -30,7 +30,7 @@ namespace Distribuidora.Forms
 
         private void btnProductos_Click(object sender, EventArgs e)
         {
-            var buscarProducto = new BuscarProducto();
+            var buscarProducto = new BuscarProducto(this);
             buscarProducto.ShowDialog();
         }
 

@@ -11,6 +11,7 @@ namespace Distribuidora.Forms.Producto
     public partial class BuscarProducto : Form
     {
         public int celda = 0;
+        private readonly Menu menu;
 
         private readonly FormsCommon formsCommon;
         private readonly RubroService rubroService;
@@ -18,9 +19,10 @@ namespace Distribuidora.Forms.Producto
         private readonly ValidacionService validacionService;
         private readonly ProductoService productoService;
 
-        public BuscarProducto()
+        public BuscarProducto(Menu menu)
         {
             InitializeComponent();
+            this.menu = menu;
             formsCommon = new FormsCommon();
             rubroService = new RubroService();
             dataBaseHelper = new DataBaseHelper();
@@ -37,8 +39,6 @@ namespace Distribuidora.Forms.Producto
 
         private void txtCodigoProducto_KeyPress(object sender, KeyPressEventArgs e)
         {
-            formsCommon.OnlyNumerics(sender, e);
-
             if (e.KeyChar == (char)Keys.Return)
             {
                 RealizarBusqueda();
@@ -70,6 +70,7 @@ namespace Distribuidora.Forms.Producto
             cboRubros.SelectedIndex = -1;
             txtCodigoProducto.Text = string.Empty;
             txtDetalleProducto.Text = string.Empty;
+            chkIncludeNoActivo.Checked = false;
             txtCodigoProducto.Focus();
             grdResult.Rows.Clear();
             btnEliminarProducto.Enabled = false;
@@ -92,20 +93,32 @@ namespace Distribuidora.Forms.Producto
                     "                  prod_precio, " +
                     "                  rubr_detalle, " +
                     "                  stoc_cantidad_actual, " +
-                    "                  stoc_ultima_reposicion" +
+                    "                  stoc_ultima_reposicion, " +
+                    "                  prod_id" +
                     "           from dbo.Producto " +
                     "           join dbo.Rubro on rubr_codigo = prod_rubro" +
-                    "           join dbo.Stock on stoc_producto = prod_codigo" +
-                    "           where prod_activo = 1 ";
+                    "           join dbo.Stock on stoc_producto = prod_id ";
+
+                if (!chkIncludeNoActivo.Checked)
+                    query += " where prod_activo = 1 ";
 
                 if (!string.IsNullOrEmpty(txtCodigoProducto.Text))
-                    query += "and prod_codigo like '%" + txtCodigoProducto.Text.Trim() + "%' ";
+                    if (query.Contains("where"))
+                        query += " and prod_codigo like '%" + txtCodigoProducto.Text.Trim() + "%' ";
+                    else
+                        query += " where prod_codigo like '%" + txtCodigoProducto.Text.Trim() + "%' ";
 
                 if (!string.IsNullOrEmpty(txtDetalleProducto.Text))
-                    query += "and prod_detalle like '%" + txtDetalleProducto.Text.Trim() + "%' ";
+                    if (query.Contains("where"))
+                        query += " and prod_detalle like '%" + txtDetalleProducto.Text.Trim() + "%' ";
+                    else
+                        query += " where prod_detalle like '%" + txtDetalleProducto.Text.Trim() + "%' ";
 
                 if (cboRubros.SelectedIndex != -1)
-                    query += "and prod_rubro = " + ((Rubro)cboRubros.SelectedItem).Codigo;
+                    if (query.Contains("where"))
+                        query += " and prod_rubro = " + ((Rubro)cboRubros.SelectedItem).Codigo;
+                    else
+                        query += " where prod_rubro = " + ((Rubro)cboRubros.SelectedItem).Codigo;
 
                 CargarGrid(dataBaseHelper.ExecQuery(query));
                 btnEliminarProducto.Enabled = true;
@@ -149,7 +162,8 @@ namespace Distribuidora.Forms.Producto
                     result.Rows[i][2].ToString(),
                     result.Rows[i][3].ToString(),
                     result.Rows[i][4].ToString(),
-                    result.Rows[i][5].ToString());
+                    result.Rows[i][5].ToString(),
+                    result.Rows[i][6].ToString());
             }
         }
 
@@ -198,7 +212,7 @@ namespace Distribuidora.Forms.Producto
         private void btnNuevoProducto_Click(object sender, EventArgs e)
         {
             LimpiarBusqueda();
-            var altaProducto = new Producto();
+            var altaProducto = new Producto(menu);
             altaProducto.ShowDialog();
         }
 
@@ -206,8 +220,8 @@ namespace Distribuidora.Forms.Producto
         {
             if (celda != -1)
             {
-                var codigoProducto = grdResult.Rows[celda].Cells[0].Value.ToString();
-                var editarProducto = new Producto(codigoProducto);
+                var idProducto = grdResult.Rows[celda].Cells[6].Value.ToString();
+                var editarProducto = new Producto(menu, idProducto);
                 LimpiarBusqueda();
                 editarProducto.ShowDialog();
             }

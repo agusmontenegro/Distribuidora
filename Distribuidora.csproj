@@ -57,7 +57,7 @@
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.SqlServer.Types, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
@@ -244,12 +244,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Reportes\InfoProductos.resx">
       <DependentUpon>InfoProductos.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Reportes\StockReport.resx">
       <DependentUpon>StockReport.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Reportes\VentaReport.resx">
       <DependentUpon>VentaReport.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -266,6 +269,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Script Creacion Inicial\actualizar columnas.sql" />
     <Content Include="Script Creacion Inicial\script_creacion_inicial.sql" />
   </ItemGroup>
   <ItemGroup>

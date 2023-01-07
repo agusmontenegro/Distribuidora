@@ -47,15 +47,16 @@ namespace Distribuidora.Forms.Venta
             this.txtCodigoProducto = new System.Windows.Forms.TextBox();
             this.lblProducto = new System.Windows.Forms.Label();
             this.grdVentas = new System.Windows.Forms.DataGridView();
+            this.btnGuardarVenta = new System.Windows.Forms.Button();
+            this.lblPrecioTotal = new System.Windows.Forms.Label();
+            this.txtPrecioTotal = new System.Windows.Forms.TextBox();
+            this.btnEliminarItem = new System.Windows.Forms.Button();
             this.codigo_producto = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.detalle_producto = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cantidad = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.subtotal = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.PrecioU = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.btnGuardarVenta = new System.Windows.Forms.Button();
-            this.lblPrecioTotal = new System.Windows.Forms.Label();
-            this.txtPrecioTotal = new System.Windows.Forms.TextBox();
-            this.btnEliminarItem = new System.Windows.Forms.Button();
+            this.id_producto = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdVentas)).BeginInit();
             this.SuspendLayout();
@@ -229,7 +230,8 @@ namespace Distribuidora.Forms.Venta
             this.detalle_producto,
             this.cantidad,
             this.subtotal,
-            this.PrecioU});
+            this.PrecioU,
+            this.id_producto});
             this.grdVentas.Location = new System.Drawing.Point(12, 142);
             this.grdVentas.MultiSelect = false;
             this.grdVentas.Name = "grdVentas";
@@ -237,38 +239,6 @@ namespace Distribuidora.Forms.Venta
             this.grdVentas.Size = new System.Drawing.Size(915, 359);
             this.grdVentas.TabIndex = 1;
             this.grdVentas.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grdVentas_CellClick);
-            // 
-            // codigo_producto
-            // 
-            this.codigo_producto.HeaderText = "Código de producto";
-            this.codigo_producto.Name = "codigo_producto";
-            this.codigo_producto.ReadOnly = true;
-            this.codigo_producto.Width = 125;
-            // 
-            // detalle_producto
-            // 
-            this.detalle_producto.HeaderText = "Detalle del producto";
-            this.detalle_producto.Name = "detalle_producto";
-            this.detalle_producto.ReadOnly = true;
-            this.detalle_producto.Width = 586;
-            // 
-            // cantidad
-            // 
-            this.cantidad.HeaderText = "Cantidad";
-            this.cantidad.Name = "cantidad";
-            this.cantidad.ReadOnly = true;
-            // 
-            // subtotal
-            // 
-            this.subtotal.HeaderText = "Subtotal";
-            this.subtotal.Name = "subtotal";
-            this.subtotal.ReadOnly = true;
-            // 
-            // PrecioU
-            // 
-            this.PrecioU.HeaderText = "";
-            this.PrecioU.Name = "PrecioU";
-            this.PrecioU.Visible = false;
             // 
             // btnGuardarVenta
             // 
@@ -304,6 +274,44 @@ namespace Distribuidora.Forms.Venta
             this.btnEliminarItem.TabIndex = 5;
             this.btnEliminarItem.UseVisualStyleBackColor = true;
             this.btnEliminarItem.Click += new System.EventHandler(this.btnEliminarItem_Click);
+            // 
+            // codigo_producto
+            // 
+            this.codigo_producto.HeaderText = "Código de producto";
+            this.codigo_producto.Name = "codigo_producto";
+            this.codigo_producto.ReadOnly = true;
+            this.codigo_producto.Width = 125;
+            // 
+            // detalle_producto
+            // 
+            this.detalle_producto.HeaderText = "Detalle del producto";
+            this.detalle_producto.Name = "detalle_producto";
+            this.detalle_producto.ReadOnly = true;
+            this.detalle_producto.Width = 586;
+            // 
+            // cantidad
+            // 
+            this.cantidad.HeaderText = "Cantidad";
+            this.cantidad.Name = "cantidad";
+            this.cantidad.ReadOnly = true;
+            // 
+            // subtotal
+            // 
+            this.subtotal.HeaderText = "Subtotal";
+            this.subtotal.Name = "subtotal";
+            this.subtotal.ReadOnly = true;
+            // 
+            // PrecioU
+            // 
+            this.PrecioU.HeaderText = "PrecioU";
+            this.PrecioU.Name = "PrecioU";
+            this.PrecioU.Visible = false;
+            // 
+            // id_producto
+            // 
+            this.id_producto.HeaderText = "IdProducto";
+            this.id_producto.Name = "id_producto";
+            this.id_producto.Visible = false;
             // 
             // Venta
             // 
@@ -353,11 +361,12 @@ namespace Distribuidora.Forms.Venta
         private System.Windows.Forms.Label lblPrecioUnitario;
         private System.Windows.Forms.Button btnConfirmarItem;
         private System.Windows.Forms.Button btnCancelarItem;
+        private System.Windows.Forms.Button btnEliminarItem;
         private System.Windows.Forms.DataGridViewTextBoxColumn codigo_producto;
         private System.Windows.Forms.DataGridViewTextBoxColumn detalle_producto;
         private System.Windows.Forms.DataGridViewTextBoxColumn cantidad;
         private System.Windows.Forms.DataGridViewTextBoxColumn subtotal;
-        private System.Windows.Forms.Button btnEliminarItem;
         private System.Windows.Forms.DataGridViewTextBoxColumn PrecioU;
+        private System.Windows.Forms.DataGridViewTextBoxColumn id_producto;
     }
 }

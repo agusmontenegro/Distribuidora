@@ -30,6 +30,8 @@ namespace Distribuidora.Forms.Stock
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lblPtoReposicion = new System.Windows.Forms.Label();
+            this.txtPtoReposicion = new System.Windows.Forms.TextBox();
             this.lblFechaUltimaReposicion = new System.Windows.Forms.Label();
             this.txtFechaUltimaReposicion = new System.Windows.Forms.TextBox();
             this.txtCantidadReponer = new System.Windows.Forms.TextBox();
@@ -44,13 +46,12 @@ namespace Distribuidora.Forms.Stock
             this.btnCancelar = new System.Windows.Forms.Button();
             this.btnConfirmar = new System.Windows.Forms.Button();
             this.grdStock = new System.Windows.Forms.DataGridView();
-            this.btnEliminarItem = new System.Windows.Forms.Button();
-            this.txtPtoReposicion = new System.Windows.Forms.TextBox();
-            this.lblPtoReposicion = new System.Windows.Forms.Label();
             this.CodigoProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DetalleProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.StockActual = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.StockAReponer = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ProductoId = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btnEliminarItem = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdStock)).BeginInit();
             this.SuspendLayout();
@@ -75,6 +76,22 @@ namespace Distribuidora.Forms.Stock
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Datos de reposición";
+            // 
+            // lblPtoReposicion
+            // 
+            this.lblPtoReposicion.AutoSize = true;
+            this.lblPtoReposicion.Location = new System.Drawing.Point(310, 55);
+            this.lblPtoReposicion.Name = "lblPtoReposicion";
+            this.lblPtoReposicion.Size = new System.Drawing.Size(82, 13);
+            this.lblPtoReposicion.TabIndex = 11;
+            this.lblPtoReposicion.Text = "Pto. Reposición";
+            // 
+            // txtPtoReposicion
+            // 
+            this.txtPtoReposicion.Location = new System.Drawing.Point(313, 71);
+            this.txtPtoReposicion.Name = "txtPtoReposicion";
+            this.txtPtoReposicion.Size = new System.Drawing.Size(98, 20);
+            this.txtPtoReposicion.TabIndex = 10;
             // 
             // lblFechaUltimaReposicion
             // 
@@ -196,7 +213,8 @@ namespace Distribuidora.Forms.Stock
             this.CodigoProducto,
             this.DetalleProducto,
             this.StockActual,
-            this.StockAReponer});
+            this.StockAReponer,
+            this.ProductoId});
             this.grdStock.Location = new System.Drawing.Point(12, 124);
             this.grdStock.MultiSelect = false;
             this.grdStock.Name = "grdStock";
@@ -204,31 +222,6 @@ namespace Distribuidora.Forms.Stock
             this.grdStock.Size = new System.Drawing.Size(574, 436);
             this.grdStock.TabIndex = 4;
             this.grdStock.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grdStock_CellClick);
-            // 
-            // btnEliminarItem
-            // 
-            this.btnEliminarItem.Location = new System.Drawing.Point(592, 124);
-            this.btnEliminarItem.Name = "btnEliminarItem";
-            this.btnEliminarItem.Size = new System.Drawing.Size(30, 28);
-            this.btnEliminarItem.TabIndex = 5;
-            this.btnEliminarItem.UseVisualStyleBackColor = true;
-            this.btnEliminarItem.Click += new System.EventHandler(this.btnEliminarItem_Click);
-            // 
-            // txtPtoReposicion
-            // 
-            this.txtPtoReposicion.Location = new System.Drawing.Point(313, 71);
-            this.txtPtoReposicion.Name = "txtPtoReposicion";
-            this.txtPtoReposicion.Size = new System.Drawing.Size(98, 20);
-            this.txtPtoReposicion.TabIndex = 10;
-            // 
-            // lblPtoReposicion
-            // 
-            this.lblPtoReposicion.AutoSize = true;
-            this.lblPtoReposicion.Location = new System.Drawing.Point(310, 55);
-            this.lblPtoReposicion.Name = "lblPtoReposicion";
-            this.lblPtoReposicion.Size = new System.Drawing.Size(82, 13);
-            this.lblPtoReposicion.TabIndex = 11;
-            this.lblPtoReposicion.Text = "Pto. Reposición";
             // 
             // CodigoProducto
             // 
@@ -257,6 +250,21 @@ namespace Distribuidora.Forms.Stock
             this.StockAReponer.Name = "StockAReponer";
             this.StockAReponer.ReadOnly = true;
             this.StockAReponer.Width = 110;
+            // 
+            // ProductoId
+            // 
+            this.ProductoId.HeaderText = "ProductoId";
+            this.ProductoId.Name = "ProductoId";
+            this.ProductoId.Visible = false;
+            // 
+            // btnEliminarItem
+            // 
+            this.btnEliminarItem.Location = new System.Drawing.Point(592, 124);
+            this.btnEliminarItem.Name = "btnEliminarItem";
+            this.btnEliminarItem.Size = new System.Drawing.Size(30, 28);
+            this.btnEliminarItem.TabIndex = 5;
+            this.btnEliminarItem.UseVisualStyleBackColor = true;
+            this.btnEliminarItem.Click += new System.EventHandler(this.btnEliminarItem_Click);
             // 
             // Stock
             // 
@@ -306,5 +314,6 @@ namespace Distribuidora.Forms.Stock
         private System.Windows.Forms.DataGridViewTextBoxColumn DetalleProducto;
         private System.Windows.Forms.DataGridViewTextBoxColumn StockActual;
         private System.Windows.Forms.DataGridViewTextBoxColumn StockAReponer;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ProductoId;
     }
 }

@@ -14,15 +14,15 @@ namespace Distribuidora.Services
             dataBaseHelper = new DataBaseHelper();
         }
 
-        public void EmitirAlertaDeReposicion(string codigoProducto)
+        public void EmitirAlertaDeReposicion(string idProducto)
         {
-            dataBaseHelper.AgregarParametroEntrada(codigoProducto, "@producto", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroEntrada(idProducto, "@producto", SqlDbType.Int);
             _ = dataBaseHelper.ExecStoredProcedure("dbo.EmitirAlertaDeReposicion");
         }
 
-        public void QuitarAlertaDeReposicion(string codigoProducto)
+        public void QuitarAlertaDeReposicion(string idProducto)
         {
-            dataBaseHelper.AgregarParametroEntrada(codigoProducto, "@producto", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroEntrada(idProducto, "@producto", SqlDbType.Int);
             _ = dataBaseHelper.ExecStoredProcedure("dbo.QuitarAlertaDeReposicion");
         }
 

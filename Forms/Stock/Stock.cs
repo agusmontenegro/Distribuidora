@@ -8,6 +8,7 @@ namespace Distribuidora.Forms.Stock
     public partial class Stock : Form
     {
         private int celda = -1;
+        private string idProducto;
 
         private readonly Menu menu;
         private readonly FormsCommon formsCommon;
@@ -43,15 +44,13 @@ namespace Distribuidora.Forms.Stock
 
         private void txtCodigoProducto_KeyPress(object sender, KeyPressEventArgs e)
         {
-            formsCommon.OnlyNumerics(sender, e);
-
             if (e.KeyChar == (char)Keys.Return)
             {
                 string msj = string.Empty;
 
                 if (ProductoValido(ref msj))
                 {
-                    CompletarDatos(txtCodigoProducto.Text);
+                    CompletarDatos(txtCodigoProducto.Text.ToUpper().Trim());
                     txtCantidadReponer.Focus();
                 }
                 else
@@ -72,11 +71,13 @@ namespace Distribuidora.Forms.Stock
             else
             {
                 validacionService.AgregarValidacion(
-                    productoService.ExisteProducto(txtCodigoProducto.Text),
+                    productoService.ExisteProductoSegunCodigo(txtCodigoProducto.Text.ToUpper().Trim()),
                     "No existe un producto activo con el código ingresado.");
 
                 validacionService.AgregarValidacion(
-                    !comboService.EsCombo(txtCodigoProducto.Text), "No está permitido reponer stock de un combo, si de sus componentes");
+                    !comboService.EsCombo_Codigo(
+                        txtCodigoProducto.Text.ToUpper().Trim()), 
+                    "No está permitido reponer stock de un combo. Reponga stock de cada uno de sus componentes");
             }
 
             return validacionService.Validar(ref msj);
@@ -84,8 +85,9 @@ namespace Distribuidora.Forms.Stock
 
         private void CompletarDatos(string codigoProducto)
         {
-            var producto = productoService.ObtenerProducto(codigoProducto);
+            var producto = productoService.ObtenerProductosPorCodigo(codigoProducto)[0];
 
+            idProducto = producto.Id;
             txtCodigoProducto.Enabled = false;
             txtDetalleProducto.Enabled = false;
             txtCantidadActual.Enabled = false;
@@ -122,6 +124,7 @@ namespace Distribuidora.Forms.Stock
             txtFechaUltimaReposicion.Enabled = false;
             btnCancelar.Enabled = false;
             btnConfirmar.Enabled = false;
+            idProducto = string.Empty;
         }
 
         private void txtCantidadReponer_KeyPress(object sender, KeyPressEventArgs e)
@@ -145,7 +148,8 @@ namespace Distribuidora.Forms.Stock
                     txtCodigoProducto.Text,
                     txtDetalleProducto.Text,
                     txtCantidadActual.Text,
-                    txtCantidadReponer.Text);
+                    txtCantidadReponer.Text,
+                    idProducto);
 
                 LimpiarFormulario();
                 txtCodigoProducto.Focus();
@@ -223,14 +227,14 @@ namespace Distribuidora.Forms.Stock
             {
                 for (int i = 0;i < grdStock.Rows.Count;++i)
                 {
-                    var codigoProducto = grdStock.Rows[i].Cells[0].Value.ToString();
+                    var idProducto = grdStock.Rows[i].Cells[4].Value.ToString();
                     var cantidadAReponer = grdStock.Rows[i].Cells[3].Value.ToString();
 
-                    stockService.ReponerStock(reposicionCodigo, codigoProducto, cantidadAReponer);
+                    stockService.ReponerStock(reposicionCodigo, idProducto, cantidadAReponer);
 
-                    if (!productoService.HayQueReponer(codigoProducto))
+                    if (!stockService.HayQueReponer(idProducto))
                     {
-                        alertaService.QuitarAlertaDeReposicion(codigoProducto);
+                        alertaService.QuitarAlertaDeReposicion(idProducto);
                         menu.CargarCantidadDeAlertas();
                     }
                 }

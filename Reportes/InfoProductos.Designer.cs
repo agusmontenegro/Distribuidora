@@ -16,6 +16,7 @@ namespace Distribuidora.Reportes
             Telerik.Reporting.TableGroup tableGroup3 = new Telerik.Reporting.TableGroup();
             Telerik.Reporting.TableGroup tableGroup4 = new Telerik.Reporting.TableGroup();
             Telerik.Reporting.TableGroup tableGroup5 = new Telerik.Reporting.TableGroup();
+            Telerik.Reporting.TableGroup tableGroup6 = new Telerik.Reporting.TableGroup();
             Telerik.Reporting.Drawing.StyleRule styleRule1 = new Telerik.Reporting.Drawing.StyleRule();
             this.textBox1 = new Telerik.Reporting.TextBox();
             this.textBox2 = new Telerik.Reporting.TextBox();
@@ -32,6 +33,8 @@ namespace Distribuidora.Reportes
             this.textBox5 = new Telerik.Reporting.TextBox();
             this.textBox10 = new Telerik.Reporting.TextBox();
             this.textBox7 = new Telerik.Reporting.TextBox();
+            this.textBox8 = new Telerik.Reporting.TextBox();
+            this.textBox9 = new Telerik.Reporting.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this)).BeginInit();
             // 
             // textBox1
@@ -94,7 +97,7 @@ namespace Distribuidora.Reportes
             // 
             // txtFecha
             // 
-            this.txtFecha.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Cm(11.6D), Telerik.Reporting.Drawing.Unit.Cm(1.2D));
+            this.txtFecha.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Cm(16.1D), Telerik.Reporting.Drawing.Unit.Cm(1.2D));
             this.txtFecha.Name = "txtFecha";
             this.txtFecha.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Cm(1.2D), Telerik.Reporting.Drawing.Unit.Cm(0.556D));
             this.txtFecha.Style.Font.Name = "Malgun Gothic";
@@ -105,7 +108,7 @@ namespace Distribuidora.Reportes
             // 
             this.txtTitulo.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Cm(5.7D), Telerik.Reporting.Drawing.Unit.Cm(0D));
             this.txtTitulo.Name = "txtTitulo";
-            this.txtTitulo.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Cm(10.8D), Telerik.Reporting.Drawing.Unit.Cm(1D));
+            this.txtTitulo.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Cm(14.149D), Telerik.Reporting.Drawing.Unit.Cm(1D));
             this.txtTitulo.Style.BorderColor.Bottom = System.Drawing.Color.Black;
             this.txtTitulo.Style.BorderColor.Default = System.Drawing.Color.Black;
             this.txtTitulo.Style.BorderStyle.Bottom = Telerik.Reporting.Drawing.BorderType.Ridge;
@@ -130,9 +133,9 @@ namespace Distribuidora.Reportes
             // 
             // txtFechaParametro
             // 
-            this.txtFechaParametro.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Cm(12.8D), Telerik.Reporting.Drawing.Unit.Cm(1.2D));
+            this.txtFechaParametro.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Cm(17.3D), Telerik.Reporting.Drawing.Unit.Cm(1.2D));
             this.txtFechaParametro.Name = "txtFechaParametro";
-            this.txtFechaParametro.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Cm(3.7D), Telerik.Reporting.Drawing.Unit.Cm(0.556D));
+            this.txtFechaParametro.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Cm(2.549D), Telerik.Reporting.Drawing.Unit.Cm(0.556D));
             this.txtFechaParametro.Style.Font.Name = "Malgun Gothic";
             this.txtFechaParametro.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(10D);
             this.txtFechaParametro.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Right;
@@ -151,11 +154,13 @@ namespace Distribuidora.Reportes
             this.tblProductos.Body.Columns.Add(new Telerik.Reporting.TableBodyColumn(Telerik.Reporting.Drawing.Unit.Cm(8.389D)));
             this.tblProductos.Body.Columns.Add(new Telerik.Reporting.TableBodyColumn(Telerik.Reporting.Drawing.Unit.Cm(2.547D)));
             this.tblProductos.Body.Columns.Add(new Telerik.Reporting.TableBodyColumn(Telerik.Reporting.Drawing.Unit.Cm(3.413D)));
+            this.tblProductos.Body.Columns.Add(new Telerik.Reporting.TableBodyColumn(Telerik.Reporting.Drawing.Unit.Cm(3.349D)));
             this.tblProductos.Body.Rows.Add(new Telerik.Reporting.TableBodyRow(Telerik.Reporting.Drawing.Unit.Cm(0.639D)));
             this.tblProductos.Body.SetCellContent(0, 1, this.textBox3);
             this.tblProductos.Body.SetCellContent(0, 2, this.textBox5);
             this.tblProductos.Body.SetCellContent(0, 0, this.textBox10);
             this.tblProductos.Body.SetCellContent(0, 3, this.textBox7);
+            this.tblProductos.Body.SetCellContent(0, 4, this.textBox9);
             tableGroup1.Name = "group1";
             tableGroup1.ReportItem = this.textBox1;
             tableGroup2.Name = "tableGroup";
@@ -164,10 +169,13 @@ namespace Distribuidora.Reportes
             tableGroup3.ReportItem = this.textBox4;
             tableGroup4.Name = "group";
             tableGroup4.ReportItem = this.textBox6;
+            tableGroup5.Name = "group2";
+            tableGroup5.ReportItem = this.textBox8;
             this.tblProductos.ColumnGroups.Add(tableGroup1);
             this.tblProductos.ColumnGroups.Add(tableGroup2);
             this.tblProductos.ColumnGroups.Add(tableGroup3);
             this.tblProductos.ColumnGroups.Add(tableGroup4);
+            this.tblProductos.ColumnGroups.Add(tableGroup5);
             this.tblProductos.Items.AddRange(new Telerik.Reporting.ReportItemBase[] {
             this.textBox10,
             this.textBox3,
@@ -176,13 +184,15 @@ namespace Distribuidora.Reportes
             this.textBox1,
             this.textBox2,
             this.textBox4,
-            this.textBox6});
+            this.textBox6,
+            this.textBox8,
+            this.textBox9});
             this.tblProductos.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Cm(0.5D), Telerik.Reporting.Drawing.Unit.Cm(0.3D));
             this.tblProductos.Name = "tblProductos";
-            tableGroup5.Groupings.Add(new Telerik.Reporting.Grouping(null));
-            tableGroup5.Name = "detailTableGroup";
-            this.tblProductos.RowGroups.Add(tableGroup5);
-            this.tblProductos.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Cm(16D), Telerik.Reporting.Drawing.Unit.Cm(1.5D));
+            tableGroup6.Groupings.Add(new Telerik.Reporting.Grouping(null));
+            tableGroup6.Name = "detailTableGroup";
+            this.tblProductos.RowGroups.Add(tableGroup6);
+            this.tblProductos.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Cm(19.349D), Telerik.Reporting.Drawing.Unit.Cm(1.5D));
             this.tblProductos.Style.BorderStyle.Default = Telerik.Reporting.Drawing.BorderType.None;
             // 
             // textBox3
@@ -214,6 +224,26 @@ namespace Distribuidora.Reportes
             this.textBox7.StyleName = "";
             this.textBox7.Value = "=Fields.Stock.CantidadMinima";
             // 
+            // textBox8
+            // 
+            this.textBox8.Name = "textBox8";
+            this.textBox8.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Cm(3.349D), Telerik.Reporting.Drawing.Unit.Cm(0.861D));
+            this.textBox8.Style.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.textBox8.Style.BorderStyle.Bottom = Telerik.Reporting.Drawing.BorderType.Solid;
+            this.textBox8.Style.BorderStyle.Left = Telerik.Reporting.Drawing.BorderType.Solid;
+            this.textBox8.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Center;
+            this.textBox8.Style.VerticalAlign = Telerik.Reporting.Drawing.VerticalAlign.Middle;
+            this.textBox8.StyleName = "";
+            this.textBox8.Value = "STOCK ACTUAL";
+            // 
+            // textBox9
+            // 
+            this.textBox9.Name = "textBox9";
+            this.textBox9.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Cm(3.349D), Telerik.Reporting.Drawing.Unit.Cm(0.639D));
+            this.textBox9.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Center;
+            this.textBox9.StyleName = "";
+            this.textBox9.Value = "=Fields.Stock.CantidadActual";
+            // 
             // InfoProductos
             // 
             this.Items.AddRange(new Telerik.Reporting.ReportItemBase[] {
@@ -229,7 +259,7 @@ namespace Distribuidora.Reportes
             styleRule1.Style.Padding.Right = Telerik.Reporting.Drawing.Unit.Point(2D);
             this.StyleSheet.AddRange(new Telerik.Reporting.Drawing.StyleRule[] {
             styleRule1});
-            this.Width = Telerik.Reporting.Drawing.Unit.Cm(17D);
+            this.Width = Telerik.Reporting.Drawing.Unit.Cm(20.4D);
             ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
 
         }
@@ -250,5 +280,7 @@ namespace Distribuidora.Reportes
         private Telerik.Reporting.TextBox textBox7;
         private Telerik.Reporting.TextBox textBox6;
         public Telerik.Reporting.TextBox txtFechaParametro;
+        private Telerik.Reporting.TextBox textBox9;
+        private Telerik.Reporting.TextBox textBox8;
     }
 }

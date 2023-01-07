@@ -14,17 +14,25 @@ namespace Distribuidora.Services
             dataBaseHelper = new DataBaseHelper();
         }
 
-        public bool EsCombo(string codigoProducto)
+        public bool EsCombo_Id(string idProducto)
         {
-            var query = "select comb_codigo from dbo.Combo where comb_codigo = " + codigoProducto;
+            var query = "select * from dbo.Combo_View where Id = " + idProducto;
             var result = dataBaseHelper.ExecQuery(query);
 
             return result.Rows.Count > 0;
         }
 
-        public Combo ObtenerCombo(string codigoProducto)
+        public bool EsCombo_Codigo(string codigoProducto)
         {
-            string query = "select * from dbo.Combo_View where Producto = " + codigoProducto;
+            var query = "select * from dbo.Combo_View where Codigo = '" + codigoProducto + "'";
+            var result = dataBaseHelper.ExecQuery(query);
+
+            return result.Rows.Count > 0;
+        }
+
+        public Combo ObtenerCombo(string idProducto)
+        {
+            string query = "select * from dbo.Combo_View where Id = " + idProducto;
             var result = dataBaseHelper.ExecQuery(query);
 
             var combo = MapearCombo(result.Rows);
@@ -44,7 +52,8 @@ namespace Distribuidora.Services
                 {
                     combo.Producto = new Producto
                     {
-                        Codigo = row["Producto"].ToString(),
+                        Id = row["Id"].ToString(),
+                        Codigo = row["Codigo"].ToString(),
                         Detalle = row["Detalle"].ToString(),
                         PrecioUnitario = decimal.Parse(row["Precio"].ToString())
                     };
@@ -55,8 +64,9 @@ namespace Distribuidora.Services
                 {
                     Producto = new Producto
                     {
+                        Id = row["IdComponente"].ToString(),
+                        Detalle = row["DetalleComponente"].ToString(),
                         Codigo = row["CodigoComponente"].ToString(),
-                        Detalle = row["DetalleComponente"].ToString()
                     },
                     Cantidad = row["CantidadComponente"].ToString()
                 };
@@ -67,19 +77,27 @@ namespace Distribuidora.Services
             return combo;
         }
 
-        public void EliminarComponentes(string codigoProductoEditar)
+        public void EliminarComponentes(string idProduct)
         {
-            var query = "delete from dbo.Combo where comb_codigo = " + codigoProductoEditar;
+            var query = "delete from dbo.Combo where comb_id = " + idProduct;
             dataBaseHelper.ExecScript(query);
         }
 
-        public void GuardarComponente(int codigoProducto, string codigoComponente, string cantidad)
+        public void GuardarComponente(int idProducto, string idComponente, string cantidad)
         {
-            dataBaseHelper.AgregarParametroEntrada(codigoProducto.ToString(), "@codigoProducto", SqlDbType.Int);
-            dataBaseHelper.AgregarParametroEntrada(codigoComponente, "@codigoComponente", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroEntrada(idProducto.ToString(), "@idProducto", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroEntrada(idComponente, "@idComponente", SqlDbType.Int);
             dataBaseHelper.AgregarParametroEntrada(cantidad, "@cantidad", SqlDbType.Int);
 
             _ = dataBaseHelper.ExecStoredProcedure("dbo.InsertarComponente");
+        }
+
+        public string InformarStockFaltante(string idProducto, string cantidad)
+        {
+            var query = "SELECT dbo.InformarStockFaltante(" + idProducto + "," + cantidad + ");";
+            var result = dataBaseHelper.ExecFunction(query);
+
+            return result.ToString();
         }
     }
 }

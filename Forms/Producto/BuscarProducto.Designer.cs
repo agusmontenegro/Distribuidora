@@ -30,6 +30,7 @@ namespace Distribuidora.Forms.Producto
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkIncludeNoActivo = new System.Windows.Forms.CheckBox();
             this.btnLimpiar = new System.Windows.Forms.Button();
             this.btnBuscar = new System.Windows.Forms.Button();
             this.cboRubros = new System.Windows.Forms.ComboBox();
@@ -39,22 +40,24 @@ namespace Distribuidora.Forms.Producto
             this.txtCodigoProducto = new System.Windows.Forms.TextBox();
             this.lblCodigoProducto = new System.Windows.Forms.Label();
             this.grdResult = new System.Windows.Forms.DataGridView();
+            this.btnNuevoProducto = new System.Windows.Forms.Button();
+            this.btnEliminarProducto = new System.Windows.Forms.Button();
+            this.btnEditarProducto = new System.Windows.Forms.Button();
+            this.btnInfoProductos = new System.Windows.Forms.Button();
             this.CodigoProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DetalleProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.PrecioUnitario = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Rubro = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.StockActual = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.FechaUltimaReposicion = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.btnNuevoProducto = new System.Windows.Forms.Button();
-            this.btnEliminarProducto = new System.Windows.Forms.Button();
-            this.btnEditarProducto = new System.Windows.Forms.Button();
-            this.btnInfoProductos = new System.Windows.Forms.Button();
+            this.IdProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdResult)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.chkIncludeNoActivo);
             this.groupBox1.Controls.Add(this.btnLimpiar);
             this.groupBox1.Controls.Add(this.btnBuscar);
             this.groupBox1.Controls.Add(this.cboRubros);
@@ -69,6 +72,16 @@ namespace Distribuidora.Forms.Producto
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Criterio de búsqueda";
+            // 
+            // chkIncludeNoActivo
+            // 
+            this.chkIncludeNoActivo.AutoSize = true;
+            this.chkIncludeNoActivo.Location = new System.Drawing.Point(539, 73);
+            this.chkIncludeNoActivo.Name = "chkIncludeNoActivo";
+            this.chkIncludeNoActivo.Size = new System.Drawing.Size(156, 17);
+            this.chkIncludeNoActivo.TabIndex = 8;
+            this.chkIncludeNoActivo.Text = "Incluir productos no activos";
+            this.chkIncludeNoActivo.UseVisualStyleBackColor = true;
             // 
             // btnLimpiar
             // 
@@ -96,7 +109,7 @@ namespace Distribuidora.Forms.Producto
             this.cboRubros.FormattingEnabled = true;
             this.cboRubros.Location = new System.Drawing.Point(9, 71);
             this.cboRubros.Name = "cboRubros";
-            this.cboRubros.Size = new System.Drawing.Size(686, 21);
+            this.cboRubros.Size = new System.Drawing.Size(524, 21);
             this.cboRubros.TabIndex = 5;
             // 
             // lblRubro
@@ -152,7 +165,8 @@ namespace Distribuidora.Forms.Producto
             this.PrecioUnitario,
             this.Rubro,
             this.StockActual,
-            this.FechaUltimaReposicion});
+            this.FechaUltimaReposicion,
+            this.IdProducto});
             this.grdResult.Location = new System.Drawing.Point(8, 126);
             this.grdResult.MultiSelect = false;
             this.grdResult.Name = "grdResult";
@@ -160,42 +174,6 @@ namespace Distribuidora.Forms.Producto
             this.grdResult.Size = new System.Drawing.Size(781, 334);
             this.grdResult.TabIndex = 1;
             this.grdResult.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grdResult_CellClick);
-            // 
-            // CodigoProducto
-            // 
-            this.CodigoProducto.HeaderText = "Código producto";
-            this.CodigoProducto.Name = "CodigoProducto";
-            this.CodigoProducto.Width = 80;
-            // 
-            // DetalleProducto
-            // 
-            this.DetalleProducto.HeaderText = "Detalle producto";
-            this.DetalleProducto.Name = "DetalleProducto";
-            this.DetalleProducto.Width = 250;
-            // 
-            // PrecioUnitario
-            // 
-            this.PrecioUnitario.HeaderText = "($) P/Unidad";
-            this.PrecioUnitario.Name = "PrecioUnitario";
-            this.PrecioUnitario.Width = 95;
-            // 
-            // Rubro
-            // 
-            this.Rubro.HeaderText = "Rubro";
-            this.Rubro.Name = "Rubro";
-            this.Rubro.Width = 152;
-            // 
-            // StockActual
-            // 
-            this.StockActual.HeaderText = "S. Actual";
-            this.StockActual.Name = "StockActual";
-            this.StockActual.Width = 75;
-            // 
-            // FechaUltimaReposicion
-            // 
-            this.FechaUltimaReposicion.HeaderText = "F. última reposición";
-            this.FechaUltimaReposicion.Name = "FechaUltimaReposicion";
-            this.FechaUltimaReposicion.Width = 125;
             // 
             // btnNuevoProducto
             // 
@@ -237,6 +215,48 @@ namespace Distribuidora.Forms.Producto
             this.btnInfoProductos.UseVisualStyleBackColor = true;
             this.btnInfoProductos.Click += new System.EventHandler(this.btnInfoProductos_Click);
             // 
+            // CodigoProducto
+            // 
+            this.CodigoProducto.HeaderText = "Código producto";
+            this.CodigoProducto.Name = "CodigoProducto";
+            this.CodigoProducto.Width = 80;
+            // 
+            // DetalleProducto
+            // 
+            this.DetalleProducto.HeaderText = "Detalle producto";
+            this.DetalleProducto.Name = "DetalleProducto";
+            this.DetalleProducto.Width = 250;
+            // 
+            // PrecioUnitario
+            // 
+            this.PrecioUnitario.HeaderText = "($) P/Unidad";
+            this.PrecioUnitario.Name = "PrecioUnitario";
+            this.PrecioUnitario.Width = 95;
+            // 
+            // Rubro
+            // 
+            this.Rubro.HeaderText = "Rubro";
+            this.Rubro.Name = "Rubro";
+            this.Rubro.Width = 152;
+            // 
+            // StockActual
+            // 
+            this.StockActual.HeaderText = "S. Actual";
+            this.StockActual.Name = "StockActual";
+            this.StockActual.Width = 75;
+            // 
+            // FechaUltimaReposicion
+            // 
+            this.FechaUltimaReposicion.HeaderText = "F. última reposición";
+            this.FechaUltimaReposicion.Name = "FechaUltimaReposicion";
+            this.FechaUltimaReposicion.Width = 125;
+            // 
+            // IdProducto
+            // 
+            this.IdProducto.HeaderText = "IdProducto";
+            this.IdProducto.Name = "IdProducto";
+            this.IdProducto.Visible = false;
+            // 
             // BuscarProducto
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -275,13 +295,15 @@ namespace Distribuidora.Forms.Producto
         private System.Windows.Forms.Label lblDetalleProducto;
         private System.Windows.Forms.TextBox txtCodigoProducto;
         private System.Windows.Forms.Label lblCodigoProducto;
+        private System.Windows.Forms.Button btnEditarProducto;
+        private System.Windows.Forms.Button btnInfoProductos;
+        private System.Windows.Forms.CheckBox chkIncludeNoActivo;
         private System.Windows.Forms.DataGridViewTextBoxColumn CodigoProducto;
         private System.Windows.Forms.DataGridViewTextBoxColumn DetalleProducto;
         private System.Windows.Forms.DataGridViewTextBoxColumn PrecioUnitario;
         private System.Windows.Forms.DataGridViewTextBoxColumn Rubro;
         private System.Windows.Forms.DataGridViewTextBoxColumn StockActual;
         private System.Windows.Forms.DataGridViewTextBoxColumn FechaUltimaReposicion;
-        private System.Windows.Forms.Button btnEditarProducto;
-        private System.Windows.Forms.Button btnInfoProductos;
+        private System.Windows.Forms.DataGridViewTextBoxColumn IdProducto;
     }
 }

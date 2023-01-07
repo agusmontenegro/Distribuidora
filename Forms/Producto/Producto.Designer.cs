@@ -30,6 +30,8 @@ namespace Distribuidora.Forms.Producto
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lblProductCode = new System.Windows.Forms.Label();
+            this.txtCodigoProducto = new System.Windows.Forms.TextBox();
             this.cboRubros = new System.Windows.Forms.ComboBox();
             this.lblRubro = new System.Windows.Forms.Label();
             this.lblStockReposicion = new System.Windows.Forms.Label();
@@ -40,19 +42,21 @@ namespace Distribuidora.Forms.Producto
             this.lblDetalleProducto = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnCancelar = new System.Windows.Forms.Button();
+            this.btnEliminar = new System.Windows.Forms.Button();
             this.lblComponentes = new System.Windows.Forms.Label();
             this.txtDetalleProductoComposicion = new System.Windows.Forms.TextBox();
             this.lblDetalleProductoComposicion = new System.Windows.Forms.Label();
             this.grdComponentes = new System.Windows.Forms.DataGridView();
-            this.CodigoProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DetalleProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Cantidad = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.lblCantidadComposicion = new System.Windows.Forms.Label();
             this.txtCantidadComposicion = new System.Windows.Forms.TextBox();
             this.btnAgregarComponente = new System.Windows.Forms.Button();
             this.lblCodigoProductoComposicion = new System.Windows.Forms.Label();
             this.txtCodigoProductoComposicion = new System.Windows.Forms.TextBox();
             this.btnGuardar = new System.Windows.Forms.Button();
+            this.CodigoProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DetalleProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Cantidad = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.IdProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdComponentes)).BeginInit();
@@ -60,6 +64,8 @@ namespace Distribuidora.Forms.Producto
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.lblProductCode);
+            this.groupBox1.Controls.Add(this.txtCodigoProducto);
             this.groupBox1.Controls.Add(this.cboRubros);
             this.groupBox1.Controls.Add(this.lblRubro);
             this.groupBox1.Controls.Add(this.lblStockReposicion);
@@ -75,6 +81,22 @@ namespace Distribuidora.Forms.Producto
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Datos del producto";
             // 
+            // lblProductCode
+            // 
+            this.lblProductCode.AutoSize = true;
+            this.lblProductCode.Location = new System.Drawing.Point(6, 16);
+            this.lblProductCode.Name = "lblProductCode";
+            this.lblProductCode.Size = new System.Drawing.Size(100, 13);
+            this.lblProductCode.TabIndex = 9;
+            this.lblProductCode.Text = "Código de producto";
+            // 
+            // txtCodigoProducto
+            // 
+            this.txtCodigoProducto.Location = new System.Drawing.Point(9, 32);
+            this.txtCodigoProducto.Name = "txtCodigoProducto";
+            this.txtCodigoProducto.Size = new System.Drawing.Size(97, 20);
+            this.txtCodigoProducto.TabIndex = 1;
+            // 
             // cboRubros
             // 
             this.cboRubros.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -82,7 +104,7 @@ namespace Distribuidora.Forms.Producto
             this.cboRubros.Location = new System.Drawing.Point(9, 76);
             this.cboRubros.Name = "cboRubros";
             this.cboRubros.Size = new System.Drawing.Size(397, 21);
-            this.cboRubros.TabIndex = 7;
+            this.cboRubros.TabIndex = 4;
             // 
             // lblRubro
             // 
@@ -107,7 +129,7 @@ namespace Distribuidora.Forms.Producto
             this.txtStockMinimo.Location = new System.Drawing.Point(412, 76);
             this.txtStockMinimo.Name = "txtStockMinimo";
             this.txtStockMinimo.Size = new System.Drawing.Size(101, 20);
-            this.txtStockMinimo.TabIndex = 4;
+            this.txtStockMinimo.TabIndex = 5;
             this.txtStockMinimo.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtStockMinimo_KeyPress);
             // 
             // txtPrecioUnitario
@@ -129,15 +151,15 @@ namespace Distribuidora.Forms.Producto
             // 
             // txtDetalleProducto
             // 
-            this.txtDetalleProducto.Location = new System.Drawing.Point(9, 32);
+            this.txtDetalleProducto.Location = new System.Drawing.Point(112, 32);
             this.txtDetalleProducto.Name = "txtDetalleProducto";
-            this.txtDetalleProducto.Size = new System.Drawing.Size(397, 20);
-            this.txtDetalleProducto.TabIndex = 1;
+            this.txtDetalleProducto.Size = new System.Drawing.Size(294, 20);
+            this.txtDetalleProducto.TabIndex = 2;
             // 
             // lblDetalleProducto
             // 
             this.lblDetalleProducto.AutoSize = true;
-            this.lblDetalleProducto.Location = new System.Drawing.Point(6, 16);
+            this.lblDetalleProducto.Location = new System.Drawing.Point(109, 16);
             this.lblDetalleProducto.Name = "lblDetalleProducto";
             this.lblDetalleProducto.Size = new System.Drawing.Size(102, 13);
             this.lblDetalleProducto.TabIndex = 0;
@@ -146,6 +168,7 @@ namespace Distribuidora.Forms.Producto
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.btnCancelar);
+            this.groupBox2.Controls.Add(this.btnEliminar);
             this.groupBox2.Controls.Add(this.lblComponentes);
             this.groupBox2.Controls.Add(this.txtDetalleProductoComposicion);
             this.groupBox2.Controls.Add(this.lblDetalleProductoComposicion);
@@ -164,13 +187,23 @@ namespace Distribuidora.Forms.Producto
             // 
             // btnCancelar
             // 
-            this.btnCancelar.Location = new System.Drawing.Point(488, 79);
+            this.btnCancelar.Location = new System.Drawing.Point(412, 53);
             this.btnCancelar.Name = "btnCancelar";
-            this.btnCancelar.Size = new System.Drawing.Size(24, 22);
-            this.btnCancelar.TabIndex = 11;
-            this.btnCancelar.Text = "X";
+            this.btnCancelar.Size = new System.Drawing.Size(100, 20);
+            this.btnCancelar.TabIndex = 12;
+            this.btnCancelar.Text = "Cancelar";
             this.btnCancelar.UseVisualStyleBackColor = true;
             this.btnCancelar.Click += new System.EventHandler(this.btnCancelar_Click);
+            // 
+            // btnEliminar
+            // 
+            this.btnEliminar.Location = new System.Drawing.Point(488, 79);
+            this.btnEliminar.Name = "btnEliminar";
+            this.btnEliminar.Size = new System.Drawing.Size(24, 22);
+            this.btnEliminar.TabIndex = 11;
+            this.btnEliminar.Text = "X";
+            this.btnEliminar.UseVisualStyleBackColor = true;
+            this.btnEliminar.Click += new System.EventHandler(this.btnEliminar_Click);
             // 
             // lblComponentes
             // 
@@ -204,7 +237,8 @@ namespace Distribuidora.Forms.Producto
             this.grdComponentes.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.CodigoProducto,
             this.DetalleProducto,
-            this.Cantidad});
+            this.Cantidad,
+            this.IdProducto});
             this.grdComponentes.Location = new System.Drawing.Point(9, 79);
             this.grdComponentes.MultiSelect = false;
             this.grdComponentes.Name = "grdComponentes";
@@ -212,25 +246,6 @@ namespace Distribuidora.Forms.Producto
             this.grdComponentes.Size = new System.Drawing.Size(472, 190);
             this.grdComponentes.TabIndex = 7;
             this.grdComponentes.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grdComponentes_CellClick);
-            // 
-            // CodigoProducto
-            // 
-            this.CodigoProducto.HeaderText = "Cod. producto";
-            this.CodigoProducto.Name = "CodigoProducto";
-            this.CodigoProducto.ReadOnly = true;
-            // 
-            // DetalleProducto
-            // 
-            this.DetalleProducto.HeaderText = "Detalle de producto";
-            this.DetalleProducto.Name = "DetalleProducto";
-            this.DetalleProducto.ReadOnly = true;
-            this.DetalleProducto.Width = 268;
-            // 
-            // Cantidad
-            // 
-            this.Cantidad.HeaderText = "Cantidad";
-            this.Cantidad.Name = "Cantidad";
-            this.Cantidad.ReadOnly = true;
             // 
             // lblCantidadComposicion
             // 
@@ -286,6 +301,31 @@ namespace Distribuidora.Forms.Producto
             this.btnGuardar.UseVisualStyleBackColor = true;
             this.btnGuardar.Click += new System.EventHandler(this.btnGuardar_Click);
             // 
+            // CodigoProducto
+            // 
+            this.CodigoProducto.HeaderText = "Cod. producto";
+            this.CodigoProducto.Name = "CodigoProducto";
+            this.CodigoProducto.ReadOnly = true;
+            // 
+            // DetalleProducto
+            // 
+            this.DetalleProducto.HeaderText = "Detalle de producto";
+            this.DetalleProducto.Name = "DetalleProducto";
+            this.DetalleProducto.ReadOnly = true;
+            this.DetalleProducto.Width = 268;
+            // 
+            // Cantidad
+            // 
+            this.Cantidad.HeaderText = "Cantidad";
+            this.Cantidad.Name = "Cantidad";
+            this.Cantidad.ReadOnly = true;
+            // 
+            // IdProducto
+            // 
+            this.IdProducto.HeaderText = "IdProducto";
+            this.IdProducto.Name = "IdProducto";
+            this.IdProducto.Visible = false;
+            // 
             // Producto
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -331,9 +371,13 @@ namespace Distribuidora.Forms.Producto
         private System.Windows.Forms.TextBox txtDetalleProductoComposicion;
         private System.Windows.Forms.Label lblDetalleProductoComposicion;
         private System.Windows.Forms.Label lblComponentes;
+        private System.Windows.Forms.Button btnEliminar;
+        private System.Windows.Forms.Label lblProductCode;
+        private System.Windows.Forms.TextBox txtCodigoProducto;
         private System.Windows.Forms.Button btnCancelar;
         private System.Windows.Forms.DataGridViewTextBoxColumn CodigoProducto;
         private System.Windows.Forms.DataGridViewTextBoxColumn DetalleProducto;
         private System.Windows.Forms.DataGridViewTextBoxColumn Cantidad;
+        private System.Windows.Forms.DataGridViewTextBoxColumn IdProducto;
     }
 }

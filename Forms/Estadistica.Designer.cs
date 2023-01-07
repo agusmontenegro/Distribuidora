@@ -30,6 +30,7 @@ namespace Distribuidora.Forms
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkIncludeNoActivo = new System.Windows.Forms.CheckBox();
             this.lblRubro = new System.Windows.Forms.Label();
             this.cboRubros = new System.Windows.Forms.ComboBox();
             this.cboMeses = new System.Windows.Forms.ComboBox();
@@ -51,6 +52,7 @@ namespace Distribuidora.Forms
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.chkIncludeNoActivo);
             this.groupBox1.Controls.Add(this.lblRubro);
             this.groupBox1.Controls.Add(this.cboRubros);
             this.groupBox1.Controls.Add(this.cboMeses);
@@ -64,10 +66,20 @@ namespace Distribuidora.Forms
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Criterio de estadística";
             // 
+            // chkIncludeNoActivo
+            // 
+            this.chkIncludeNoActivo.AutoSize = true;
+            this.chkIncludeNoActivo.Location = new System.Drawing.Point(634, 34);
+            this.chkIncludeNoActivo.Name = "chkIncludeNoActivo";
+            this.chkIncludeNoActivo.Size = new System.Drawing.Size(156, 17);
+            this.chkIncludeNoActivo.TabIndex = 6;
+            this.chkIncludeNoActivo.Text = "Incluir productos no activos";
+            this.chkIncludeNoActivo.UseVisualStyleBackColor = true;
+            // 
             // lblRubro
             // 
             this.lblRubro.AutoSize = true;
-            this.lblRubro.Location = new System.Drawing.Point(378, 16);
+            this.lblRubro.Location = new System.Drawing.Point(223, 16);
             this.lblRubro.Name = "lblRubro";
             this.lblRubro.Size = new System.Drawing.Size(36, 13);
             this.lblRubro.TabIndex = 3;
@@ -77,18 +89,18 @@ namespace Distribuidora.Forms
             // 
             this.cboRubros.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboRubros.FormattingEnabled = true;
-            this.cboRubros.Location = new System.Drawing.Point(381, 32);
+            this.cboRubros.Location = new System.Drawing.Point(226, 32);
             this.cboRubros.Name = "cboRubros";
-            this.cboRubros.Size = new System.Drawing.Size(409, 21);
+            this.cboRubros.Size = new System.Drawing.Size(402, 21);
             this.cboRubros.TabIndex = 5;
             // 
             // cboMeses
             // 
             this.cboMeses.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboMeses.FormattingEnabled = true;
-            this.cboMeses.Location = new System.Drawing.Point(195, 32);
+            this.cboMeses.Location = new System.Drawing.Point(114, 32);
             this.cboMeses.Name = "cboMeses";
-            this.cboMeses.Size = new System.Drawing.Size(180, 21);
+            this.cboMeses.Size = new System.Drawing.Size(106, 21);
             this.cboMeses.TabIndex = 4;
             // 
             // cboAños
@@ -97,13 +109,13 @@ namespace Distribuidora.Forms
             this.cboAños.FormattingEnabled = true;
             this.cboAños.Location = new System.Drawing.Point(9, 32);
             this.cboAños.Name = "cboAños";
-            this.cboAños.Size = new System.Drawing.Size(180, 21);
+            this.cboAños.Size = new System.Drawing.Size(99, 21);
             this.cboAños.TabIndex = 3;
             // 
             // lblMes
             // 
             this.lblMes.AutoSize = true;
-            this.lblMes.Location = new System.Drawing.Point(192, 16);
+            this.lblMes.Location = new System.Drawing.Point(114, 16);
             this.lblMes.Name = "lblMes";
             this.lblMes.Size = new System.Drawing.Size(27, 13);
             this.lblMes.TabIndex = 2;
@@ -238,5 +250,6 @@ namespace Distribuidora.Forms
         private System.Windows.Forms.DataGridViewTextBoxColumn PrecioUnitario;
         private System.Windows.Forms.DataGridViewTextBoxColumn StockActual;
         private System.Windows.Forms.DataGridViewTextBoxColumn CantidadVendida;
+        private System.Windows.Forms.CheckBox chkIncludeNoActivo;
     }
 }

@@ -1,5 +1,4 @@
-﻿using Distribuidora.Commons;
-using Distribuidora.DTOs;
+﻿using Distribuidora.DTOs;
 using Distribuidora.Helpers;
 using Distribuidora.Services;
 using System;
@@ -14,14 +13,12 @@ namespace Distribuidora.Forms
     {
         private readonly RubroService rubroService;
         private readonly DataBaseHelper dataBaseHelper;
-        private readonly FormsCommon formsCommon;
 
         public Estadistica()
         {
             InitializeComponent();
             rubroService = new RubroService();
             dataBaseHelper = new DataBaseHelper();
-            formsCommon = new FormsCommon();
         }
 
         private void Estadistica_Load(object sender, EventArgs e)
@@ -45,6 +42,7 @@ namespace Distribuidora.Forms
             cboRubros.SelectedIndex = -1;
             cboMeses.SelectedIndex = -1;
             cboAños.SelectedIndex = -1;
+            chkIncludeNoActivo.Checked = false;
             grdEstadisticas.Rows.Clear();
         }
 
@@ -56,47 +54,41 @@ namespace Distribuidora.Forms
                 "            			   s.stoc_cantidad_actual," +
                 "                          sum(i.item_cantidad)" +
                 "           from Producto p" +
-                "           join Stock s on p.prod_codigo = s.stoc_producto" +
-                "           join Item_Venta i on i.item_producto = p.prod_codigo" +
-                "           join Venta v on i.item_venta = v.vent_codigo";
+                "           join Stock s on p.prod_id = s.stoc_producto" +
+                "           join Item_Venta i on i.item_producto = p.prod_id" +
+                "           join Venta v on i.item_venta = v.vent_codigo ";
+
+            if (!chkIncludeNoActivo.Checked)
+                query += " where p.prod_activo = 1";
 
             if (cboAños.SelectedIndex != -1)
-            {
-                query += " where year(v.vent_fecha) = " + cboAños.SelectedItem.ToString();
-            }
+                if (query.Contains("where"))
+                    query += " and year(v.vent_fecha) = " + cboAños.SelectedItem.ToString();
+                else
+                    query += " where year(v.vent_fecha) = " + cboAños.SelectedItem.ToString();
 
             if (cboMeses.SelectedIndex != -1)
-            {
                 if (query.Contains("where"))
                     query += " and MONTH(v.vent_fecha) = " + (cboMeses.SelectedIndex + 1).ToString();
                 else
                     query += " where MONTH(v.vent_fecha) = " + (cboMeses.SelectedIndex + 1).ToString();
-            }
 
             if (cboRubros.SelectedIndex != -1)
-            {
                 if (query.Contains("where"))
                     query += " and p.prod_rubro = " + ((Rubro)cboRubros.SelectedItem).Codigo;
                 else
                     query += " where p.prod_rubro = " + ((Rubro)cboRubros.SelectedItem).Codigo;
-            }
 
             query += " group by p.prod_codigo, p.prod_Detalle, p.prod_precio, s.stoc_cantidad_actual";
 
             if (cboAños.SelectedIndex != -1)
-            {
                 query += " ,year(v.vent_fecha) ";
-            }
 
             if (cboMeses.SelectedIndex != -1)
-            {
                 query += " ,MONTH(v.vent_fecha) ";
-            }
 
             if (cboRubros.SelectedIndex != -1)
-            {
                 query += " ,p.prod_rubro";
-            }
 
             query += " order by sum(i.item_cantidad) desc";
 
