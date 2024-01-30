@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Distribuidora", "Distribuidora.csproj", "{AB9B1C06-4D2A-47CB-B124-592CE7729117}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentacion", "Presentacion\Presentacion.csproj", "{AB9B1C06-4D2A-47CB-B124-592CE7729117}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logica", "Logica\Logica.csproj", "{F8FDDA76-2134-4F3E-BADC-DA1FDAC7B7AC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistencia", "Persistencia\Persistencia.csproj", "{CF903B77-8664-4DAC-88D9-A3EEA46DA4D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{AB9B1C06-4D2A-47CB-B124-592CE7729117}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB9B1C06-4D2A-47CB-B124-592CE7729117}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB9B1C06-4D2A-47CB-B124-592CE7729117}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8FDDA76-2134-4F3E-BADC-DA1FDAC7B7AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8FDDA76-2134-4F3E-BADC-DA1FDAC7B7AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8FDDA76-2134-4F3E-BADC-DA1FDAC7B7AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8FDDA76-2134-4F3E-BADC-DA1FDAC7B7AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF903B77-8664-4DAC-88D9-A3EEA46DA4D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF903B77-8664-4DAC-88D9-A3EEA46DA4D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF903B77-8664-4DAC-88D9-A3EEA46DA4D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF903B77-8664-4DAC-88D9-A3EEA46DA4D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
