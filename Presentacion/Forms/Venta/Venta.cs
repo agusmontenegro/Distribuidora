@@ -278,15 +278,15 @@ namespace Presentacion.Forms.Venta
             {
                 for (int i = 0;i < grdVentas.Rows.Count;++i)
                 {
-                    var producto = grdVentas.Rows[i].Cells[5].Value.ToString();
+                    var idProducto = grdVentas.Rows[i].Cells[5].Value.ToString();
                     var cantidad = grdVentas.Rows[i].Cells[2].Value.ToString();
                     var precio = grdVentas.Rows[i].Cells[4].Value.ToString();
 
-                    VentaService.GuardarItem(codigoVenta, int.Parse(producto), decimal.Parse(precio), int.Parse(cantidad));
+                    VentaService.GuardarItem(codigoVenta, int.Parse(idProducto), decimal.Parse(precio), int.Parse(cantidad));
 
-                    if (StockService.HayQueReponer(producto))
+                    if (StockService.HayQueReponer(idProducto) && !ComboService.EsCombo_Id(idProducto))
                     {
-                        AlertaService.EmitirAlertaDeReposicion(producto);
+                        AlertaService.EmitirAlertaDeReposicion(idProducto);
                         Menu.CargarCantidadDeAlertas();
                     }
                 }

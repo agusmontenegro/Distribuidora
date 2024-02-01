@@ -24,10 +24,10 @@ namespace Persistencia.DAOs
             return int.Parse(salidas[0]);
         }
 
-        public void GuardarItem(int codigoVenta, int producto, decimal precioUnitario, int cantidad)
+        public void GuardarItem(int codigoVenta, int IdProducto, decimal precioUnitario, int cantidad)
         {
             DataBaseHelper.AgregarParametroEntrada(codigoVenta.ToString(), "@codigoVenta", SqlDbType.Int);
-            DataBaseHelper.AgregarParametroEntrada(producto.ToString(), "@producto", SqlDbType.Int);
+            DataBaseHelper.AgregarParametroEntrada(IdProducto.ToString(), "@producto", SqlDbType.Int);
             DataBaseHelper.AgregarParametroEntrada(precioUnitario.ToString(), "@precioUnitario", SqlDbType.Decimal);
             DataBaseHelper.AgregarParametroEntrada(cantidad.ToString(), "@cantidad", SqlDbType.Int);
 

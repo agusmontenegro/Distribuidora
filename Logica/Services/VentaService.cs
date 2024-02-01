@@ -18,9 +18,9 @@ namespace Logica.Services
             return codigoVenta;
         }
 
-        public void GuardarItem(int codigoVenta, int producto, decimal precioUnitario, int cantidad)
+        public void GuardarItem(int codigoVenta, int IdProducto, decimal precioUnitario, int cantidad)
         {
-            DAOVenta.GuardarItem(codigoVenta, producto, precioUnitario, cantidad);
+            DAOVenta.GuardarItem(codigoVenta, IdProducto, precioUnitario, cantidad);
         }
 
         public Venta ObtenerVenta(string codigoVenta)
