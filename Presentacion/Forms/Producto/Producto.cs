@@ -150,14 +150,7 @@ namespace Presentacion.Forms.Producto
 
             if (ItemValido(ref msj))
             {
-                var componente = new
-                {
-                    CodigoProducto = txtCodigoProductoComposicion.Text,
-                    CodigoComponente = txtDetalleProductoComposicion.Text,
-                    Cantidad = txtCantidadComposicion.Text,
-                    IdComponente
-                };
-                grdComponentes.DataSource = componente;
+                grdComponentes.Rows.Add(txtCodigoProductoComposicion.Text, txtDetalleProductoComposicion.Text, txtCantidadComposicion.Text, IdComponente);
                 LimpiarFormularioDeComponentes();
                 btnAgregarComponente.Enabled = true;
                 txtCodigoProductoComposicion.Focus();

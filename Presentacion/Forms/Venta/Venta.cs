@@ -11,7 +11,7 @@ namespace Presentacion.Forms.Venta
         private int Celda = -1;
         private string IdProducto;
 
-        private readonly Menu menu;
+        private readonly Menu Menu;
         private readonly FormsCommon FormsCommon;
         private readonly ProductoService ProductoService;
         private readonly ComboService ComboService;
@@ -23,7 +23,7 @@ namespace Presentacion.Forms.Venta
         public Venta(Menu Menu)
         {
             InitializeComponent();
-            this.menu = Menu;
+            this.Menu = Menu;
             FormsCommon = new FormsCommon();
             ProductoService = new ProductoService();
             ComboService = new ComboService();
@@ -287,7 +287,7 @@ namespace Presentacion.Forms.Venta
                     if (StockService.HayQueReponer(producto))
                     {
                         AlertaService.EmitirAlertaDeReposicion(producto);
-                        menu.CargarCantidadDeAlertas();
+                        Menu.CargarCantidadDeAlertas();
                     }
                 }
             }
