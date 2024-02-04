@@ -96,7 +96,8 @@ namespace Persistencia.DAOs
                         CantidadActual = row["StockActual"].ToString(),
                         CantidadMinima = row["PtoReposicion"].ToString(),
                         UltimaReposicion = row["UltimaReposicion"].ToString()
-                    }
+                    },
+                    UltimaModificacion = row["UltimaModificacion"].ToString(),
                 };
 
                 productos.Add(producto);

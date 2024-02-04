@@ -129,6 +129,7 @@ namespace Presentacion.Forms.Producto
                     producto.Rubro.Detalle,
                     producto.Stock.CantidadActual,
                     producto.Stock.UltimaReposicion,
+                    producto.UltimaModificacion,
                     producto.Id);
             }
         }
@@ -174,19 +175,19 @@ namespace Presentacion.Forms.Producto
 
         private void btnNuevoProducto_Click(object sender, EventArgs e)
         {
-            LimpiarBusqueda();
             var altaProducto = new Producto(Menu);
             altaProducto.ShowDialog();
+            RealizarBusqueda();
         }
 
         private void btnEditarProducto_Click(object sender, EventArgs e)
         {
             if (Celda != -1)
             {
-                var idProducto = grdResult.Rows[Celda].Cells[6].Value.ToString();
+                var idProducto = grdResult.Rows[Celda].Cells[7].Value.ToString();
                 var editarProducto = new Producto(Menu, idProducto);
-                LimpiarBusqueda();
                 editarProducto.ShowDialog();
+                RealizarBusqueda();
             }
             else
                 MessageBox.Show("Seleccione un producto");

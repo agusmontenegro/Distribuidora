@@ -16,6 +16,10 @@ update [dbo].[Producto]
 set prod_codigo = prod_id
 GO
 
+ALTER TABLE [dbo].[Producto]
+ADD prod_ultima_modificacion smalldatetime;
+GO
+
 USE [DISTRIBUIDORA]
 GO
 
@@ -244,7 +248,8 @@ begin
 		@rubro,
 		@precioUnitario,
 		1,
-		@codigo
+		@codigo, 
+		getdate()
 	);
 
 	set @id = (select top 1 prod_id 
@@ -390,7 +395,7 @@ ALTER procedure [dbo].[ActualizarProducto] (@id int, @codigo nvarchar(5), @detal
 begin
 
 	update Producto
-	set prod_detalle = @detalle, prod_precio = @precioUnitario, prod_rubro = @rubro, prod_codigo = @codigo
+	set prod_detalle = @detalle, prod_precio = @precioUnitario, prod_rubro = @rubro, prod_codigo = @codigo, prod_ultima_modificacion = getdate()
 	where prod_id = @id;
 
 	update Stock
@@ -565,7 +570,8 @@ as
 		   rubr_detalle RubroDetalle, 
 		   stoc_cantidad_actual StockActual, 
 		   stoc_cantidad_minima PtoReposicion, 
-		   stoc_ultima_reposicion UltimaReposicion
+		   stoc_ultima_reposicion UltimaReposicion,
+		   prod_ultima_modificacion UltimaModificacion
 
 	from Producto
 	join Rubro on rubr_codigo = prod_rubro

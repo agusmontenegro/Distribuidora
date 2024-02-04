@@ -245,9 +245,9 @@ namespace Presentacion.Forms.Producto
                         Close();
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
-                    throw new Exception("Hubo un error al intentar guardar el producto");
+                    throw new Exception("Hubo un error al intentar guardar el producto " + ex.Message);
                 }
             }
             else
@@ -338,7 +338,7 @@ namespace Presentacion.Forms.Producto
         {
             LimpiarFormularioDeComponentes();
 
-            btnAgregarComponente.Enabled = true;
+            btnAgregarComponente.Enabled = false;
             txtCodigoProductoComposicion.Focus();
         }
     }

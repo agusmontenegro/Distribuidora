@@ -39,19 +39,20 @@ namespace Presentacion.Forms.Producto
             this.txtCodigoProducto = new System.Windows.Forms.TextBox();
             this.lblCodigoProducto = new System.Windows.Forms.Label();
             this.grdResult = new System.Windows.Forms.DataGridView();
-            this.CodigoProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DetalleProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.PrecioUnitario = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Rubro = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.StockActual = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.FechaUltimaReposicion = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.IdProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnNuevoProducto = new System.Windows.Forms.Button();
             this.btnEliminarProducto = new System.Windows.Forms.Button();
             this.btnEditarProducto = new System.Windows.Forms.Button();
             this.btnInfoProductos = new System.Windows.Forms.Button();
             this.btnImport = new System.Windows.Forms.Button();
             this.btnExport = new System.Windows.Forms.Button();
+            this.CodigoProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DetalleProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.PrecioUnitario = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Rubro = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.StockActual = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.FechaUltimaReposicion = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.UltimaModificacion = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.IdProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdResult)).BeginInit();
             this.SuspendLayout();
@@ -68,14 +69,14 @@ namespace Presentacion.Forms.Producto
             this.groupBox1.Controls.Add(this.lblCodigoProducto);
             this.groupBox1.Location = new System.Drawing.Point(8, 7);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(781, 113);
+            this.groupBox1.Size = new System.Drawing.Size(909, 113);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Criterio de búsqueda";
             // 
             // btnLimpiar
             // 
-            this.btnLimpiar.Location = new System.Drawing.Point(710, 63);
+            this.btnLimpiar.Location = new System.Drawing.Point(844, 63);
             this.btnLimpiar.Name = "btnLimpiar";
             this.btnLimpiar.Size = new System.Drawing.Size(65, 34);
             this.btnLimpiar.TabIndex = 7;
@@ -85,7 +86,7 @@ namespace Presentacion.Forms.Producto
             // 
             // btnBuscar
             // 
-            this.btnBuscar.Location = new System.Drawing.Point(710, 24);
+            this.btnBuscar.Location = new System.Drawing.Point(844, 25);
             this.btnBuscar.Name = "btnBuscar";
             this.btnBuscar.Size = new System.Drawing.Size(65, 33);
             this.btnBuscar.TabIndex = 6;
@@ -99,7 +100,7 @@ namespace Presentacion.Forms.Producto
             this.cboRubros.FormattingEnabled = true;
             this.cboRubros.Location = new System.Drawing.Point(9, 71);
             this.cboRubros.Name = "cboRubros";
-            this.cboRubros.Size = new System.Drawing.Size(686, 21);
+            this.cboRubros.Size = new System.Drawing.Size(829, 21);
             this.cboRubros.TabIndex = 5;
             // 
             // lblRubro
@@ -115,7 +116,7 @@ namespace Presentacion.Forms.Producto
             // 
             this.txtDetalleProducto.Location = new System.Drawing.Point(153, 32);
             this.txtDetalleProducto.Name = "txtDetalleProducto";
-            this.txtDetalleProducto.Size = new System.Drawing.Size(542, 20);
+            this.txtDetalleProducto.Size = new System.Drawing.Size(685, 20);
             this.txtDetalleProducto.TabIndex = 3;
             this.txtDetalleProducto.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtDetalleProducto_KeyPress);
             // 
@@ -156,56 +157,15 @@ namespace Presentacion.Forms.Producto
             this.Rubro,
             this.StockActual,
             this.FechaUltimaReposicion,
+            this.UltimaModificacion,
             this.IdProducto});
             this.grdResult.Location = new System.Drawing.Point(8, 126);
             this.grdResult.MultiSelect = false;
             this.grdResult.Name = "grdResult";
             this.grdResult.RowHeadersVisible = false;
-            this.grdResult.Size = new System.Drawing.Size(781, 334);
+            this.grdResult.Size = new System.Drawing.Size(909, 334);
             this.grdResult.TabIndex = 1;
             this.grdResult.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grdResult_CellClick);
-            // 
-            // CodigoProducto
-            // 
-            this.CodigoProducto.HeaderText = "Código producto";
-            this.CodigoProducto.Name = "CodigoProducto";
-            this.CodigoProducto.Width = 80;
-            // 
-            // DetalleProducto
-            // 
-            this.DetalleProducto.HeaderText = "Detalle producto";
-            this.DetalleProducto.Name = "DetalleProducto";
-            this.DetalleProducto.Width = 250;
-            // 
-            // PrecioUnitario
-            // 
-            this.PrecioUnitario.HeaderText = "($) P/Unidad";
-            this.PrecioUnitario.Name = "PrecioUnitario";
-            this.PrecioUnitario.Width = 95;
-            // 
-            // Rubro
-            // 
-            this.Rubro.HeaderText = "Rubro";
-            this.Rubro.Name = "Rubro";
-            this.Rubro.Width = 152;
-            // 
-            // StockActual
-            // 
-            this.StockActual.HeaderText = "S. Actual";
-            this.StockActual.Name = "StockActual";
-            this.StockActual.Width = 75;
-            // 
-            // FechaUltimaReposicion
-            // 
-            this.FechaUltimaReposicion.HeaderText = "F. última reposición";
-            this.FechaUltimaReposicion.Name = "FechaUltimaReposicion";
-            this.FechaUltimaReposicion.Width = 125;
-            // 
-            // IdProducto
-            // 
-            this.IdProducto.HeaderText = "IdProducto";
-            this.IdProducto.Name = "IdProducto";
-            this.IdProducto.Visible = false;
             // 
             // btnNuevoProducto
             // 
@@ -249,7 +209,7 @@ namespace Presentacion.Forms.Producto
             // 
             // btnImport
             // 
-            this.btnImport.Location = new System.Drawing.Point(471, 466);
+            this.btnImport.Location = new System.Drawing.Point(698, 466);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(103, 59);
             this.btnImport.TabIndex = 6;
@@ -259,7 +219,7 @@ namespace Presentacion.Forms.Producto
             // 
             // btnExport
             // 
-            this.btnExport.Location = new System.Drawing.Point(580, 466);
+            this.btnExport.Location = new System.Drawing.Point(807, 466);
             this.btnExport.Name = "btnExport";
             this.btnExport.Size = new System.Drawing.Size(110, 59);
             this.btnExport.TabIndex = 7;
@@ -267,11 +227,60 @@ namespace Presentacion.Forms.Producto
             this.btnExport.UseVisualStyleBackColor = true;
             this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
             // 
+            // CodigoProducto
+            // 
+            this.CodigoProducto.HeaderText = "Código";
+            this.CodigoProducto.Name = "CodigoProducto";
+            this.CodigoProducto.Width = 80;
+            // 
+            // DetalleProducto
+            // 
+            this.DetalleProducto.HeaderText = "Detalle";
+            this.DetalleProducto.Name = "DetalleProducto";
+            this.DetalleProducto.Width = 250;
+            // 
+            // PrecioUnitario
+            // 
+            this.PrecioUnitario.HeaderText = "($) P/Unidad";
+            this.PrecioUnitario.Name = "PrecioUnitario";
+            this.PrecioUnitario.Width = 95;
+            // 
+            // Rubro
+            // 
+            this.Rubro.HeaderText = "Rubro";
+            this.Rubro.Name = "Rubro";
+            this.Rubro.Width = 152;
+            // 
+            // StockActual
+            // 
+            this.StockActual.HeaderText = "S. Actual";
+            this.StockActual.Name = "StockActual";
+            this.StockActual.Width = 75;
+            // 
+            // FechaUltimaReposicion
+            // 
+            this.FechaUltimaReposicion.HeaderText = "F. última reposición";
+            this.FechaUltimaReposicion.Name = "FechaUltimaReposicion";
+            this.FechaUltimaReposicion.Width = 125;
+            // 
+            // UltimaModificacion
+            // 
+            this.UltimaModificacion.HeaderText = "Ult. Modificación";
+            this.UltimaModificacion.Name = "UltimaModificacion";
+            this.UltimaModificacion.ReadOnly = true;
+            this.UltimaModificacion.Width = 127;
+            // 
+            // IdProducto
+            // 
+            this.IdProducto.HeaderText = "IdProducto";
+            this.IdProducto.Name = "IdProducto";
+            this.IdProducto.Visible = false;
+            // 
             // BuscarProducto
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(801, 537);
+            this.ClientSize = new System.Drawing.Size(929, 537);
             this.Controls.Add(this.btnExport);
             this.Controls.Add(this.btnImport);
             this.Controls.Add(this.btnInfoProductos);
@@ -309,14 +318,15 @@ namespace Presentacion.Forms.Producto
         public System.Windows.Forms.Label lblCodigoProducto;
         public System.Windows.Forms.Button btnEditarProducto;
         public System.Windows.Forms.Button btnInfoProductos;
-        public System.Windows.Forms.DataGridViewTextBoxColumn CodigoProducto;
-        public System.Windows.Forms.DataGridViewTextBoxColumn DetalleProducto;
-        public System.Windows.Forms.DataGridViewTextBoxColumn PrecioUnitario;
-        public System.Windows.Forms.DataGridViewTextBoxColumn Rubro;
-        public System.Windows.Forms.DataGridViewTextBoxColumn StockActual;
-        public System.Windows.Forms.DataGridViewTextBoxColumn FechaUltimaReposicion;
-        public System.Windows.Forms.DataGridViewTextBoxColumn IdProducto;
         public System.Windows.Forms.Button btnImport;
         public System.Windows.Forms.Button btnExport;
+        private System.Windows.Forms.DataGridViewTextBoxColumn CodigoProducto;
+        private System.Windows.Forms.DataGridViewTextBoxColumn DetalleProducto;
+        private System.Windows.Forms.DataGridViewTextBoxColumn PrecioUnitario;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Rubro;
+        private System.Windows.Forms.DataGridViewTextBoxColumn StockActual;
+        private System.Windows.Forms.DataGridViewTextBoxColumn FechaUltimaReposicion;
+        private System.Windows.Forms.DataGridViewTextBoxColumn UltimaModificacion;
+        private System.Windows.Forms.DataGridViewTextBoxColumn IdProducto;
     }
 }

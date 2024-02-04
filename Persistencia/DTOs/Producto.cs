@@ -9,5 +9,6 @@
         public Stock Stock { get; set; }
         public Rubro Rubro { get; set; }
         public bool Activo { get; set; }
+        public string UltimaModificacion { get; set; }
     }
 }
