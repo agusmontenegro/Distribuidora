@@ -4,6 +4,7 @@ using Persistencia.DTOs;
 using Presentacion.Commons;
 using System;
 using System.Linq;
+using System.Transactions;
 using System.Windows.Forms;
 
 namespace Presentacion.Forms.Producto
@@ -196,58 +197,62 @@ namespace Presentacion.Forms.Producto
 
             if (DatosValidos(ref msj))
             {
-                try
+                using (var scope = new TransactionScope())
                 {
-                    if (string.IsNullOrEmpty(IdProduct))
+                    try
                     {
-                        var productosSimilares = ProductoService.ObtenerProductosSimilares(txtDetalleProducto.Text.ToUpper().Trim());
-
-                        if (productosSimilares.Count > 0)
+                        if (string.IsNullOrEmpty(IdProduct))
                         {
-                            var infoProductos = string.Empty;
-                            productosSimilares.ForEach(p => infoProductos += p.Codigo + " - " + p.Detalle + "\n");
+                            var productosSimilares = ProductoService.ObtenerProductosSimilares(txtDetalleProducto.Text.ToUpper().Trim());
 
-                            var dialogResult = MessageBox.Show(
-                                "Ya hay productos similares guardados anteriormente:\n" + infoProductos +
-                                "\n¿Desea guardar este producto de todos modos?",
-                                "Existen productos similares",
-                                MessageBoxButtons.YesNo);
+                            if (productosSimilares.Count > 0)
+                            {
+                                var infoProductos = string.Empty;
+                                productosSimilares.ForEach(p => infoProductos += p.Codigo + " - " + p.Detalle + "\n");
 
-                            if (dialogResult == DialogResult.Yes)
+                                var dialogResult = MessageBox.Show(
+                                    "Ya hay productos similares guardados anteriormente:\n" + infoProductos +
+                                    "\n¿Desea guardar este producto de todos modos?",
+                                    "Existen productos similares",
+                                    MessageBoxButtons.YesNo);
+
+                                if (dialogResult == DialogResult.Yes)
+                                    GuardarProducto();
+                            }
+                            else
                                 GuardarProducto();
                         }
                         else
-                            GuardarProducto();
-                    }
-                    else
-                    {
-                        var codigoProd = txtCodigoProducto.Text.ToUpper().Trim();
-                        var detalleProd = txtDetalleProducto.Text.ToUpper().Trim();
-                        var precio = txtPrecioUnitario.Text;
-                        var codigoRubro = ((Rubro)cboRubros.SelectedItem).Codigo;
-                        var stockMinimo = txtStockMinimo.Text;
-
-                        ProductoService.ActualizarProducto(IdProduct, codigoProd, detalleProd, precio, codigoRubro, stockMinimo);
-
-                        if (grdComponentes.Rows.Count > 0)
                         {
-                            ComboService.EliminarComponentes(IdProduct);
-                            for (int i = 0;i < grdComponentes.Rows.Count;++i)
-                            {
-                                var idComponente = grdComponentes.Rows[i].Cells[3].Value.ToString();
-                                var cantidad = grdComponentes.Rows[i].Cells[2].Value.ToString();
-                                ComboService.GuardarComponente(int.Parse(IdProduct), idComponente, cantidad);
-                            }
-                        }
+                            var codigoProd = txtCodigoProducto.Text.ToUpper().Trim();
+                            var detalleProd = txtDetalleProducto.Text.ToUpper().Trim();
+                            var precio = txtPrecioUnitario.Text;
+                            var codigoRubro = ((Rubro)cboRubros.SelectedItem).Codigo;
+                            var stockMinimo = txtStockMinimo.Text;
 
+                            ProductoService.ActualizarProducto(IdProduct, codigoProd, detalleProd, precio, codigoRubro, stockMinimo);
+
+                            if (grdComponentes.Rows.Count > 0)
+                            {
+                                ComboService.EliminarComponentes(IdProduct);
+                                for (int i = 0;i < grdComponentes.Rows.Count;++i)
+                                {
+                                    var idComponente = grdComponentes.Rows[i].Cells[3].Value.ToString();
+                                    var cantidad = grdComponentes.Rows[i].Cells[2].Value.ToString();
+                                    ComboService.GuardarComponente(int.Parse(IdProduct), idComponente, cantidad);
+                                }
+                            }
+
+                            VerificarAlertas(IdProduct);
+                        }
+                        scope.Complete();
                         MessageBox.Show("El producto ha sido actualizado exitosamente");
-                        VerificarAlertas(IdProduct);
                         Close();
                     }
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception("Hubo un error al intentar guardar el producto " + ex.Message);
+                    catch (Exception ex)
+                    {
+                        throw new Exception("Hubo un error al intentar guardar el producto " + ex.Message);
+                    }
                 }
             }
             else

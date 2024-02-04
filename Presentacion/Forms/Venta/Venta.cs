@@ -1,6 +1,7 @@
 ﻿using Logica.Services;
 using Presentacion.Commons;
 using System;
+using System.Transactions;
 using System.Windows.Forms;
 
 namespace Presentacion.Forms.Venta
@@ -273,37 +274,42 @@ namespace Presentacion.Forms.Venta
 
         private void btnGuardarVenta_Click(object sender, EventArgs e)
         {
-            var codigoVenta = VentaService.GuardarVenta(txtPrecioTotal.Text);
-            try
+            int codigoVenta;
+            using (var scope = new TransactionScope())
             {
-                for (int i = 0;i < grdVentas.Rows.Count;++i)
+                try
                 {
-                    var idProducto = grdVentas.Rows[i].Cells[5].Value.ToString();
-                    var cantidad = grdVentas.Rows[i].Cells[2].Value.ToString();
-                    var precio = grdVentas.Rows[i].Cells[4].Value.ToString();
-
-                    VentaService.GuardarItem(codigoVenta, int.Parse(idProducto), decimal.Parse(precio), int.Parse(cantidad));
-
-                    if (StockService.HayQueReponer(idProducto) && !ComboService.EsCombo_Id(idProducto))
+                    codigoVenta = VentaService.GuardarVenta(txtPrecioTotal.Text);
+                    for (int i = 0;i < grdVentas.Rows.Count;++i)
                     {
-                        AlertaService.EmitirAlertaDeReposicion(idProducto);
-                        Menu.CargarCantidadDeAlertas();
+                        var idProducto = grdVentas.Rows[i].Cells[5].Value.ToString();
+                        var cantidad = grdVentas.Rows[i].Cells[2].Value.ToString();
+                        var precio = grdVentas.Rows[i].Cells[4].Value.ToString();
+
+                        VentaService.GuardarItem(codigoVenta, int.Parse(idProducto), decimal.Parse(precio), int.Parse(cantidad));
+
+                        if (StockService.HayQueReponer(idProducto) && !ComboService.EsCombo_Id(idProducto))
+                        {
+                            AlertaService.EmitirAlertaDeReposicion(idProducto);
+                            Menu.CargarCantidadDeAlertas();
+                        }
                     }
+                    scope.Complete();
+                    MessageBox.Show("La venta ha sido procesada con éxito");
+                    LimpiarFormulario();
+                    txtCodigoProducto.Focus();
+                    grdVentas.Rows.Clear();
+                    btnGuardarVenta.Enabled = false;
+                    txtPrecioTotal.Text = string.Empty;
+                }
+                catch
+                {
+                    throw new Exception("Hubo un error al intentar procesar la venta");
                 }
             }
-            catch
-            {
-                throw new Exception("Hubo un error al intentar procesar la venta");
-            }
 
-            MessageBox.Show("La venta ha sido procesada con éxito");
-            LimpiarFormulario();
-            txtCodigoProducto.Focus();
-            grdVentas.Rows.Clear();
-            btnGuardarVenta.Enabled = false;
-            txtPrecioTotal.Text = string.Empty;
 
-            DialogResult dialogResult = MessageBox.Show("¿Desea imprimir el comprobante de venta?", "Imprimir venta", MessageBoxButtons.YesNo);
+            var dialogResult = MessageBox.Show("¿Desea imprimir el comprobante de venta?", "Imprimir venta", MessageBoxButtons.YesNo);
 
             if (dialogResult == DialogResult.Yes)
             {

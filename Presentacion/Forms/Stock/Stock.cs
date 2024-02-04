@@ -1,6 +1,7 @@
 ﻿using Logica.Services;
 using Presentacion.Commons;
 using System;
+using System.Transactions;
 using System.Windows.Forms;
 
 namespace Presentacion.Forms.Stock
@@ -207,33 +208,37 @@ namespace Presentacion.Forms.Stock
 
         private void ReponerStock()
         {
-            var reposicionCodigo = StockService.GuardarReposicion();
-            try
+            int reposicionCodigo;
+            using (var scope = new TransactionScope())
             {
-                for (int i = 0;i < grdStock.Rows.Count;++i)
+                try
                 {
-                    var idProducto = grdStock.Rows[i].Cells[4].Value.ToString();
-                    var cantidadAReponer = grdStock.Rows[i].Cells[3].Value.ToString();
-
-                    StockService.ReponerStock(reposicionCodigo, idProducto, cantidadAReponer);
-
-                    if (!StockService.HayQueReponer(idProducto))
+                    reposicionCodigo = StockService.GuardarReposicion();
+                    for (int i = 0;i < grdStock.Rows.Count;++i)
                     {
-                        AlertaService.QuitarAlertaDeReposicion(idProducto);
-                        Menu.CargarCantidadDeAlertas();
+                        var idProducto = grdStock.Rows[i].Cells[4].Value.ToString();
+                        var cantidadAReponer = grdStock.Rows[i].Cells[3].Value.ToString();
+
+                        StockService.ReponerStock(reposicionCodigo, idProducto, cantidadAReponer);
+
+                        if (!StockService.HayQueReponer(idProducto))
+                        {
+                            AlertaService.QuitarAlertaDeReposicion(idProducto);
+                            Menu.CargarCantidadDeAlertas();
+                        }
                     }
+                    scope.Complete();
+                    MessageBox.Show("La reposición de stock se ha realizado con éxito.");
+                    LimpiarFormulario();
+                    txtCodigoProducto.Focus();
+                    grdStock.Rows.Clear();
+                    btnConfirmar.Enabled = false;
+                }
+                catch
+                {
+                    throw new Exception("Hubo un error al intentar reponer stock");
                 }
             }
-            catch
-            {
-                throw new Exception("Hubo un error al intentar reponer stock");
-            }
-
-            MessageBox.Show("La reposición de stock se ha realizado con éxito.");
-            LimpiarFormulario();
-            txtCodigoProducto.Focus();
-            grdStock.Rows.Clear();
-            btnConfirmar.Enabled = false;
 
             var dialogResult = MessageBox.Show("¿Desea imprimir el comprobante de reposición de stock?", "Imprimir información de stock", MessageBoxButtons.YesNo);
 
