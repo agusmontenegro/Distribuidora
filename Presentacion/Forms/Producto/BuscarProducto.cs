@@ -204,7 +204,8 @@ namespace Presentacion.Forms.Producto
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(ExcelService.ImportarProductos());
+            //MessageBox.Show(ExcelService.ImportarProductos());
+            MessageBox.Show("Funcionalidad en desarrollo");
         }
 
         private void btnExport_Click(object sender, EventArgs e)
