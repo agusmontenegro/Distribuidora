@@ -2,13 +2,15 @@
 using Presentacion.Forms.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Transactions;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace Presentacion.Forms.Producto
 {
     public partial class BuscarProducto : Form
     {
-        public int Celda = 0;
+        public int Fila = 0;
         private readonly Menu Menu;
 
         private readonly BuscarProductoFormHelper BuscarProductoFormHelper;
@@ -130,16 +132,17 @@ namespace Presentacion.Forms.Producto
                     producto.Stock.CantidadActual,
                     producto.Stock.UltimaReposicion,
                     producto.UltimaModificacion,
-                    producto.Id);
+                    producto.Id,
+                    false);
             }
         }
 
         private void btnEliminarProducto_Click(object sender, EventArgs e)
         {
-            if (Celda != -1)
+            if (Fila != -1)
             {
-                var codigoProducto = grdResult.Rows[Celda].Cells[0].Value.ToString();
-                var detalleProducto = grdResult.Rows[Celda].Cells[1].Value.ToString();
+                var codigoProducto = grdResult.Rows[Fila].Cells[0].Value.ToString();
+                var detalleProducto = grdResult.Rows[Fila].Cells[1].Value.ToString();
 
                 var dialogResult = MessageBox.Show("Se eliminará el producto " + codigoProducto + " - " + detalleProducto + ".\n¿Continuar? ", "Eliminar producto", MessageBoxButtons.YesNo);
 
@@ -148,8 +151,8 @@ namespace Presentacion.Forms.Producto
                     try
                     {
                         ProductoService.EliminarProducto(codigoProducto);
-                        grdResult.Rows.RemoveAt(Celda);
-                        Celda = -1;
+                        grdResult.Rows.RemoveAt(Fila);
+                        Fila = -1;
                         MessageBox.Show("Se ha eliminado el producto exitosamente");
 
                         if (grdResult.Rows.Count == 0)
@@ -158,9 +161,9 @@ namespace Presentacion.Forms.Producto
                             btnEditarProducto.Enabled = false;
                         }
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        throw new Exception("Hubo un error al querer eliminar el producto");
+                        MessageBox.Show("Hubo un error al intentar eliminar el producto. " + ex.Message);
                     }
                 }
             }
@@ -170,7 +173,7 @@ namespace Presentacion.Forms.Producto
 
         private void grdResult_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            Celda = e.RowIndex;
+            Fila = e.RowIndex;
         }
 
         private void btnNuevoProducto_Click(object sender, EventArgs e)
@@ -182,9 +185,9 @@ namespace Presentacion.Forms.Producto
 
         private void btnEditarProducto_Click(object sender, EventArgs e)
         {
-            if (Celda != -1)
+            if (Fila != -1)
             {
-                var idProducto = grdResult.Rows[Celda].Cells[7].Value.ToString();
+                var idProducto = grdResult.Rows[Fila].Cells[7].Value.ToString();
                 var editarProducto = new Producto(Menu, idProducto);
                 editarProducto.ShowDialog();
                 RealizarBusqueda();
@@ -207,6 +210,64 @@ namespace Presentacion.Forms.Producto
         private void btnExport_Click(object sender, EventArgs e)
         {
             MessageBox.Show(ExcelService.ExportarProductos());
+        }
+
+        //Solo se permite actualizar detalle y precio
+        //Para stock, rubro y combos se hace en Editar Producto y Seguimiento de Stock
+        private void btnGuardarCambios_Click(object sender, EventArgs e)
+        {
+            using (var scope = new TransactionScope())
+            {
+                try
+                {
+                    string msj = string.Empty;
+                    foreach (DataGridViewRow fila in grdResult.Rows.Cast<DataGridViewRow>().Where(f => (bool)f.Cells[8].Value))
+                    {
+                        if (ItemValido(fila, ref msj))
+                        {
+                            var codigoProd = fila.Cells[0]?.Value?.ToString();
+                            var IdProduct = fila.Cells[7].Value.ToString();
+                            var detalleProd = fila.Cells[1].Value.ToString();
+                            var precio = fila.Cells[2].Value.ToString();
+
+                            ProductoService.ActualizarProductoLazy(IdProduct, codigoProd, detalleProd, precio);
+                        }
+                    }
+                    if (string.IsNullOrEmpty(msj))
+                    {
+                        scope.Complete();
+                        MessageBox.Show("Se han guardado los cambios correctamente");
+                    }
+                    else
+                    {
+                        scope.Dispose();
+                        MessageBox.Show(msj);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Hubo un error al intentar guardar los cambios. " + ex.Message);
+                }
+            }
+        }
+
+        private bool ItemValido(DataGridViewRow fila, ref string msj)
+        {
+            var codigoProd = fila.Cells[0]?.Value?.ToString();
+            ValidacionService.AgregarValidacion(!string.IsNullOrEmpty(fila.Cells[1]?.Value?.ToString()), codigoProd + " - Ingrese el DETALLE del producto");
+            ValidacionService.AgregarValidacion(!string.IsNullOrEmpty(fila.Cells[2]?.Value?.ToString()), codigoProd + " - Ingrese el PRECIO del producto");
+            return ValidacionService.Validar(ref msj);
+        }
+
+        private void grdResult_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
+            {
+                if (!grdResult.Columns[e.ColumnIndex].ReadOnly)
+                {
+                    grdResult.Rows[Fila].Cells[8].Value = true;
+                }
+            }
         }
     }
 }

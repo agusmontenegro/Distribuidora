@@ -77,5 +77,10 @@ namespace Logica.Services
         {
             DAOProducto.ActualizarProducto(id, codigo, detalle, precioUnitario, codigoRubro, stockMinimo);
         }
+
+        public void ActualizarProductoLazy(string id, string codigo, string detalle, string precioUnitario)
+        {
+            DAOProducto.ActualizarProductoLazy(id, codigo, detalle, precioUnitario);
+        }
     }
 }

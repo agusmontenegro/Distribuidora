@@ -406,6 +406,17 @@ end
 
 GO
 
+CREATE procedure [dbo].[ActualizarProductoLazy] (@id int, @codigo nvarchar(5), @detalle nvarchar(255), @precioUnitario decimal(12,2)) as
+begin
+
+	update Producto
+	set prod_detalle = @detalle, prod_precio = @precioUnitario, prod_codigo = @codigo, prod_ultima_modificacion = getdate()
+	where prod_id = @id;
+
+end
+
+GO
+
 USE [DISTRIBUIDORA]
 GO
 

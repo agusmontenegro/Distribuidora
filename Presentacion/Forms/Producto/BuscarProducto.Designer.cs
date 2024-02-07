@@ -45,6 +45,7 @@ namespace Presentacion.Forms.Producto
             this.btnInfoProductos = new System.Windows.Forms.Button();
             this.btnImport = new System.Windows.Forms.Button();
             this.btnExport = new System.Windows.Forms.Button();
+            this.btnGuardarCambios = new System.Windows.Forms.Button();
             this.CodigoProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DetalleProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.PrecioUnitario = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -53,6 +54,7 @@ namespace Presentacion.Forms.Producto
             this.FechaUltimaReposicion = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.UltimaModificacion = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.IdProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Edited = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdResult)).BeginInit();
             this.SuspendLayout();
@@ -149,6 +151,8 @@ namespace Presentacion.Forms.Producto
             // grdResult
             // 
             this.grdResult.AllowUserToAddRows = false;
+            this.grdResult.AllowUserToDeleteRows = false;
+            this.grdResult.AllowUserToOrderColumns = true;
             this.grdResult.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grdResult.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.CodigoProducto,
@@ -158,52 +162,57 @@ namespace Presentacion.Forms.Producto
             this.StockActual,
             this.FechaUltimaReposicion,
             this.UltimaModificacion,
-            this.IdProducto});
+            this.IdProducto,
+            this.Edited});
             this.grdResult.Location = new System.Drawing.Point(8, 126);
-            this.grdResult.MultiSelect = false;
             this.grdResult.Name = "grdResult";
             this.grdResult.RowHeadersVisible = false;
             this.grdResult.Size = new System.Drawing.Size(909, 334);
+            this.grdResult.StandardTab = true;
             this.grdResult.TabIndex = 1;
             this.grdResult.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grdResult_CellClick);
+            this.grdResult.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grdResult_CellDoubleClick);
             // 
             // btnNuevoProducto
             // 
-            this.btnNuevoProducto.Location = new System.Drawing.Point(8, 466);
+            this.btnNuevoProducto.Location = new System.Drawing.Point(356, 466);
             this.btnNuevoProducto.Name = "btnNuevoProducto";
             this.btnNuevoProducto.Size = new System.Drawing.Size(115, 59);
             this.btnNuevoProducto.TabIndex = 2;
-            this.btnNuevoProducto.Text = "Nuevo producto";
+            this.btnNuevoProducto.Text = "Nuevo";
             this.btnNuevoProducto.UseVisualStyleBackColor = true;
             this.btnNuevoProducto.Click += new System.EventHandler(this.btnNuevoProducto_Click);
             // 
             // btnEliminarProducto
             // 
-            this.btnEliminarProducto.Location = new System.Drawing.Point(243, 466);
+            this.btnEliminarProducto.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btnEliminarProducto.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnEliminarProducto.ForeColor = System.Drawing.Color.Black;
+            this.btnEliminarProducto.Location = new System.Drawing.Point(477, 466);
             this.btnEliminarProducto.Name = "btnEliminarProducto";
-            this.btnEliminarProducto.Size = new System.Drawing.Size(109, 59);
+            this.btnEliminarProducto.Size = new System.Drawing.Size(113, 59);
             this.btnEliminarProducto.TabIndex = 3;
-            this.btnEliminarProducto.Text = "Eliminar producto";
-            this.btnEliminarProducto.UseVisualStyleBackColor = true;
+            this.btnEliminarProducto.Text = "Eliminar";
+            this.btnEliminarProducto.UseVisualStyleBackColor = false;
             this.btnEliminarProducto.Click += new System.EventHandler(this.btnEliminarProducto_Click);
             // 
             // btnEditarProducto
             // 
-            this.btnEditarProducto.Location = new System.Drawing.Point(129, 466);
+            this.btnEditarProducto.Location = new System.Drawing.Point(242, 466);
             this.btnEditarProducto.Name = "btnEditarProducto";
             this.btnEditarProducto.Size = new System.Drawing.Size(108, 59);
             this.btnEditarProducto.TabIndex = 4;
-            this.btnEditarProducto.Text = "Editar producto";
+            this.btnEditarProducto.Text = "Editar";
             this.btnEditarProducto.UseVisualStyleBackColor = true;
             this.btnEditarProducto.Click += new System.EventHandler(this.btnEditarProducto_Click);
             // 
             // btnInfoProductos
             // 
-            this.btnInfoProductos.Location = new System.Drawing.Point(358, 466);
+            this.btnInfoProductos.Location = new System.Drawing.Point(129, 466);
             this.btnInfoProductos.Name = "btnInfoProductos";
             this.btnInfoProductos.Size = new System.Drawing.Size(107, 59);
             this.btnInfoProductos.TabIndex = 5;
-            this.btnInfoProductos.Text = "Lista Productos";
+            this.btnInfoProductos.Text = "Obtener Lista";
             this.btnInfoProductos.UseVisualStyleBackColor = true;
             this.btnInfoProductos.Click += new System.EventHandler(this.btnInfoProductos_Click);
             // 
@@ -227,10 +236,23 @@ namespace Presentacion.Forms.Producto
             this.btnExport.UseVisualStyleBackColor = true;
             this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
             // 
+            // btnGuardarCambios
+            // 
+            this.btnGuardarCambios.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+            this.btnGuardarCambios.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnGuardarCambios.Location = new System.Drawing.Point(8, 466);
+            this.btnGuardarCambios.Name = "btnGuardarCambios";
+            this.btnGuardarCambios.Size = new System.Drawing.Size(115, 59);
+            this.btnGuardarCambios.TabIndex = 8;
+            this.btnGuardarCambios.Text = "Guardar cambios";
+            this.btnGuardarCambios.UseVisualStyleBackColor = false;
+            this.btnGuardarCambios.Click += new System.EventHandler(this.btnGuardarCambios_Click);
+            // 
             // CodigoProducto
             // 
             this.CodigoProducto.HeaderText = "Código";
             this.CodigoProducto.Name = "CodigoProducto";
+            this.CodigoProducto.ReadOnly = true;
             this.CodigoProducto.Width = 80;
             // 
             // DetalleProducto
@@ -249,23 +271,26 @@ namespace Presentacion.Forms.Producto
             // 
             this.Rubro.HeaderText = "Rubro";
             this.Rubro.Name = "Rubro";
+            this.Rubro.ReadOnly = true;
             this.Rubro.Width = 152;
             // 
             // StockActual
             // 
             this.StockActual.HeaderText = "S. Actual";
             this.StockActual.Name = "StockActual";
+            this.StockActual.ReadOnly = true;
             this.StockActual.Width = 75;
             // 
             // FechaUltimaReposicion
             // 
-            this.FechaUltimaReposicion.HeaderText = "F. última reposición";
+            this.FechaUltimaReposicion.HeaderText = "Ult reposición stock";
             this.FechaUltimaReposicion.Name = "FechaUltimaReposicion";
+            this.FechaUltimaReposicion.ReadOnly = true;
             this.FechaUltimaReposicion.Width = 125;
             // 
             // UltimaModificacion
             // 
-            this.UltimaModificacion.HeaderText = "Ult. Modificación";
+            this.UltimaModificacion.HeaderText = "Ult modificación";
             this.UltimaModificacion.Name = "UltimaModificacion";
             this.UltimaModificacion.ReadOnly = true;
             this.UltimaModificacion.Width = 127;
@@ -274,13 +299,22 @@ namespace Presentacion.Forms.Producto
             // 
             this.IdProducto.HeaderText = "IdProducto";
             this.IdProducto.Name = "IdProducto";
+            this.IdProducto.ReadOnly = true;
             this.IdProducto.Visible = false;
+            // 
+            // Edited
+            // 
+            this.Edited.HeaderText = "Edited";
+            this.Edited.Name = "Edited";
+            this.Edited.ReadOnly = true;
+            this.Edited.Visible = false;
             // 
             // BuscarProducto
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(929, 537);
+            this.Controls.Add(this.btnGuardarCambios);
             this.Controls.Add(this.btnExport);
             this.Controls.Add(this.btnImport);
             this.Controls.Add(this.btnInfoProductos);
@@ -320,6 +354,7 @@ namespace Presentacion.Forms.Producto
         public System.Windows.Forms.Button btnInfoProductos;
         public System.Windows.Forms.Button btnImport;
         public System.Windows.Forms.Button btnExport;
+        public System.Windows.Forms.Button btnGuardarCambios;
         private System.Windows.Forms.DataGridViewTextBoxColumn CodigoProducto;
         private System.Windows.Forms.DataGridViewTextBoxColumn DetalleProducto;
         private System.Windows.Forms.DataGridViewTextBoxColumn PrecioUnitario;
@@ -328,5 +363,6 @@ namespace Presentacion.Forms.Producto
         private System.Windows.Forms.DataGridViewTextBoxColumn FechaUltimaReposicion;
         private System.Windows.Forms.DataGridViewTextBoxColumn UltimaModificacion;
         private System.Windows.Forms.DataGridViewTextBoxColumn IdProducto;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Edited;
     }
 }

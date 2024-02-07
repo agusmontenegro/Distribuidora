@@ -158,6 +158,16 @@ namespace Persistencia.DAOs
             _ = DataBaseHelper.ExecStoredProcedure("dbo.ActualizarProducto");
         }
 
+        public void ActualizarProductoLazy(string id, string codigo, string detalle, string precioUnitario)
+        {
+            DataBaseHelper.AgregarParametroEntrada(id, "@id", SqlDbType.Int);
+            DataBaseHelper.AgregarParametroEntrada(codigo, "@codigo", SqlDbType.NVarChar);
+            DataBaseHelper.AgregarParametroEntrada(detalle, "@detalle", SqlDbType.NVarChar);
+            DataBaseHelper.AgregarParametroEntrada(precioUnitario, "@precioUnitario", SqlDbType.Decimal);
+
+            _ = DataBaseHelper.ExecStoredProcedure("dbo.ActualizarProductoLazy");
+        }
+
         public List<Producto> Buscar(Producto producto)
         {
             string query = "select * from dbo.Producto_View ";
