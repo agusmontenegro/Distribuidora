@@ -35,6 +35,7 @@ namespace Presentacion.Forms.Producto
         {
             btnEliminarProducto.Enabled = false;
             btnEditarProducto.Enabled = false;
+            btnGuardarCambios.Enabled = false;
             CargarCombos();
         }
 
@@ -76,6 +77,7 @@ namespace Presentacion.Forms.Producto
             grdResult.Rows.Clear();
             btnEliminarProducto.Enabled = false;
             btnEditarProducto.Enabled = false;
+            btnGuardarCambios.Enabled = false;
         }
 
         private void btnBuscar_Click(object sender, EventArgs e)
@@ -94,11 +96,13 @@ namespace Presentacion.Forms.Producto
                 CargarGrid(resultados);
                 btnEliminarProducto.Enabled = true;
                 btnEditarProducto.Enabled = true;
+                btnGuardarCambios.Enabled = true;
 
                 if (grdResult.Rows.Count == 0)
                 {
                     btnEliminarProducto.Enabled = false;
                     btnEditarProducto.Enabled = false;
+                    btnGuardarCambios.Enabled = false;
                     MessageBox.Show("La búsqueda no arrojó ningún resultado");
                 }
             }
