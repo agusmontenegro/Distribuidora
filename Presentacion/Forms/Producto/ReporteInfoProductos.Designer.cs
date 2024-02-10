@@ -38,14 +38,14 @@ namespace Presentacion.Forms.Producto
             this.rptInfoProductos.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rptInfoProductos.Location = new System.Drawing.Point(0, 0);
             this.rptInfoProductos.Name = "rptInfoProductos";
-            this.rptInfoProductos.Size = new System.Drawing.Size(800, 450);
+            this.rptInfoProductos.Size = new System.Drawing.Size(1058, 661);
             this.rptInfoProductos.TabIndex = 0;
             // 
             // ReporteInfoProductos
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(1058, 661);
             this.Controls.Add(this.rptInfoProductos);
             this.Name = "ReporteInfoProductos";
             this.Text = "ReporteInfoProductos";

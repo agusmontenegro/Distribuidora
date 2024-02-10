@@ -37,23 +37,7 @@ namespace Presentacion.Forms.Producto
             btnEditarProducto.Enabled = false;
             btnGuardarCambios.Enabled = false;
             CargarCombos();
-        }
-
-        private void txtCodigoProducto_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar == (char)Keys.Return)
-            {
-                RealizarBusqueda();
-            }
-        }
-
-        private void txtDetalleProducto_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar == (char)Keys.Return)
-            {
-                RealizarBusqueda();
-            }
-        }
+        }        
 
         private void CargarCombos()
         {
@@ -61,11 +45,6 @@ namespace Presentacion.Forms.Producto
             cboRubros.Items.AddRange(rubros.ToArray());
             cboRubros.DisplayMember = "detalle";
             cboRubros.ValueMember = "codigo";
-        }
-
-        private void btnLimpiar_Click(object sender, EventArgs e)
-        {
-            LimpiarBusqueda();
         }
 
         private void LimpiarBusqueda()
@@ -78,12 +57,7 @@ namespace Presentacion.Forms.Producto
             btnEliminarProducto.Enabled = false;
             btnEditarProducto.Enabled = false;
             btnGuardarCambios.Enabled = false;
-        }
-
-        private void btnBuscar_Click(object sender, EventArgs e)
-        {
-            RealizarBusqueda();
-        }
+        }        
 
         private void RealizarBusqueda()
         {
@@ -173,12 +147,7 @@ namespace Presentacion.Forms.Producto
             }
             else
                 MessageBox.Show("Seleccione un producto");
-        }
-
-        private void grdResult_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            Fila = e.RowIndex;
-        }
+        }        
 
         private void btnNuevoProducto_Click(object sender, EventArgs e)
         {
@@ -204,12 +173,6 @@ namespace Presentacion.Forms.Producto
         {
             var reporte = new ReporteInfoProductos();
             reporte.ShowDialog();
-        }
-
-        private void btnImport_Click(object sender, EventArgs e)
-        {
-            //MessageBox.Show(ExcelService.ImportarProductos());
-            MessageBox.Show("Funcionalidad en desarrollo");
         }
 
         private void btnExport_Click(object sender, EventArgs e)
@@ -273,6 +236,37 @@ namespace Presentacion.Forms.Producto
                     grdResult.Rows[Fila].Cells[8].Value = true;
                 }
             }
+        }
+
+        private void grdResult_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            Fila = e.RowIndex;
+        }
+
+        private void txtCodigoProducto_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Return)
+            {
+                RealizarBusqueda();
+            }
+        }
+
+        private void txtDetalleProducto_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Return)
+            {
+                RealizarBusqueda();
+            }
+        }
+
+        private void btnLimpiar_Click(object sender, EventArgs e)
+        {
+            LimpiarBusqueda();
+        }
+
+        private void btnBuscar_Click(object sender, EventArgs e)
+        {
+            RealizarBusqueda();
         }
     }
 }

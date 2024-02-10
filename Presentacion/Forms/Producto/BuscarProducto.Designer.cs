@@ -39,13 +39,6 @@ namespace Presentacion.Forms.Producto
             this.txtCodigoProducto = new System.Windows.Forms.TextBox();
             this.lblCodigoProducto = new System.Windows.Forms.Label();
             this.grdResult = new System.Windows.Forms.DataGridView();
-            this.btnNuevoProducto = new System.Windows.Forms.Button();
-            this.btnEliminarProducto = new System.Windows.Forms.Button();
-            this.btnEditarProducto = new System.Windows.Forms.Button();
-            this.btnInfoProductos = new System.Windows.Forms.Button();
-            this.btnImport = new System.Windows.Forms.Button();
-            this.btnExport = new System.Windows.Forms.Button();
-            this.btnGuardarCambios = new System.Windows.Forms.Button();
             this.CodigoProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DetalleProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.PrecioUnitario = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -55,6 +48,12 @@ namespace Presentacion.Forms.Producto
             this.UltimaModificacion = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.IdProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Edited = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btnNuevoProducto = new System.Windows.Forms.Button();
+            this.btnEliminarProducto = new System.Windows.Forms.Button();
+            this.btnEditarProducto = new System.Windows.Forms.Button();
+            this.btnInfoProductos = new System.Windows.Forms.Button();
+            this.btnExport = new System.Windows.Forms.Button();
+            this.btnGuardarCambios = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdResult)).BeginInit();
             this.SuspendLayout();
@@ -173,81 +172,6 @@ namespace Presentacion.Forms.Producto
             this.grdResult.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grdResult_CellClick);
             this.grdResult.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grdResult_CellDoubleClick);
             // 
-            // btnNuevoProducto
-            // 
-            this.btnNuevoProducto.Location = new System.Drawing.Point(356, 466);
-            this.btnNuevoProducto.Name = "btnNuevoProducto";
-            this.btnNuevoProducto.Size = new System.Drawing.Size(115, 59);
-            this.btnNuevoProducto.TabIndex = 2;
-            this.btnNuevoProducto.Text = "Nuevo";
-            this.btnNuevoProducto.UseVisualStyleBackColor = true;
-            this.btnNuevoProducto.Click += new System.EventHandler(this.btnNuevoProducto_Click);
-            // 
-            // btnEliminarProducto
-            // 
-            this.btnEliminarProducto.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.btnEliminarProducto.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnEliminarProducto.ForeColor = System.Drawing.Color.Black;
-            this.btnEliminarProducto.Location = new System.Drawing.Point(477, 466);
-            this.btnEliminarProducto.Name = "btnEliminarProducto";
-            this.btnEliminarProducto.Size = new System.Drawing.Size(113, 59);
-            this.btnEliminarProducto.TabIndex = 3;
-            this.btnEliminarProducto.Text = "Eliminar";
-            this.btnEliminarProducto.UseVisualStyleBackColor = false;
-            this.btnEliminarProducto.Click += new System.EventHandler(this.btnEliminarProducto_Click);
-            // 
-            // btnEditarProducto
-            // 
-            this.btnEditarProducto.Location = new System.Drawing.Point(242, 466);
-            this.btnEditarProducto.Name = "btnEditarProducto";
-            this.btnEditarProducto.Size = new System.Drawing.Size(108, 59);
-            this.btnEditarProducto.TabIndex = 4;
-            this.btnEditarProducto.Text = "Editar";
-            this.btnEditarProducto.UseVisualStyleBackColor = true;
-            this.btnEditarProducto.Click += new System.EventHandler(this.btnEditarProducto_Click);
-            // 
-            // btnInfoProductos
-            // 
-            this.btnInfoProductos.Location = new System.Drawing.Point(129, 466);
-            this.btnInfoProductos.Name = "btnInfoProductos";
-            this.btnInfoProductos.Size = new System.Drawing.Size(107, 59);
-            this.btnInfoProductos.TabIndex = 5;
-            this.btnInfoProductos.Text = "Obtener Lista";
-            this.btnInfoProductos.UseVisualStyleBackColor = true;
-            this.btnInfoProductos.Click += new System.EventHandler(this.btnInfoProductos_Click);
-            // 
-            // btnImport
-            // 
-            this.btnImport.Location = new System.Drawing.Point(698, 466);
-            this.btnImport.Name = "btnImport";
-            this.btnImport.Size = new System.Drawing.Size(103, 59);
-            this.btnImport.TabIndex = 6;
-            this.btnImport.Text = "Importar";
-            this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
-            // 
-            // btnExport
-            // 
-            this.btnExport.Location = new System.Drawing.Point(807, 466);
-            this.btnExport.Name = "btnExport";
-            this.btnExport.Size = new System.Drawing.Size(110, 59);
-            this.btnExport.TabIndex = 7;
-            this.btnExport.Text = "Exportar";
-            this.btnExport.UseVisualStyleBackColor = true;
-            this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
-            // 
-            // btnGuardarCambios
-            // 
-            this.btnGuardarCambios.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            this.btnGuardarCambios.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnGuardarCambios.Location = new System.Drawing.Point(8, 466);
-            this.btnGuardarCambios.Name = "btnGuardarCambios";
-            this.btnGuardarCambios.Size = new System.Drawing.Size(115, 59);
-            this.btnGuardarCambios.TabIndex = 8;
-            this.btnGuardarCambios.Text = "Guardar cambios";
-            this.btnGuardarCambios.UseVisualStyleBackColor = false;
-            this.btnGuardarCambios.Click += new System.EventHandler(this.btnGuardarCambios_Click);
-            // 
             // CodigoProducto
             // 
             this.CodigoProducto.HeaderText = "Código";
@@ -309,6 +233,71 @@ namespace Presentacion.Forms.Producto
             this.Edited.ReadOnly = true;
             this.Edited.Visible = false;
             // 
+            // btnNuevoProducto
+            // 
+            this.btnNuevoProducto.Location = new System.Drawing.Point(356, 466);
+            this.btnNuevoProducto.Name = "btnNuevoProducto";
+            this.btnNuevoProducto.Size = new System.Drawing.Size(115, 59);
+            this.btnNuevoProducto.TabIndex = 2;
+            this.btnNuevoProducto.Text = "Nuevo";
+            this.btnNuevoProducto.UseVisualStyleBackColor = true;
+            this.btnNuevoProducto.Click += new System.EventHandler(this.btnNuevoProducto_Click);
+            // 
+            // btnEliminarProducto
+            // 
+            this.btnEliminarProducto.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btnEliminarProducto.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnEliminarProducto.ForeColor = System.Drawing.Color.Black;
+            this.btnEliminarProducto.Location = new System.Drawing.Point(477, 466);
+            this.btnEliminarProducto.Name = "btnEliminarProducto";
+            this.btnEliminarProducto.Size = new System.Drawing.Size(113, 59);
+            this.btnEliminarProducto.TabIndex = 3;
+            this.btnEliminarProducto.Text = "Eliminar";
+            this.btnEliminarProducto.UseVisualStyleBackColor = false;
+            this.btnEliminarProducto.Click += new System.EventHandler(this.btnEliminarProducto_Click);
+            // 
+            // btnEditarProducto
+            // 
+            this.btnEditarProducto.Location = new System.Drawing.Point(242, 466);
+            this.btnEditarProducto.Name = "btnEditarProducto";
+            this.btnEditarProducto.Size = new System.Drawing.Size(108, 59);
+            this.btnEditarProducto.TabIndex = 4;
+            this.btnEditarProducto.Text = "Editar";
+            this.btnEditarProducto.UseVisualStyleBackColor = true;
+            this.btnEditarProducto.Click += new System.EventHandler(this.btnEditarProducto_Click);
+            // 
+            // btnInfoProductos
+            // 
+            this.btnInfoProductos.Location = new System.Drawing.Point(129, 466);
+            this.btnInfoProductos.Name = "btnInfoProductos";
+            this.btnInfoProductos.Size = new System.Drawing.Size(107, 59);
+            this.btnInfoProductos.TabIndex = 5;
+            this.btnInfoProductos.Text = "Obtener Lista";
+            this.btnInfoProductos.UseVisualStyleBackColor = true;
+            this.btnInfoProductos.Click += new System.EventHandler(this.btnInfoProductos_Click);
+            // 
+            // btnExport
+            // 
+            this.btnExport.Location = new System.Drawing.Point(807, 466);
+            this.btnExport.Name = "btnExport";
+            this.btnExport.Size = new System.Drawing.Size(110, 59);
+            this.btnExport.TabIndex = 7;
+            this.btnExport.Text = "Exportar";
+            this.btnExport.UseVisualStyleBackColor = true;
+            this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
+            // 
+            // btnGuardarCambios
+            // 
+            this.btnGuardarCambios.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+            this.btnGuardarCambios.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnGuardarCambios.Location = new System.Drawing.Point(8, 466);
+            this.btnGuardarCambios.Name = "btnGuardarCambios";
+            this.btnGuardarCambios.Size = new System.Drawing.Size(115, 59);
+            this.btnGuardarCambios.TabIndex = 8;
+            this.btnGuardarCambios.Text = "Guardar cambios";
+            this.btnGuardarCambios.UseVisualStyleBackColor = false;
+            this.btnGuardarCambios.Click += new System.EventHandler(this.btnGuardarCambios_Click);
+            // 
             // BuscarProducto
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -316,7 +305,6 @@ namespace Presentacion.Forms.Producto
             this.ClientSize = new System.Drawing.Size(929, 537);
             this.Controls.Add(this.btnGuardarCambios);
             this.Controls.Add(this.btnExport);
-            this.Controls.Add(this.btnImport);
             this.Controls.Add(this.btnInfoProductos);
             this.Controls.Add(this.btnEditarProducto);
             this.Controls.Add(this.btnEliminarProducto);
@@ -352,7 +340,6 @@ namespace Presentacion.Forms.Producto
         public System.Windows.Forms.Label lblCodigoProducto;
         public System.Windows.Forms.Button btnEditarProducto;
         public System.Windows.Forms.Button btnInfoProductos;
-        public System.Windows.Forms.Button btnImport;
         public System.Windows.Forms.Button btnExport;
         public System.Windows.Forms.Button btnGuardarCambios;
         private System.Windows.Forms.DataGridViewTextBoxColumn CodigoProducto;

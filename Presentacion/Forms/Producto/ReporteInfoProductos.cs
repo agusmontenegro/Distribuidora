@@ -19,7 +19,7 @@ namespace Presentacion.Forms.Producto
         {
             var reporte = new InfoProductos();
             var productos = ProductoService.ObtenerProductos();
-            reporte.txtFechaParametro.Value = DateTime.Today.ToString("dd/MM/yyyy");
+            reporte.txtFechaParametro.Value = DateTime.Now.ToString();
             reporte.tblProductos.DataSource = productos;
             rptInfoProductos.Report = reporte;
             rptInfoProductos.RefreshReport();
