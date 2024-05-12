@@ -208,7 +208,7 @@ namespace Presentacion.Forms.Stock
 
         private void ReponerStock()
         {
-            int reposicionCodigo;
+            int reposicionCodigo = 0;
             using (var scope = new TransactionScope())
             {
                 try
@@ -234,9 +234,9 @@ namespace Presentacion.Forms.Stock
                     grdStock.Rows.Clear();
                     btnConfirmar.Enabled = false;
                 }
-                catch
+                catch (Exception ex)
                 {
-                    throw new Exception("Hubo un error al intentar reponer stock");
+                    MessageBox.Show("Hubo un error al intentar reponer stock " + ex.Message);
                 }
             }
 
@@ -249,9 +249,9 @@ namespace Presentacion.Forms.Stock
                     var reporte = new ReporteStock(reposicionCodigo.ToString());
                     reporte.ShowDialog();
                 }
-                catch
+                catch (Exception ex)
                 {
-                    throw new Exception("Hubo un error al querer imprimir la reposición de stock");
+                    MessageBox.Show("Hubo un error al querer imprimir la reposición de stock " + ex.Message);
                 }
             }
         }

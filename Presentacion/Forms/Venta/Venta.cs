@@ -274,7 +274,7 @@ namespace Presentacion.Forms.Venta
 
         private void btnGuardarVenta_Click(object sender, EventArgs e)
         {
-            int codigoVenta;
+            int codigoVenta = 0;
             using (var scope = new TransactionScope())
             {
                 try
@@ -302,9 +302,9 @@ namespace Presentacion.Forms.Venta
                     btnGuardarVenta.Enabled = false;
                     txtPrecioTotal.Text = string.Empty;
                 }
-                catch
+                catch (Exception ex)
                 {
-                    throw new Exception("Hubo un error al intentar procesar la venta");
+                    MessageBox.Show("Hubo un error al intentar procesar la venta " + ex.Message);
                 }
             }
 
@@ -318,9 +318,9 @@ namespace Presentacion.Forms.Venta
                     var reporte = new ReporteVenta(codigoVenta.ToString());
                     reporte.ShowDialog();
                 }
-                catch
+                catch (Exception ex)
                 {
-                    throw new Exception("Hubo un error al querer imprimir la venta");
+                    MessageBox.Show("Hubo un error al querer imprimir la venta " + ex.Message);
                 }
             }
         }
