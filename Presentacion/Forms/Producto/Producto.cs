@@ -1,7 +1,10 @@
-﻿using Distribuidora.Forms.Helpers;
-using Logica.Services;
+﻿using Logica.Services.Alerta;
+using Logica.Services.Combo;
+using Logica.Services.Producto;
+using Logica.Services.Rubro;
+using Logica.Services.Stock;
+using Logica.Services.Validacion;
 using Persistencia.DTOs;
-using Presentacion.Commons;
 using System;
 using System.Linq;
 using System.Transactions;
@@ -15,34 +18,35 @@ namespace Presentacion.Forms.Producto
         private string IdProduct;
         private string IdComponente;
 
-        private readonly RubroService RubroService;
-        private readonly ProductoService ProductoService;
-        private readonly ComboService ComboService;
-        private readonly ValidacionService ValidacionService;
-        private readonly AlertaService AlertaService;
-        private readonly StockService StockService;
-
-        private readonly FormsCommon FormsCommon;
-        private readonly ProductoFormHelper ProductoFormHelper;
+        private readonly IRubroService rubroService;
+        private readonly IProductoService productoService;
+        private readonly IComboService comboService;
+        private readonly IValidacionService validacionService;
+        private readonly IAlertaService alertaService;
+        private readonly IStockService stockService;
 
         private readonly Menu Menu;
 
-        public Producto(Menu Menu, string IdProduct = null)
+        public Producto(Menu Menu,
+            IRubroService rubroService,
+            IProductoService productoService,
+            IComboService comboService,
+            IValidacionService validacionService,
+            IAlertaService alertaService,
+            IStockService stockService,
+            string IdProduct = null)
         {
             InitializeComponent();
 
             this.IdProduct = IdProduct;
             this.Menu = Menu;
 
-            RubroService = new RubroService();
-            ProductoService = new ProductoService();
-            ComboService = new ComboService();
-            ValidacionService = new ValidacionService();
-            AlertaService = new AlertaService();
-            StockService = new StockService();
-
-            FormsCommon = new FormsCommon();
-            ProductoFormHelper = new ProductoFormHelper();
+            this.rubroService = rubroService;
+            this.productoService = productoService;
+            this.comboService = comboService;
+            this.validacionService = validacionService;
+            this.alertaService = alertaService;
+            this.stockService = stockService;
         }
 
         private void AltaProducto_Load(object sender, EventArgs e)
@@ -60,7 +64,7 @@ namespace Presentacion.Forms.Producto
 
         private void CargarCombos()
         {
-            var rubros = RubroService.ObtenerRubros();
+            var rubros = rubroService.ObtenerRubros();
             cboRubros.Items.AddRange(rubros.ToArray());
             cboRubros.DisplayMember = "Detalle";
             cboRubros.ValueMember = "Codigo";
@@ -68,25 +72,33 @@ namespace Presentacion.Forms.Producto
 
         private void CargarDatosAlFormulario(string idProduct)
         {
-            var producto = ProductoService.ObtenerProductoPorId(idProduct);
-            var combo = ComboService.ObtenerCombo(idProduct);
-            ProductoFormHelper.CargarDatosAlFormulario(this, producto);
-            ProductoFormHelper.CargarDatosALaGrilla(this, combo);
+            var producto = productoService.ObtenerProductoPorId(idProduct);
+            var combo = comboService.ObtenerCombo(idProduct);
+            CargarDatosAlFormulario(this, producto);
+            CargarDatosALaGrilla(this, combo);
+        }
+
+        private void OnlyNumerics(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
+                e.Handled = true;
+            if ((e.KeyChar == '.') && ((sender as TextBox).Text.IndexOf('.') > -1))
+                e.Handled = true;
         }
 
         private void txtPrecioUnitario_KeyPress(object sender, KeyPressEventArgs e)
         {
-            FormsCommon.OnlyNumerics(sender, e);
+            OnlyNumerics(sender, e);
         }
 
         private void txtStockMinimo_KeyPress(object sender, KeyPressEventArgs e)
         {
-            FormsCommon.OnlyNumerics(sender, e);
+            OnlyNumerics(sender, e);
         }
 
         private void txtCantidadComposicion_KeyPress(object sender, KeyPressEventArgs e)
         {
-            FormsCommon.OnlyNumerics(sender, e);
+            OnlyNumerics(sender, e);
 
             if (e.KeyChar == (char)Keys.Return)
             {
@@ -118,20 +130,20 @@ namespace Presentacion.Forms.Producto
         {
             if (string.IsNullOrEmpty(codigoProducto))
             {
-                ValidacionService.AgregarValidacion(false, "Debe ingresar un código de producto.");
+                validacionService.AgregarValidacion(false, "Debe ingresar un código de producto.");
             }
             else
             {
-                var existeProd = ProductoService.ExisteProductoSegunCodigo(codigoProducto);
-                ValidacionService.AgregarValidacion(existeProd, "No existe un producto activo con el código ingresado.");
+                var existeProd = productoService.ExisteProductoSegunCodigo(codigoProducto);
+                validacionService.AgregarValidacion(existeProd, "No existe un producto activo con el código ingresado.");
             }
 
-            return ValidacionService.Validar(ref msj);
+            return validacionService.Validar(ref msj);
         }
 
         private void CompletarItem(string codigoProducto)
         {
-            var producto = ProductoService.ObtenerProductosPorCodigo(codigoProducto)[0];
+            var producto = productoService.ObtenerProductosPorCodigo(codigoProducto)[0];
 
             IdComponente = producto.Id;
             txtCodigoProductoComposicion.Enabled = false;
@@ -167,16 +179,16 @@ namespace Presentacion.Forms.Producto
         {
             if (string.IsNullOrEmpty(txtCantidadComposicion.Text))
             {
-                ValidacionService.AgregarValidacion(false, "Debe ingresar la cantidad del componente");
+                validacionService.AgregarValidacion(false, "Debe ingresar la cantidad del componente");
             }
             else
             {
-                var existeItemEnGrid = ProductoFormHelper.ExisteItemEnGrid(this, txtCodigoProductoComposicion.Text.ToString());
-                ValidacionService.AgregarValidacion(int.Parse(txtCantidadComposicion.Text) > 0, "La cantidad del componente no puede ser 0");
-                ValidacionService.AgregarValidacion(!existeItemEnGrid, "El producto " + txtCodigoProductoComposicion.Text.ToString() + " ya fue agregado");
+                var existeItemEnGrid = ExisteItemEnGrid(this, txtCodigoProductoComposicion.Text.ToString());
+                validacionService.AgregarValidacion(int.Parse(txtCantidadComposicion.Text) > 0, "La cantidad del componente no puede ser 0");
+                validacionService.AgregarValidacion(!existeItemEnGrid, "El producto " + txtCodigoProductoComposicion.Text.ToString() + " ya fue agregado");
             }
 
-            return ValidacionService.Validar(ref msj);
+            return validacionService.Validar(ref msj);
         }
 
         private void LimpiarFormularioDeComponentes()
@@ -203,7 +215,7 @@ namespace Presentacion.Forms.Producto
                     {
                         if (string.IsNullOrEmpty(IdProduct))
                         {
-                            var productosSimilares = ProductoService.ObtenerProductosSimilares(txtDetalleProducto.Text.ToUpper().Trim());
+                            var productosSimilares = productoService.ObtenerProductosSimilares(txtDetalleProducto.Text.ToUpper().Trim());
 
                             if (productosSimilares.Count > 0)
                             {
@@ -230,16 +242,16 @@ namespace Presentacion.Forms.Producto
                             var codigoRubro = ((Rubro)cboRubros.SelectedItem).Codigo;
                             var stockMinimo = txtStockMinimo.Text;
 
-                            ProductoService.ActualizarProducto(IdProduct, codigoProd, detalleProd, precio, codigoRubro, stockMinimo);
+                            productoService.ActualizarProducto(IdProduct, codigoProd, detalleProd, precio, codigoRubro, stockMinimo);
 
                             if (grdComponentes.Rows.Count > 0)
                             {
-                                ComboService.EliminarComponentes(IdProduct);
+                                comboService.EliminarComponentes(IdProduct);
                                 for (int i = 0;i < grdComponentes.Rows.Count;++i)
                                 {
                                     var idComponente = grdComponentes.Rows[i].Cells[3].Value.ToString();
                                     var cantidad = grdComponentes.Rows[i].Cells[2].Value.ToString();
-                                    ComboService.GuardarComponente(int.Parse(IdProduct), idComponente, cantidad);
+                                    comboService.GuardarComponente(int.Parse(IdProduct), idComponente, cantidad);
                                 }
                             }
 
@@ -263,12 +275,12 @@ namespace Presentacion.Forms.Producto
 
         private void VerificarAlertas(string idProduct)
         {
-            if (!ComboService.EsCombo_Id(idProduct))
+            if (!comboService.EsCombo_Id(idProduct))
             {
-                if (StockService.HayQueReponer(idProduct))
-                    AlertaService.EmitirAlertaDeReposicion(idProduct);
+                if (stockService.HayQueReponer(idProduct))
+                    alertaService.EmitirAlertaDeReposicion(idProduct);
                 else
-                    AlertaService.QuitarAlertaDeReposicion(idProduct);
+                    alertaService.QuitarAlertaDeReposicion(idProduct);
 
                 Menu.CargarCantidadDeAlertas();
             }
@@ -282,7 +294,7 @@ namespace Presentacion.Forms.Producto
             var codigoRubro = ((Rubro)cboRubros.SelectedItem).Codigo;
             var stockMinimo = txtStockMinimo.Text;
 
-            var idProducto = ProductoService.GuardarProducto(codigoProd, detalleProd, precio, codigoRubro, stockMinimo);
+            var idProducto = productoService.GuardarProducto(codigoProd, detalleProd, precio, codigoRubro, stockMinimo);
 
             if (grdComponentes.Rows.Count > 0)
             {
@@ -290,7 +302,7 @@ namespace Presentacion.Forms.Producto
                 {
                     var idComponente = grdComponentes.Rows[i].Cells[3].Value.ToString();
                     var cantidad = grdComponentes.Rows[i].Cells[2].Value.ToString();
-                    ComboService.GuardarComponente(idProducto, idComponente, cantidad);
+                    comboService.GuardarComponente(idProducto, idComponente, cantidad);
                 }
             }
             MessageBox.Show("El producto ha sido guardado exitosamente");
@@ -302,30 +314,30 @@ namespace Presentacion.Forms.Producto
         {
             if (!string.IsNullOrEmpty(txtCodigoProducto.Text.Trim()))
             {
-                ValidacionService.AgregarValidacion(txtCodigoProducto.Text.Trim().Count() < 5, "El código del producto no debe superar los 5 caracteres");
+                validacionService.AgregarValidacion(txtCodigoProducto.Text.Trim().Count() < 5, "El código del producto no debe superar los 5 caracteres");
 
                 if (string.IsNullOrEmpty(IdProduct))
                 {
-                    var existeProducto = ProductoService.ExisteProductoSegunCodigo(txtCodigoProducto.Text.ToUpper().Trim());
-                    ValidacionService.AgregarValidacion(!existeProducto, "Ya existe otro producto con el mismo código ingresado.");
+                    var existeProducto = productoService.ExisteProductoSegunCodigo(txtCodigoProducto.Text.ToUpper().Trim());
+                    validacionService.AgregarValidacion(!existeProducto, "Ya existe otro producto con el mismo código ingresado.");
                 }
                 else
                 {
-                    var products = ProductoService.ObtenerProductosPorCodigo(txtCodigoProducto.Text.ToUpper().Trim());
+                    var products = productoService.ObtenerProductosPorCodigo(txtCodigoProducto.Text.ToUpper().Trim());
 
                     if (products != null)
-                        ValidacionService.AgregarValidacion(products.Count() == 1 && products[0].Id == IdProduct, "Ya existe otro producto con el mismo código ingresado.");
+                        validacionService.AgregarValidacion(products.Count() == 1 && products[0].Id == IdProduct, "Ya existe otro producto con el mismo código ingresado.");
                 }
             }
             else
-                ValidacionService.AgregarValidacion(false, "Debe ingresar el código del producto");
+                validacionService.AgregarValidacion(false, "Debe ingresar el código del producto");
 
-            ValidacionService.AgregarValidacion(!string.IsNullOrEmpty(txtDetalleProducto.Text.Trim()), "Debe ingresar el detalle del producto");
-            ValidacionService.AgregarValidacion(!string.IsNullOrEmpty(txtPrecioUnitario.Text), "Debe ingresar el precio unitario del producto");
-            ValidacionService.AgregarValidacion(cboRubros.SelectedIndex != -1, "Debe seleccionar el rubro del producto");
-            ValidacionService.AgregarValidacion(!string.IsNullOrEmpty(txtStockMinimo.Text), "Debe ingresar el punto de reposición de stock");
+            validacionService.AgregarValidacion(!string.IsNullOrEmpty(txtDetalleProducto.Text.Trim()), "Debe ingresar el detalle del producto");
+            validacionService.AgregarValidacion(!string.IsNullOrEmpty(txtPrecioUnitario.Text), "Debe ingresar el precio unitario del producto");
+            validacionService.AgregarValidacion(cboRubros.SelectedIndex != -1, "Debe seleccionar el rubro del producto");
+            validacionService.AgregarValidacion(!string.IsNullOrEmpty(txtStockMinimo.Text), "Debe ingresar el punto de reposición de stock");
 
-            return ValidacionService.Validar(ref msj);
+            return validacionService.Validar(ref msj);
         }
 
         private void btnEliminar_Click(object sender, EventArgs e)
@@ -337,7 +349,8 @@ namespace Presentacion.Forms.Producto
             }
         }
 
-        private void grdComponentes_CellClick(object sender, DataGridViewCellEventArgs e) { Celda = e.RowIndex; }
+        private void grdComponentes_CellClick(object sender, DataGridViewCellEventArgs e)
+            => Celda = e.RowIndex;
 
         private void btnCancelar_Click(object sender, EventArgs e)
         {
@@ -345,6 +358,41 @@ namespace Presentacion.Forms.Producto
 
             btnAgregarComponente.Enabled = false;
             txtCodigoProductoComposicion.Focus();
+        }
+
+        private void CargarDatosAlFormulario(Producto form, Persistencia.DTOs.Producto producto)
+        {
+            form.txtCodigoProducto.Text = producto.Codigo;
+            form.txtDetalleProducto.Text = producto.Detalle;
+            form.txtPrecioUnitario.Text = producto.PrecioUnitario.ToString();
+            form.cboRubros.Text = producto.Rubro.Detalle;
+            form.txtStockMinimo.Text = producto.Stock.CantidadMinima;
+        }
+
+        private void CargarDatosALaGrilla(Producto form, Persistencia.DTOs.Combo combo)
+        {
+            foreach (var componente in combo.Componentes)
+            {
+                int rowId = form.grdComponentes.Rows.Add();
+
+                form.grdComponentes.Rows[rowId].Cells[0].Value = componente.Producto.Codigo;
+                form.grdComponentes.Rows[rowId].Cells[1].Value = componente.Producto.Detalle;
+                form.grdComponentes.Rows[rowId].Cells[2].Value = componente.Cantidad;
+                form.grdComponentes.Rows[rowId].Cells[3].Value = componente.Producto.Id;
+            }
+        }
+
+        private bool ExisteItemEnGrid(Producto form, string codigoProducto)
+        {
+            foreach (DataGridViewRow row in form.grdComponentes.Rows)
+            {
+                if (row.Cells[0].Value.ToString() == codigoProducto)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

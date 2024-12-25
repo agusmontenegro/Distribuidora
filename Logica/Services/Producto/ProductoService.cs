@@ -3,9 +3,9 @@ using Persistencia.DTOs;
 using System.Collections.Generic;
 using System.Data;
 
-namespace Logica.Services
+namespace Logica.Services.Producto
 {
-    public class ProductoService
+    public class ProductoService : IProductoService
     {
         private readonly DAOProducto DAOProducto;
 
@@ -20,7 +20,7 @@ namespace Logica.Services
             return existsProduct;
         }
 
-        public List<Producto> ObtenerProductos()
+        public List<Persistencia.DTOs.Producto> ObtenerProductos()
         {
             var productos = DAOProducto.ObtenerProductos();
             return productos;
@@ -32,25 +32,25 @@ namespace Logica.Services
             return productos;
         }
 
-        public List<Producto> ObtenerProductosSimilares(string detalleProducto)
+        public List<Persistencia.DTOs.Producto> ObtenerProductosSimilares(string detalleProducto)
         {
             var productos = DAOProducto.ObtenerProductosSimilares(detalleProducto);
             return productos;
         }
 
-        public Producto ObtenerProductoPorId(string idProducto)
+        public Persistencia.DTOs.Producto ObtenerProductoPorId(string idProducto)
         {
             var producto = DAOProducto.ObtenerProductoPorId(idProducto);
             return producto;
         }
 
-        public List<Producto> ObtenerProductosPorCodigo(string codigoProducto)
+        public List<Persistencia.DTOs.Producto> ObtenerProductosPorCodigo(string codigoProducto)
         {
             var productos = DAOProducto.ObtenerProductosPorCodigo(codigoProducto);
             return productos;
         }
 
-        public List<Producto> Buscar(Producto producto)
+        public List<Persistencia.DTOs.Producto> Buscar(Persistencia.DTOs.Producto producto)
         {
             var productos = DAOProducto.Buscar(producto);
             return productos;

@@ -1,14 +1,15 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Windows.Forms;
 
 namespace Presentacion
 {
-    public class Movimiento
-    {
-        public int PosicionX;
-        public int PosicionY;
-        public bool EsPosible;
-    }
+    //public class Movimiento
+    //{
+    //    public int PosicionX;
+    //    public int PosicionY;
+    //    public bool EsPosible;
+    //}
 
     static class Program
     {
@@ -20,7 +21,9 @@ namespace Presentacion
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Forms.Menu());
+            var serviceProvider = DependencyInjectionConfig.ConfigureServices();
+            var menu = serviceProvider.GetRequiredService<Forms.Menu>();
+            Application.Run(menu);
         }
 
         //static void Main()

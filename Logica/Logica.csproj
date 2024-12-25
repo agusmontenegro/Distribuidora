@@ -70,14 +70,22 @@
     <Compile Include="Reportes\VentaReport.Designer.cs">
       <DependentUpon>VentaReport.cs</DependentUpon>
     </Compile>
-    <Compile Include="Services\AlertaService.cs" />
-    <Compile Include="Services\ComboService.cs" />
-    <Compile Include="Services\ExcelService.cs" />
-    <Compile Include="Services\ProductoService.cs" />
-    <Compile Include="Services\RubroService.cs" />
-    <Compile Include="Services\StockService.cs" />
-    <Compile Include="Services\ValidacionService.cs" />
-    <Compile Include="Services\VentaService.cs" />
+    <Compile Include="Services\Combo\IComboService.cs" />
+    <Compile Include="Services\Alerta\IAlertaService.cs" />
+    <Compile Include="Services\Alerta\AlertaService.cs" />
+    <Compile Include="Services\Combo\ComboService.cs" />
+    <Compile Include="Services\Excel\IExcelService.cs" />
+    <Compile Include="Services\Excel\ExcelService.cs" />
+    <Compile Include="Services\Producto\IProductoService.cs" />
+    <Compile Include="Services\Producto\ProductoService.cs" />
+    <Compile Include="Services\Rubro\IRubroService.cs" />
+    <Compile Include="Services\Rubro\RubroService.cs" />
+    <Compile Include="Services\Stock\IStockService.cs" />
+    <Compile Include="Services\Stock\StockService.cs" />
+    <Compile Include="Services\Validacion\IValidacionService.cs" />
+    <Compile Include="Services\Validacion\ValidacionService.cs" />
+    <Compile Include="Services\Venta\IVentaService.cs" />
+    <Compile Include="Services\Venta\VentaService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Persistencia\Persistencia.csproj">

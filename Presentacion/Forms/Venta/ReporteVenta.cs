@@ -1,5 +1,5 @@
-﻿using Logica.Services;
-using Logica.Reportes;
+﻿using Logica.Reportes;
+using Logica.Services.Venta;
 using System;
 using System.Windows.Forms;
 
@@ -8,19 +8,20 @@ namespace Presentacion.Forms.Venta
     public partial class ReporteVenta : Form
     {
         private readonly string CodigoVenta;
-        private readonly VentaService VentaService;
+        private readonly IVentaService ventaService;
 
-        public ReporteVenta(string CodigoVenta)
+        public ReporteVenta(string CodigoVenta,
+            IVentaService ventaService)
         {
             InitializeComponent();
             this.CodigoVenta = CodigoVenta;
-            VentaService = new VentaService();
+            this.ventaService = ventaService;
         }
 
         private void GenerarReporte()
         {
             var reporte = new VentaReport();
-            var venta = VentaService.ObtenerVenta(CodigoVenta);
+            var venta = ventaService.ObtenerVenta(CodigoVenta);
             reporte.txtFechaParametro.Value = venta.Fecha;
             reporte.txtTotalParametro.Value = venta.Total.ToString();
             reporte.tblVenta.DataSource = venta.Items;

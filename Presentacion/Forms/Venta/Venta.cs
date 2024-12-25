@@ -1,5 +1,9 @@
-﻿using Logica.Services;
-using Presentacion.Commons;
+﻿using Logica.Services.Alerta;
+using Logica.Services.Combo;
+using Logica.Services.Producto;
+using Logica.Services.Stock;
+using Logica.Services.Validacion;
+using Logica.Services.Venta;
 using System;
 using System.Transactions;
 using System.Windows.Forms;
@@ -13,25 +17,32 @@ namespace Presentacion.Forms.Venta
         private string IdProducto;
 
         private readonly Menu Menu;
-        private readonly FormsCommon FormsCommon;
-        private readonly ProductoService ProductoService;
-        private readonly ComboService ComboService;
-        private readonly ValidacionService ValidacionService;
-        private readonly AlertaService AlertaService;
-        private readonly VentaService VentaService;
-        private readonly StockService StockService;
+        private readonly ReporteVenta reporteVenta;
+        private readonly IProductoService productoService;
+        private readonly IComboService comboService;
+        private readonly IValidacionService validacionService;
+        private readonly IAlertaService alertaService;
+        private readonly IVentaService ventaService;
+        private readonly IStockService stockService;
 
-        public Venta(Menu Menu)
+        public Venta(Menu Menu,
+            ReporteVenta reporteVenta,
+            IProductoService productoService,
+            IComboService comboService,
+            IValidacionService validacionService,
+            IAlertaService alertaService,
+            IVentaService ventaService,
+            IStockService stockService)
         {
             InitializeComponent();
             this.Menu = Menu;
-            FormsCommon = new FormsCommon();
-            ProductoService = new ProductoService();
-            ComboService = new ComboService();
-            ValidacionService = new ValidacionService();
-            AlertaService = new AlertaService();
-            VentaService = new VentaService();
-            StockService = new StockService();
+            this.reporteVenta = reporteVenta;
+            this.productoService = productoService;
+            this.comboService = comboService;
+            this.validacionService = validacionService;
+            this.alertaService = alertaService;
+            this.ventaService = ventaService;
+            this.stockService = stockService;
         }
 
         private void Venta_Load(object sender, EventArgs e)
@@ -72,15 +83,15 @@ namespace Presentacion.Forms.Venta
         {
             if (string.IsNullOrEmpty(codigoProducto))
             {
-                ValidacionService.AgregarValidacion(false, "Debe ingresar un código de producto.");
+                validacionService.AgregarValidacion(false, "Debe ingresar un código de producto.");
             }
             else
             {
-                var existeProd = ProductoService.ExisteProductoSegunCodigo(codigoProducto);
-                ValidacionService.AgregarValidacion(existeProd, "No existe un producto activo con el código ingresado.");
+                var existeProd = productoService.ExisteProductoSegunCodigo(codigoProducto);
+                validacionService.AgregarValidacion(existeProd, "No existe un producto activo con el código ingresado.");
             }
 
-            return ValidacionService.Validar(ref msj);
+            return validacionService.Validar(ref msj);
         }
 
         private void btnCancelarItem_Click(object sender, EventArgs e)
@@ -116,7 +127,7 @@ namespace Presentacion.Forms.Venta
 
                 txtSubtotal.Text = subtotal.ToString();
 
-                if (!ComboService.EsCombo_Id(IdProducto))
+                if (!comboService.EsCombo_Id(IdProducto))
                 {
                     var nuevoStockActual = int.Parse(Stock.CantidadActual) - cantidad;
                     txtNuevoStock.Text = nuevoStockActual.ToString();
@@ -133,7 +144,7 @@ namespace Presentacion.Forms.Venta
 
         private void txtCantidad_KeyPress(object sender, KeyPressEventArgs e)
         {
-            FormsCommon.OnlyNumerics(sender, e);
+            OnlyNumerics(sender, e);
 
             if (e.KeyChar == (char)Keys.Return)
             {
@@ -141,9 +152,17 @@ namespace Presentacion.Forms.Venta
             }
         }
 
+        private void OnlyNumerics(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
+                e.Handled = true;
+            if ((e.KeyChar == '.') && ((sender as TextBox).Text.IndexOf('.') > -1))
+                e.Handled = true;
+        }
+
         private void CompletarItem(string codigoProducto)
         {
-            var producto = ProductoService.ObtenerProductosPorCodigo(codigoProducto)[0];
+            var producto = productoService.ObtenerProductosPorCodigo(codigoProducto)[0];
 
             IdProducto = producto.Id;
             txtCodigoProducto.Enabled = false;
@@ -158,9 +177,9 @@ namespace Presentacion.Forms.Venta
         private void ObtenerStock()
         {
             // Se podría consultar igual el stock actual segun el stock actual de los componentes cuántos combos se pueden armar
-            if (!ComboService.EsCombo_Id(IdProducto))
+            if (!comboService.EsCombo_Id(IdProducto))
             {
-                var producto = ProductoService.ObtenerProductoPorId(IdProducto);
+                var producto = productoService.ObtenerProductoPorId(IdProducto);
 
                 txtStockActual.Text = producto.Stock.CantidadActual.ToString();
                 Stock = producto.Stock;
@@ -203,29 +222,29 @@ namespace Presentacion.Forms.Venta
         {
             if (string.IsNullOrEmpty(txtCantidad.Text))
             {
-                ValidacionService.AgregarValidacion(false, "Debe ingresar la cantidad del producto a vender");
+                validacionService.AgregarValidacion(false, "Debe ingresar la cantidad del producto a vender");
             }
             else
             {
-                ValidacionService.AgregarValidacion(int.Parse(txtCantidad.Text) > 0, "La cantidad del producto a vender no puede ser 0");
-                if (ComboService.EsCombo_Id(IdProducto))
+                validacionService.AgregarValidacion(int.Parse(txtCantidad.Text) > 0, "La cantidad del producto a vender no puede ser 0");
+                if (comboService.EsCombo_Id(IdProducto))
                 {
-                    if (!StockService.HayStock(IdProducto, txtCantidad.Text))
+                    if (!stockService.HayStock(IdProducto, txtCantidad.Text))
                     {
-                        var stockInfo = ComboService.InformarStockFaltante(IdProducto, txtCantidad.Text);
-                        ValidacionService.AgregarValidacion(false, "Stock no disponible para la cantidad ingresada. \n" + stockInfo);
+                        var stockInfo = comboService.InformarStockFaltante(IdProducto, txtCantidad.Text);
+                        validacionService.AgregarValidacion(false, "Stock no disponible para la cantidad ingresada. \n" + stockInfo);
                     }
                 }
                 else
                 {
-                    ValidacionService.AgregarValidacion(int.Parse(txtCantidad.Text) <= int.Parse(txtStockActual.Text), "Stock no disponible para la cantidad ingresada");
+                    validacionService.AgregarValidacion(int.Parse(txtCantidad.Text) <= int.Parse(txtStockActual.Text), "Stock no disponible para la cantidad ingresada");
                 }
             }
 
             var existeEnGrid = ExisteItemEnGrid(txtCodigoProducto.Text.ToString());
-            ValidacionService.AgregarValidacion(!existeEnGrid, "El producto " + txtCodigoProducto.Text.ToString() + " ya fue agregado");
+            validacionService.AgregarValidacion(!existeEnGrid, "El producto " + txtCodigoProducto.Text.ToString() + " ya fue agregado");
 
-            return ValidacionService.Validar(ref msj);
+            return validacionService.Validar(ref msj);
         }
 
         private bool ExisteItemEnGrid(string codigoProducto)
@@ -274,23 +293,22 @@ namespace Presentacion.Forms.Venta
 
         private void btnGuardarVenta_Click(object sender, EventArgs e)
         {
-            int codigoVenta = 0;
             using (var scope = new TransactionScope())
             {
                 try
                 {
-                    codigoVenta = VentaService.GuardarVenta(txtPrecioTotal.Text);
+                    int codigoVenta = ventaService.GuardarVenta(txtPrecioTotal.Text);
                     for (int i = 0;i < grdVentas.Rows.Count;++i)
                     {
                         var idProducto = grdVentas.Rows[i].Cells[5].Value.ToString();
                         var cantidad = grdVentas.Rows[i].Cells[2].Value.ToString();
                         var precio = grdVentas.Rows[i].Cells[4].Value.ToString();
 
-                        VentaService.GuardarItem(codigoVenta, int.Parse(idProducto), decimal.Parse(precio), int.Parse(cantidad));
+                        ventaService.GuardarItem(codigoVenta, int.Parse(idProducto), decimal.Parse(precio), int.Parse(cantidad));
 
-                        if (StockService.HayQueReponer(idProducto) && !ComboService.EsCombo_Id(idProducto))
+                        if (stockService.HayQueReponer(idProducto) && !comboService.EsCombo_Id(idProducto))
                         {
-                            AlertaService.EmitirAlertaDeReposicion(idProducto);
+                            alertaService.EmitirAlertaDeReposicion(idProducto);
                             Menu.CargarCantidadDeAlertas();
                         }
                     }
@@ -315,8 +333,8 @@ namespace Presentacion.Forms.Venta
             {
                 try
                 {
-                    var reporte = new ReporteVenta(codigoVenta.ToString());
-                    reporte.ShowDialog();
+                    //var reporte = new ReporteVenta(codigoVenta.ToString());
+                    reporteVenta.ShowDialog();
                 }
                 catch (Exception ex)
                 {

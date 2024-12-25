@@ -1,10 +1,9 @@
 ﻿using Persistencia.DAOs;
-using Persistencia.DTOs;
 using System.Collections.Generic;
 
-namespace Logica.Services
+namespace Logica.Services.Alerta
 {
-    public class AlertaService
+    public class AlertaService : IAlertaService
     {
         private readonly DAOAlerta DAOAlerta;
 
@@ -29,7 +28,7 @@ namespace Logica.Services
             return cantidad;
         }
 
-        public List<Alerta> ObtenerAlertas()
+        public List<Persistencia.DTOs.Alerta> ObtenerAlertas()
         {
             var alertas = DAOAlerta.ObtenerAlertas();
             return alertas;

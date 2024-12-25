@@ -1,9 +1,9 @@
 ﻿using Persistencia.DAOs;
 using Persistencia.DTOs.Reportes;
 
-namespace Logica.Services
+namespace Logica.Services.Stock
 {
-    public class StockService
+    public class StockService : IStockService
     {
         private readonly DAOStock DAOStock;
 

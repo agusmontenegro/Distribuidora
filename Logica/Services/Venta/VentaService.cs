@@ -1,9 +1,8 @@
 ﻿using Persistencia.DAOs;
-using Persistencia.DTOs.Reportes;
 
-namespace Logica.Services
+namespace Logica.Services.Venta
 {
-    public class VentaService
+    public class VentaService : IVentaService
     {
         private readonly DAOVenta DAOVenta;
 
@@ -23,7 +22,7 @@ namespace Logica.Services
             DAOVenta.GuardarItem(codigoVenta, IdProducto, precioUnitario, cantidad);
         }
 
-        public Venta ObtenerVenta(string codigoVenta)
+        public Persistencia.DTOs.Reportes.Venta ObtenerVenta(string codigoVenta)
         {
             var venta = DAOVenta.ObtenerVenta(codigoVenta);
             return venta;

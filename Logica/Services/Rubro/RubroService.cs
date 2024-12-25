@@ -1,10 +1,9 @@
 ﻿using Persistencia.DAOs;
-using Persistencia.DTOs;
 using System.Collections.Generic;
 
-namespace Logica.Services
+namespace Logica.Services.Rubro
 {
-    public class RubroService
+    public class RubroService : IRubroService
     {
         private readonly DAORubro DAORubro;
 
@@ -13,7 +12,7 @@ namespace Logica.Services
             DAORubro = new DAORubro();
         }
 
-        public List<Rubro> ObtenerRubros()
+        public List<Persistencia.DTOs.Rubro> ObtenerRubros()
         {
             var rubros = DAORubro.ObtenerRubros();
             return rubros;

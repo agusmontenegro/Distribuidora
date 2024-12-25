@@ -1,4 +1,4 @@
-﻿using Logica.Services;
+﻿using Logica.Services.Alerta;
 using System.Windows.Forms;
 
 namespace Presentacion.Forms
@@ -6,17 +6,17 @@ namespace Presentacion.Forms
     public partial class Alerta : Form
     {
         private int celda = -1;
-        private readonly AlertaService AlertaService;
+        private readonly IAlertaService alertaService;
 
-        public Alerta()
+        public Alerta(IAlertaService alertaService)
         {
             InitializeComponent();
-            AlertaService = new AlertaService();
+            this.alertaService = alertaService;
         }
 
         private void Alerta_Load(object sender, System.EventArgs e)
         {
-            var alertas = AlertaService.ObtenerAlertas();
+            var alertas = alertaService.ObtenerAlertas();
             grdAlertas.DataSource = alertas;
         }
 

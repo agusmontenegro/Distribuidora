@@ -1,5 +1,5 @@
 ﻿using Logica.Reportes;
-using Logica.Services;
+using Logica.Services.Stock;
 using System;
 using System.Windows.Forms;
 
@@ -8,19 +8,20 @@ namespace Presentacion.Forms.Stock
     public partial class ReporteStock : Form
     {
         private readonly string codigoReposicion;
-        private readonly StockService StockService;
+        private readonly IStockService stockService;
 
-        public ReporteStock(string codigoReposicion)
+        public ReporteStock(string codigoReposicion,
+            IStockService stockService)
         {
             InitializeComponent();
             this.codigoReposicion = codigoReposicion;
-            StockService = new StockService();
+            this.stockService = stockService;
         }
 
         private void GenerarReporte()
         {
             var reporte = new StockReport();
-            var reposicion = StockService.ObtenerReposicion(codigoReposicion);
+            var reposicion = stockService.ObtenerReposicion(codigoReposicion);
             reporte.txtFechaReposicionParametro.Value = reposicion.Fecha.ToString();
             reporte.tblStock.DataSource = reposicion.Items;
             rptStock.Report = reporte;

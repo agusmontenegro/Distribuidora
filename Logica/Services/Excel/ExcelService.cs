@@ -1,8 +1,8 @@
 ﻿using Persistencia.Helpers;
 
-namespace Logica.Services
+namespace Logica.Services.Excel
 {
-    public class ExcelService
+    public class ExcelService : IExcelService
     {
         private readonly ExcelHelper ExcelHelper;
 

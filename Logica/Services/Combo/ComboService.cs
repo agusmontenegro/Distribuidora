@@ -1,9 +1,8 @@
 ﻿using Persistencia.DAOs;
-using Persistencia.DTOs;
 
-namespace Logica.Services
+namespace Logica.Services.Combo
 {
-    public class ComboService
+    public class ComboService : IComboService
     {
         private readonly DAOCombo DAOCombo;
 
@@ -24,7 +23,7 @@ namespace Logica.Services
             return esCombo;
         }
 
-        public Combo ObtenerCombo(string idProducto)
+        public Persistencia.DTOs.Combo ObtenerCombo(string idProducto)
         {
             var combo = DAOCombo.ObtenerCombo(idProducto);
             return combo;

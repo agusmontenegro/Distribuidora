@@ -1,5 +1,5 @@
-﻿using Logica.Services;
-using Logica.Reportes;
+﻿using Logica.Reportes;
+using Logica.Services.Producto;
 using System;
 using System.Windows.Forms;
 
@@ -7,18 +7,19 @@ namespace Presentacion.Forms.Producto
 {
     public partial class ReporteInfoProductos : Form
     {
-        private readonly ProductoService ProductoService;
+        private readonly IProductoService productoService;
 
-        public ReporteInfoProductos()
+        public ReporteInfoProductos(
+            IProductoService productoService)
         {
             InitializeComponent();
-            ProductoService = new ProductoService();
+            this.productoService = productoService;
         }
 
         private void GenerarReporte()
         {
             var reporte = new InfoProductos();
-            var productos = ProductoService.ObtenerProductos();
+            var productos = productoService.ObtenerProductos();
             reporte.txtFechaParametro.Value = DateTime.Now.ToString();
             reporte.tblProductos.DataSource = productos;
             rptInfoProductos.Report = reporte;

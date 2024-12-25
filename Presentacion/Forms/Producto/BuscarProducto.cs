@@ -1,34 +1,44 @@
-﻿using Logica.Services;
-using Presentacion.Forms.Helpers;
+﻿using Logica.Services.Excel;
+using Logica.Services.Producto;
+using Logica.Services.Rubro;
+using Logica.Services.Validacion;
+using Persistencia.DTOs;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Transactions;
 using System.Windows.Forms;
-using System.Linq;
 
 namespace Presentacion.Forms.Producto
 {
     public partial class BuscarProducto : Form
     {
         public int Fila = 0;
-        private readonly Menu Menu;
+        private readonly Menu menu;
+        private readonly Producto producto;
+        private readonly ReporteInfoProductos reporteInfoProductos;
 
-        private readonly BuscarProductoFormHelper BuscarProductoFormHelper;
-        private readonly RubroService RubroService;
-        private readonly ProductoService ProductoService;
-        private readonly ExcelService ExcelService;
-        private readonly ValidacionService ValidacionService;
+        private readonly IRubroService rubroService;
+        private readonly IProductoService productoService;
+        private readonly IExcelService excelService;
+        private readonly IValidacionService validacionService;
 
-        public BuscarProducto(Menu Menu)
+        public BuscarProducto(Menu menu,
+            Producto producto,
+            ReporteInfoProductos reporteInfoProductos,
+            IRubroService rubroService,
+            IProductoService productoService,
+            IExcelService excelService,
+            IValidacionService validacionService)
         {
             InitializeComponent();
-            this.Menu = Menu;
-
-            BuscarProductoFormHelper = new BuscarProductoFormHelper();
-            RubroService = new RubroService();
-            ProductoService = new ProductoService();
-            ExcelService = new ExcelService();
-            ValidacionService = new ValidacionService();
+            this.menu = menu;
+            this.producto = producto;
+            this.reporteInfoProductos = reporteInfoProductos;
+            this.rubroService = rubroService;
+            this.productoService = productoService;
+            this.excelService = excelService;
+            this.validacionService = validacionService;
         }
 
         private void Producto_Load(object sender, EventArgs e)
@@ -37,11 +47,11 @@ namespace Presentacion.Forms.Producto
             btnEditarProducto.Enabled = false;
             btnGuardarCambios.Enabled = false;
             CargarCombos();
-        }        
+        }
 
         private void CargarCombos()
         {
-            var rubros = RubroService.ObtenerRubros();
+            var rubros = rubroService.ObtenerRubros();
             cboRubros.Items.AddRange(rubros.ToArray());
             cboRubros.DisplayMember = "detalle";
             cboRubros.ValueMember = "codigo";
@@ -57,7 +67,7 @@ namespace Presentacion.Forms.Producto
             btnEliminarProducto.Enabled = false;
             btnEditarProducto.Enabled = false;
             btnGuardarCambios.Enabled = false;
-        }        
+        }
 
         private void RealizarBusqueda()
         {
@@ -65,8 +75,8 @@ namespace Presentacion.Forms.Producto
 
             if (BusquedaValida(ref msj))
             {
-                var producto = BuscarProductoFormHelper.CompletarObjeto(this);
-                var resultados = ProductoService.Buscar(producto);
+                var producto = CompletarObjeto();
+                var resultados = productoService.Buscar(producto);
                 CargarGrid(resultados);
                 btnEliminarProducto.Enabled = true;
                 btnEditarProducto.Enabled = true;
@@ -87,15 +97,34 @@ namespace Presentacion.Forms.Producto
             }
         }
 
+        private Persistencia.DTOs.Producto CompletarObjeto()
+        {
+            var producto = new Persistencia.DTOs.Producto();
+
+            if (!string.IsNullOrEmpty(txtCodigoProducto.Text))
+                producto.Codigo = txtCodigoProducto.Text.Trim();
+
+            if (!string.IsNullOrEmpty(txtDetalleProducto.Text))
+                producto.Detalle = txtDetalleProducto.Text.Trim();
+
+            if (cboRubros.SelectedIndex != -1)
+            {
+                producto.Rubro = new Rubro();
+                producto.Rubro.Codigo = ((Rubro)cboRubros.SelectedItem).Codigo;
+            }
+
+            return producto;
+        }
+
         private bool BusquedaValida(ref string msj)
         {
-            ValidacionService.AgregarValidacion(
+            validacionService.AgregarValidacion(
                 !string.IsNullOrEmpty(txtCodigoProducto.Text) ||
                 !string.IsNullOrEmpty(txtDetalleProducto.Text) ||
                 cboRubros.SelectedIndex != -1,
                 "Ingrese algún criterio de búsqueda");
 
-            return ValidacionService.Validar(ref msj);
+            return validacionService.Validar(ref msj);
         }
 
         private void CargarGrid(List<Persistencia.DTOs.Producto> productos)
@@ -128,7 +157,7 @@ namespace Presentacion.Forms.Producto
                 {
                     try
                     {
-                        ProductoService.EliminarProducto(codigoProducto);
+                        productoService.EliminarProducto(codigoProducto);
                         grdResult.Rows.RemoveAt(Fila);
                         Fila = -1;
                         MessageBox.Show("Se ha eliminado el producto exitosamente");
@@ -147,12 +176,11 @@ namespace Presentacion.Forms.Producto
             }
             else
                 MessageBox.Show("Seleccione un producto");
-        }        
+        }
 
         private void btnNuevoProducto_Click(object sender, EventArgs e)
         {
-            var altaProducto = new Producto(Menu);
-            altaProducto.ShowDialog();
+            producto.ShowDialog();
             RealizarBusqueda();
         }
 
@@ -160,9 +188,9 @@ namespace Presentacion.Forms.Producto
         {
             if (Fila != -1)
             {
-                var idProducto = grdResult.Rows[Fila].Cells[7].Value.ToString();
-                var editarProducto = new Producto(Menu, idProducto);
-                editarProducto.ShowDialog();
+                //var idProducto = grdResult.Rows[Fila].Cells[7].Value.ToString();
+                //var editarProducto = new Producto(menu, idProducto);
+                producto.ShowDialog();
                 RealizarBusqueda();
             }
             else
@@ -171,13 +199,12 @@ namespace Presentacion.Forms.Producto
 
         private void btnInfoProductos_Click(object sender, EventArgs e)
         {
-            var reporte = new ReporteInfoProductos();
-            reporte.ShowDialog();
+            reporteInfoProductos.ShowDialog();
         }
 
         private void btnExport_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(ExcelService.ExportarProductos());
+            MessageBox.Show(excelService.ExportarProductos());
         }
 
         //Solo se permite actualizar detalle y precio
@@ -198,7 +225,7 @@ namespace Presentacion.Forms.Producto
                             var detalleProd = fila.Cells[1].Value.ToString();
                             var precio = fila.Cells[2].Value.ToString();
 
-                            ProductoService.ActualizarProductoLazy(IdProduct, codigoProd, detalleProd, precio);
+                            productoService.ActualizarProductoLazy(IdProduct, codigoProd, detalleProd, precio);
                         }
                     }
                     if (string.IsNullOrEmpty(msj))
@@ -222,9 +249,9 @@ namespace Presentacion.Forms.Producto
         private bool ItemValido(DataGridViewRow fila, ref string msj)
         {
             var codigoProd = fila.Cells[0]?.Value?.ToString();
-            ValidacionService.AgregarValidacion(!string.IsNullOrEmpty(fila.Cells[1]?.Value?.ToString()), codigoProd + " - Ingrese el DETALLE del producto");
-            ValidacionService.AgregarValidacion(!string.IsNullOrEmpty(fila.Cells[2]?.Value?.ToString()), codigoProd + " - Ingrese el PRECIO del producto");
-            return ValidacionService.Validar(ref msj);
+            validacionService.AgregarValidacion(!string.IsNullOrEmpty(fila.Cells[1]?.Value?.ToString()), codigoProd + " - Ingrese el DETALLE del producto");
+            validacionService.AgregarValidacion(!string.IsNullOrEmpty(fila.Cells[2]?.Value?.ToString()), codigoProd + " - Ingrese el PRECIO del producto");
+            return validacionService.Validar(ref msj);
         }
 
         private void grdResult_CellDoubleClick(object sender, DataGridViewCellEventArgs e)

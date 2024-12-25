@@ -1,4 +1,4 @@
-﻿using Logica.Services;
+﻿using Logica.Services.Alerta;
 using Presentacion.Forms.Producto;
 using System;
 using System.Drawing;
@@ -8,41 +8,51 @@ namespace Presentacion.Forms
 {
     public partial class Menu : Form
     {
-        private readonly AlertaService AlertaService;
+        private readonly IAlertaService alertaService;
+        private readonly BuscarProducto buscarProducto;
+        private readonly Venta.Venta venta;
+        private readonly Stock.Stock stock;
+        private readonly Estadistica estadistica;
+        private readonly Alerta alerta;
 
-        public Menu()
+        public Menu(IAlertaService alertaService,
+            BuscarProducto buscarProducto,
+            Venta.Venta venta,
+            Stock.Stock stock,
+            Estadistica estadistica,
+            Alerta alerta)
         {
             InitializeComponent();
-            AlertaService = new AlertaService();
+            this.alertaService = alertaService;
+            this.buscarProducto = buscarProducto;
+            this.venta = venta;
+            this.stock = stock;
+            this.estadistica = estadistica;
+            this.alerta = alerta;
         }
 
         private void btnSale_Click(object sender, EventArgs e)
         {
-            var venta = new Venta.Venta(this);
             venta.ShowDialog();
         }
 
         private void btnStock_Click(object sender, EventArgs e)
         {
-            var stock = new Stock.Stock(this);
             stock.ShowDialog();
         }
 
         private void btnProductos_Click(object sender, EventArgs e)
         {
-            var buscarProducto = new BuscarProducto(this);
             buscarProducto.ShowDialog();
         }
 
         private void btnEstadistica_Click(object sender, EventArgs e)
         {
-            var estadistica = new Estadistica();
             estadistica.ShowDialog();
         }
 
         private void btnAlertas_Click(object sender, EventArgs e)
         {
-            var alerta = new Alerta();
             alerta.ShowDialog();
         }
 
@@ -53,18 +63,9 @@ namespace Presentacion.Forms
 
         public void CargarCantidadDeAlertas()
         {
-            var cantidadDeAlertas = AlertaService.ObtenerCantidadDeAlertas();
-
-            if (cantidadDeAlertas > 0)
-            {
-                btnAlertas.Text = "ALERTAS (" + cantidadDeAlertas + ")";
-                btnAlertas.BackColor = Color.Red;
-            }
-            else
-            {
-                btnAlertas.Text = "ALERTAS (0)";
-                btnAlertas.BackColor = Color.Green;
-            }
+            var cantidadDeAlertas = alertaService.ObtenerCantidadDeAlertas();
+            btnAlertas.Text = $"ALERTAS ({cantidadDeAlertas})";
+            btnAlertas.BackColor = cantidadDeAlertas > 0 ? Color.Red : Color.Green;
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Logica.Services
+namespace Logica.Services.Validacion
 {
-    public class ValidacionService
+    public class ValidacionService : IValidacionService
     {
         public class Validacion
         {

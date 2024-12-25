@@ -1,5 +1,6 @@
-﻿using Distribuidora.Forms.Helpers;
-using Logica.Services;
+﻿using Logica.Services.Producto;
+using Logica.Services.Rubro;
+using Persistencia.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,16 +12,16 @@ namespace Presentacion.Forms
 {
     public partial class Estadistica : Form
     {
-        private readonly RubroService RubroService;
-        private readonly ProductoService ProductoService;
-        private readonly EstadisticaFormHelper EstadisticaFormHelper;
+        private readonly IRubroService rubroService;
+        private readonly IProductoService productoService;
 
-        public Estadistica()
+        public Estadistica(
+            IRubroService rubroService,
+            IProductoService productoService)
         {
             InitializeComponent();
-            RubroService = new RubroService();
-            ProductoService = new ProductoService();
-            EstadisticaFormHelper = new EstadisticaFormHelper();
+            this.rubroService = rubroService;
+            this.productoService = productoService;
         }
 
         private void Estadistica_Load(object sender, EventArgs e)
@@ -31,7 +32,7 @@ namespace Presentacion.Forms
 
         private void CargarCombos()
         {
-            cboRubros.Items.AddRange(RubroService.ObtenerRubros().ToArray());
+            cboRubros.Items.AddRange(rubroService.ObtenerRubros().ToArray());
             cboRubros.DisplayMember = "Detalle";
             cboRubros.ValueMember = "Codigo";
 
@@ -50,14 +51,41 @@ namespace Presentacion.Forms
 
         private void ObtenerEstadisticaDeProductos()
         {
-            var estadistica = EstadisticaFormHelper.CompletarObjeto(this);
-            var resultados = ProductoService.BuscarParaEstadistica(estadistica);
+            var estadistica = CompletarObjeto();
+            var resultados = productoService.BuscarParaEstadistica(estadistica);
             CargarGrid(resultados);
 
             if (grdEstadisticas.Rows.Count == 0)
             {
                 MessageBox.Show("No hay estadísticas que mostrar");
             }
+        }
+
+        private Persistencia.DTOs.Estadistica CompletarObjeto()
+        {
+            var estadistica = new Persistencia.DTOs.Estadistica();
+
+            if (!chkIncludeNoActivo.Checked)
+            {
+                estadistica.EstaActivoProducto = true;
+            }
+
+            if (cboAños.SelectedIndex != -1)
+            {
+                estadistica.Año = cboAños.SelectedItem.ToString();
+            }
+
+            if (cboMeses.SelectedIndex != -1)
+            {
+                estadistica.Mes = cboMeses.SelectedItem.ToString();
+            }
+
+            if (cboRubros.SelectedIndex != -1)
+            {
+                estadistica.RubroProducto = ((Rubro)cboRubros.SelectedItem).Codigo;
+            }
+
+            return estadistica;
         }
 
         private void CargarGrid(List<Persistencia.DTOs.Estadistica> estadisticas)
