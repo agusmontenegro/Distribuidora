@@ -21,6 +21,10 @@ namespace Presentacion.Forms.Producto
         private readonly IProductoService productoService;
         private readonly IComboService comboService;
         private readonly IValidacionService validacionService;
+
+        //Producto podria implementar publisherAlerta segun diagrama de clases del Observer
+        //pero rompe con el principio de responsabilidad unica: ademas de ser un formulario tambien seria un notificador
+        //entonces utilizamos el servicio publisher y que este se encargue de notificar (idem Stock y Venta)
         private readonly IPublisherAlerta publisherAlerta;
 
         public Producto(IRubroService rubroService,

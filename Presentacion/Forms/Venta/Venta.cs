@@ -4,6 +4,7 @@ using Logica.Services.Producto;
 using Logica.Services.Stock;
 using Logica.Services.Validacion;
 using Logica.Services.Venta;
+using Presentacion.Forms.Factory.ReporteVenta;
 using Presentacion.Forms.Observer;
 using System;
 using System.Transactions;
@@ -17,14 +18,16 @@ namespace Presentacion.Forms.Venta
         private int Celda = -1;
         private string IdProducto;
 
-        private readonly ReporteVenta reporteVenta;
         private readonly IProductoService productoService;
         private readonly IComboService comboService;
         private readonly IValidacionService validacionService;
         private readonly IAlertaService alertaService;
         private readonly IVentaService ventaService;
         private readonly IStockService stockService;
+
         private readonly IPublisherAlerta publisherAlerta;
+
+        private readonly IReporteVentaFormFactory reporteVentaFormFactory;
 
         public Venta(ReporteVenta reporteVenta,
             IProductoService productoService,
@@ -33,10 +36,10 @@ namespace Presentacion.Forms.Venta
             IAlertaService alertaService,
             IVentaService ventaService,
             IStockService stockService,
-            IPublisherAlerta publisherAlerta)
+            IPublisherAlerta publisherAlerta,
+            IReporteVentaFormFactory reporteVentaFormFactory)
         {
             InitializeComponent();
-            this.reporteVenta = reporteVenta;
             this.productoService = productoService;
             this.comboService = comboService;
             this.validacionService = validacionService;
@@ -44,6 +47,7 @@ namespace Presentacion.Forms.Venta
             this.ventaService = ventaService;
             this.stockService = stockService;
             this.publisherAlerta = publisherAlerta;
+            this.reporteVentaFormFactory = reporteVentaFormFactory;
         }
 
         private void Venta_Load(object sender, EventArgs e)
@@ -294,11 +298,12 @@ namespace Presentacion.Forms.Venta
 
         private void btnGuardarVenta_Click(object sender, EventArgs e)
         {
+            int codigoVenta = 0;
             using (var scope = new TransactionScope())
             {
                 try
                 {
-                    int codigoVenta = ventaService.GuardarVenta(txtPrecioTotal.Text);
+                    codigoVenta = ventaService.GuardarVenta(txtPrecioTotal.Text);
                     for (int i = 0;i < grdVentas.Rows.Count;++i)
                     {
                         var idProducto = grdVentas.Rows[i].Cells[5].Value.ToString();
@@ -330,8 +335,8 @@ namespace Presentacion.Forms.Venta
             {
                 try
                 {
-                    //var reporte = new ReporteVenta(codigoVenta.ToString());
-                    reporteVenta.ShowDialog();
+                    var reporteVentaForm = reporteVentaFormFactory.CrearReporteVenta(codigoVenta.ToString());
+                    reporteVentaForm.ShowDialog();
                 }
                 catch (Exception ex)
                 {
