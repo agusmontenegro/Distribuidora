@@ -1,10 +1,9 @@
-﻿using Logica.Services.Alerta;
-using Logica.Services.Combo;
+﻿using Logica.Services.Combo;
 using Logica.Services.Producto;
 using Logica.Services.Rubro;
-using Logica.Services.Stock;
 using Logica.Services.Validacion;
 using Persistencia.DTOs;
+using Presentacion.Forms.Observer;
 using System;
 using System.Linq;
 using System.Transactions;
@@ -15,38 +14,32 @@ namespace Presentacion.Forms.Producto
     public partial class Producto : Form
     {
         private int Celda = 0;
-        private string IdProduct;
+        private string idProducto;
         private string IdComponente;
 
         private readonly IRubroService rubroService;
         private readonly IProductoService productoService;
         private readonly IComboService comboService;
         private readonly IValidacionService validacionService;
-        private readonly IAlertaService alertaService;
-        private readonly IStockService stockService;
+        private readonly IPublisherAlerta publisherAlerta;
 
-        private readonly Menu Menu;
-
-        public Producto(Menu Menu,
-            IRubroService rubroService,
+        public Producto(IRubroService rubroService,
             IProductoService productoService,
             IComboService comboService,
             IValidacionService validacionService,
-            IAlertaService alertaService,
-            IStockService stockService,
-            string IdProduct = null)
+            IPublisherAlerta publisherAlerta)
         {
             InitializeComponent();
-
-            this.IdProduct = IdProduct;
-            this.Menu = Menu;
-
             this.rubroService = rubroService;
             this.productoService = productoService;
             this.comboService = comboService;
             this.validacionService = validacionService;
-            this.alertaService = alertaService;
-            this.stockService = stockService;
+            this.publisherAlerta = publisherAlerta;
+        }
+
+        public void SetIdProducto(string idProducto)
+        {
+            this.idProducto = idProducto;
         }
 
         private void AltaProducto_Load(object sender, EventArgs e)
@@ -56,9 +49,9 @@ namespace Presentacion.Forms.Producto
             btnAgregarComponente.Enabled = false;
             CargarCombos();
 
-            if (!string.IsNullOrEmpty(IdProduct))
+            if (!string.IsNullOrEmpty(idProducto))
             {
-                CargarDatosAlFormulario(IdProduct);
+                CargarDatosAlFormulario(idProducto);
             }
         }
 
@@ -213,7 +206,7 @@ namespace Presentacion.Forms.Producto
                 {
                     try
                     {
-                        if (string.IsNullOrEmpty(IdProduct))
+                        if (string.IsNullOrEmpty(idProducto))
                         {
                             var productosSimilares = productoService.ObtenerProductosSimilares(txtDetalleProducto.Text.ToUpper().Trim());
 
@@ -242,20 +235,20 @@ namespace Presentacion.Forms.Producto
                             var codigoRubro = ((Rubro)cboRubros.SelectedItem).Codigo;
                             var stockMinimo = txtStockMinimo.Text;
 
-                            productoService.ActualizarProducto(IdProduct, codigoProd, detalleProd, precio, codigoRubro, stockMinimo);
+                            productoService.ActualizarProducto(idProducto, codigoProd, detalleProd, precio, codigoRubro, stockMinimo);
 
                             if (grdComponentes.Rows.Count > 0)
                             {
-                                comboService.EliminarComponentes(IdProduct);
+                                comboService.EliminarComponentes(idProducto);
                                 for (int i = 0;i < grdComponentes.Rows.Count;++i)
                                 {
                                     var idComponente = grdComponentes.Rows[i].Cells[3].Value.ToString();
                                     var cantidad = grdComponentes.Rows[i].Cells[2].Value.ToString();
-                                    comboService.GuardarComponente(int.Parse(IdProduct), idComponente, cantidad);
+                                    comboService.GuardarComponente(int.Parse(idProducto), idComponente, cantidad);
                                 }
                             }
 
-                            VerificarAlertas(IdProduct);
+                            NotificarAlertas(idProducto);
                         }
                         scope.Complete();
                         MessageBox.Show("El producto ha sido actualizado exitosamente");
@@ -270,19 +263,6 @@ namespace Presentacion.Forms.Producto
             else
             {
                 MessageBox.Show(msj);
-            }
-        }
-
-        private void VerificarAlertas(string idProduct)
-        {
-            if (!comboService.EsCombo_Id(idProduct))
-            {
-                if (stockService.HayQueReponer(idProduct))
-                    alertaService.EmitirAlertaDeReposicion(idProduct);
-                else
-                    alertaService.QuitarAlertaDeReposicion(idProduct);
-
-                Menu.CargarCantidadDeAlertas();
             }
         }
 
@@ -306,7 +286,7 @@ namespace Presentacion.Forms.Producto
                 }
             }
             MessageBox.Show("El producto ha sido guardado exitosamente");
-            VerificarAlertas(idProducto.ToString());
+            NotificarAlertas(idProducto.ToString());
             Close();
         }
 
@@ -316,7 +296,7 @@ namespace Presentacion.Forms.Producto
             {
                 validacionService.AgregarValidacion(txtCodigoProducto.Text.Trim().Count() < 5, "El código del producto no debe superar los 5 caracteres");
 
-                if (string.IsNullOrEmpty(IdProduct))
+                if (string.IsNullOrEmpty(idProducto))
                 {
                     var existeProducto = productoService.ExisteProductoSegunCodigo(txtCodigoProducto.Text.ToUpper().Trim());
                     validacionService.AgregarValidacion(!existeProducto, "Ya existe otro producto con el mismo código ingresado.");
@@ -326,7 +306,7 @@ namespace Presentacion.Forms.Producto
                     var products = productoService.ObtenerProductosPorCodigo(txtCodigoProducto.Text.ToUpper().Trim());
 
                     if (products != null)
-                        validacionService.AgregarValidacion(products.Count() == 1 && products[0].Id == IdProduct, "Ya existe otro producto con el mismo código ingresado.");
+                        validacionService.AgregarValidacion(products.Count() == 1 && products[0].Id == idProducto, "Ya existe otro producto con el mismo código ingresado.");
                 }
             }
             else
@@ -369,7 +349,7 @@ namespace Presentacion.Forms.Producto
             form.txtStockMinimo.Text = producto.Stock.CantidadMinima;
         }
 
-        private void CargarDatosALaGrilla(Producto form, Persistencia.DTOs.Combo combo)
+        private void CargarDatosALaGrilla(Producto form, Combo combo)
         {
             foreach (var componente in combo.Componentes)
             {
@@ -393,6 +373,11 @@ namespace Presentacion.Forms.Producto
             }
 
             return false;
+        }
+
+        public void NotificarAlertas(string idProduct)
+        {
+            publisherAlerta.Notificar(idProduct);
         }
     }
 }

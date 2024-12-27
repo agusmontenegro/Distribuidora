@@ -3,6 +3,8 @@ using Logica.Services.Producto;
 using Logica.Services.Rubro;
 using Logica.Services.Validacion;
 using Persistencia.DTOs;
+using Presentacion.Forms.Factory.Producto;
+using Presentacion.Forms.Factory.ReporteInfoProductos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,31 +16,29 @@ namespace Presentacion.Forms.Producto
     public partial class BuscarProducto : Form
     {
         public int Fila = 0;
-        private readonly Menu menu;
-        private readonly Producto producto;
-        private readonly ReporteInfoProductos reporteInfoProductos;
 
         private readonly IRubroService rubroService;
         private readonly IProductoService productoService;
         private readonly IExcelService excelService;
         private readonly IValidacionService validacionService;
 
-        public BuscarProducto(Menu menu,
-            Producto producto,
-            ReporteInfoProductos reporteInfoProductos,
-            IRubroService rubroService,
+        private readonly IReporteInfoProductosFormFactory reporteInfoProductosFactory;
+        private readonly IProductoFormFactory productoFormFactory;
+
+        public BuscarProducto(IRubroService rubroService,
             IProductoService productoService,
             IExcelService excelService,
-            IValidacionService validacionService)
+            IValidacionService validacionService,
+            IReporteInfoProductosFormFactory reporteInfoProductosFactory,
+            IProductoFormFactory productoFormFactory)
         {
             InitializeComponent();
-            this.menu = menu;
-            this.producto = producto;
-            this.reporteInfoProductos = reporteInfoProductos;
             this.rubroService = rubroService;
             this.productoService = productoService;
             this.excelService = excelService;
             this.validacionService = validacionService;
+            this.reporteInfoProductosFactory = reporteInfoProductosFactory;
+            this.productoFormFactory = productoFormFactory;
         }
 
         private void Producto_Load(object sender, EventArgs e)
@@ -180,7 +180,8 @@ namespace Presentacion.Forms.Producto
 
         private void btnNuevoProducto_Click(object sender, EventArgs e)
         {
-            producto.ShowDialog();
+            var productoForm = productoFormFactory.CrearFormularioProducto();
+            productoForm.ShowDialog();
             RealizarBusqueda();
         }
 
@@ -188,9 +189,9 @@ namespace Presentacion.Forms.Producto
         {
             if (Fila != -1)
             {
-                //var idProducto = grdResult.Rows[Fila].Cells[7].Value.ToString();
-                //var editarProducto = new Producto(menu, idProducto);
-                producto.ShowDialog();
+                var idProducto = grdResult.Rows[Fila].Cells[7].Value.ToString();
+                var productoForm = productoFormFactory.CrearFormularioProducto(idProducto);
+                productoForm.ShowDialog();
                 RealizarBusqueda();
             }
             else
@@ -199,7 +200,8 @@ namespace Presentacion.Forms.Producto
 
         private void btnInfoProductos_Click(object sender, EventArgs e)
         {
-            reporteInfoProductos.ShowDialog();
+            var reporteForm = reporteInfoProductosFactory.CrearReporteProducto();
+            reporteForm.ShowDialog();
         }
 
         private void btnExport_Click(object sender, EventArgs e)

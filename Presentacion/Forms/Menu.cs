@@ -1,4 +1,5 @@
 ﻿using Logica.Services.Alerta;
+using Presentacion.Forms.Observer;
 using Presentacion.Forms.Producto;
 using System;
 using System.Drawing;
@@ -6,9 +7,10 @@ using System.Windows.Forms;
 
 namespace Presentacion.Forms
 {
-    public partial class Menu : Form
+    public partial class Menu : Form, ISuscriptorAlerta
     {
         private readonly IAlertaService alertaService;
+        private readonly IPublisherAlerta publisherAlerta;
         private readonly BuscarProducto buscarProducto;
         private readonly Venta.Venta venta;
         private readonly Stock.Stock stock;
@@ -16,6 +18,7 @@ namespace Presentacion.Forms
         private readonly Alerta alerta;
 
         public Menu(IAlertaService alertaService,
+            IPublisherAlerta publisherAlerta,
             BuscarProducto buscarProducto,
             Venta.Venta venta,
             Stock.Stock stock,
@@ -24,6 +27,7 @@ namespace Presentacion.Forms
         {
             InitializeComponent();
             this.alertaService = alertaService;
+            this.publisherAlerta = publisherAlerta;
             this.buscarProducto = buscarProducto;
             this.venta = venta;
             this.stock = stock;
@@ -58,14 +62,20 @@ namespace Presentacion.Forms
 
         private void Menu_Load(object sender, EventArgs e)
         {
-            CargarCantidadDeAlertas();
+            publisherAlerta.Subscribe(this);
+            ActualizarAlertas();
         }
 
-        public void CargarCantidadDeAlertas()
+        public void ActualizarAlertas()
         {
             var cantidadDeAlertas = alertaService.ObtenerCantidadDeAlertas();
             btnAlertas.Text = $"ALERTAS ({cantidadDeAlertas})";
             btnAlertas.BackColor = cantidadDeAlertas > 0 ? Color.Red : Color.Green;
+        }
+
+        private void Menu_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            publisherAlerta.Unsubscribe(this);
         }
     }
 }

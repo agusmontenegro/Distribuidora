@@ -4,8 +4,7 @@ namespace Logica.Services.Alerta
 {
     public interface IAlertaService
     {
-        void EmitirAlertaDeReposicion(string idProducto);
-        void QuitarAlertaDeReposicion(string idProducto);
+        void ActualizarAlertaDeReposicion(string idProducto);
         int ObtenerCantidadDeAlertas();
         List<Persistencia.DTOs.Alerta> ObtenerAlertas();
     }

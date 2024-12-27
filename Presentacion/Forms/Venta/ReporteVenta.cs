@@ -7,21 +7,24 @@ namespace Presentacion.Forms.Venta
 {
     public partial class ReporteVenta : Form
     {
-        private readonly string CodigoVenta;
+        private string codigoVenta;
         private readonly IVentaService ventaService;
 
-        public ReporteVenta(string CodigoVenta,
-            IVentaService ventaService)
+        public ReporteVenta(IVentaService ventaService)
         {
             InitializeComponent();
-            this.CodigoVenta = CodigoVenta;
             this.ventaService = ventaService;
+        }
+
+        public void SetCodigoVenta(string codigoVenta)
+        {
+            this.codigoVenta = codigoVenta;
         }
 
         private void GenerarReporte()
         {
             var reporte = new VentaReport();
-            var venta = ventaService.ObtenerVenta(CodigoVenta);
+            var venta = ventaService.ObtenerVenta(codigoVenta);
             reporte.txtFechaParametro.Value = venta.Fecha;
             reporte.txtTotalParametro.Value = venta.Total.ToString();
             reporte.tblVenta.DataSource = venta.Items;

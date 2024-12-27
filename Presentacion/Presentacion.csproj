@@ -130,6 +130,17 @@
     <Compile Include="Forms\Estadistica.Designer.cs">
       <DependentUpon>Estadistica.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Factory\ReporteInfoProductos\IReporteInfoProductosFormFactory.cs" />
+    <Compile Include="Forms\Factory\ReporteInfoProductos\ReporteInfoProductosFormFactory.cs" />
+    <Compile Include="Forms\Factory\Producto\ProductoFormFactory.cs" />
+    <Compile Include="Forms\Factory\Producto\IProductoFormFactory.cs" />
+    <Compile Include="Forms\Factory\ReporteStock\ReporteStockFormFactory.cs" />
+    <Compile Include="Forms\Factory\ReporteStock\IReporteStockFormFactory.cs" />
+    <Compile Include="Forms\Factory\ReporteVenta\IReporteVentaFormFactory.cs" />
+    <Compile Include="Forms\Factory\ReporteVenta\ReporteVentaFormFactory.cs" />
+    <Compile Include="Forms\Observer\PublisherAlerta.cs" />
+    <Compile Include="Forms\Observer\IPublisherAlerta.cs" />
+    <Compile Include="Forms\Observer\ISuscriptorAlerta.cs" />
     <Compile Include="Forms\Producto\ReporteInfoProductos.cs">
       <SubType>Form</SubType>
     </Compile>

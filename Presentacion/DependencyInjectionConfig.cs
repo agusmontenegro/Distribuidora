@@ -8,6 +8,11 @@ using Logica.Services.Validacion;
 using Logica.Services.Venta;
 using Microsoft.Extensions.DependencyInjection;
 using Presentacion.Forms;
+using Presentacion.Forms.Factory.Producto;
+using Presentacion.Forms.Factory.ReporteInfoProductos;
+using Presentacion.Forms.Factory.ReporteStock;
+using Presentacion.Forms.Factory.ReporteVenta;
+using Presentacion.Forms.Observer;
 using Presentacion.Forms.Producto;
 using Presentacion.Forms.Stock;
 using Presentacion.Forms.Venta;
@@ -28,6 +33,15 @@ public static class DependencyInjectionConfig
         services.AddTransient<IStockService, StockService>();
         services.AddTransient<IValidacionService, ValidacionService>();
         services.AddTransient<IVentaService, VentaService>();
+
+        // Observer
+        services.AddTransient<IPublisherAlerta, PublisherAlerta>();
+
+        //Factory
+        services.AddTransient<IProductoFormFactory, ProductoFormFactory>();
+        services.AddTransient<IReporteInfoProductosFormFactory, ReporteInfoProductosFormFactory>();
+        services.AddTransient<IReporteStockFormFactory, ReporteStockFormFactory>();
+        services.AddTransient<IReporteVentaFormFactory, ReporteVentaFormFactory>();
 
         // Registrar formularios
         services.AddTransient<Menu>();

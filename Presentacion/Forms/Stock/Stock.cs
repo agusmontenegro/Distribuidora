@@ -3,6 +3,8 @@ using Logica.Services.Combo;
 using Logica.Services.Producto;
 using Logica.Services.Stock;
 using Logica.Services.Validacion;
+using Presentacion.Forms.Factory.ReporteStock;
+using Presentacion.Forms.Observer;
 using System;
 using System.Transactions;
 using System.Windows.Forms;
@@ -14,30 +16,32 @@ namespace Presentacion.Forms.Stock
         private int Celda = -1;
         private string IdProducto;
 
-        private readonly Menu Menu;
-        private readonly ReporteStock reporteStock;
         private readonly IValidacionService validacionService;
         private readonly IProductoService productoService;
         private readonly IComboService comboService;
         private readonly IStockService stockService;
         private readonly IAlertaService alertaService;
 
-        public Stock(Menu Menu,
-            ReporteStock reporteStock,
-            IValidacionService validacionService,
+        private readonly IPublisherAlerta publisherAlerta;
+
+        private readonly IReporteStockFormFactory reporteStockFormFactory;
+
+        public Stock(IValidacionService validacionService,
             IProductoService productoService,
             IComboService comboService,
             IStockService stockService,
-            IAlertaService alertaService)
+            IAlertaService alertaService,
+            IPublisherAlerta publisherAlerta,
+            IReporteStockFormFactory reporteStockFormFactory)
         {
             InitializeComponent();
-            this.Menu = Menu;
-            this.reporteStock = reporteStock;
             this.validacionService = validacionService;
             this.productoService = productoService;
             this.comboService = comboService;
             this.stockService = stockService;
             this.alertaService = alertaService;
+            this.publisherAlerta = publisherAlerta;
+            this.reporteStockFormFactory = reporteStockFormFactory;
         }
 
         private void Stock_Load(object sender, EventArgs e)
@@ -225,24 +229,22 @@ namespace Presentacion.Forms.Stock
 
         private void ReponerStock()
         {
+            int reposicionCodigo = 0;
             using (var scope = new TransactionScope())
             {
                 try
                 {
-                    int reposicionCodigo = stockService.GuardarReposicion();
+                    reposicionCodigo = stockService.GuardarReposicion();
                     for (int i = 0;i < grdStock.Rows.Count;++i)
                     {
                         var idProducto = grdStock.Rows[i].Cells[4].Value.ToString();
                         var cantidadAReponer = grdStock.Rows[i].Cells[3].Value.ToString();
 
                         stockService.ReponerStock(reposicionCodigo, idProducto, cantidadAReponer);
-
-                        if (!stockService.HayQueReponer(idProducto))
-                        {
-                            alertaService.QuitarAlertaDeReposicion(idProducto);
-                            Menu.CargarCantidadDeAlertas();
-                        }
+                        alertaService.ActualizarAlertaDeReposicion(idProducto);
+                        Notificar(idProducto);
                     }
+
                     scope.Complete();
                     MessageBox.Show("La reposición de stock se ha realizado con éxito.");
                     LimpiarFormulario();
@@ -262,14 +264,19 @@ namespace Presentacion.Forms.Stock
             {
                 try
                 {
-                    //var reporte = new ReporteStock(reposicionCodigo.ToString());
-                    reporteStock.ShowDialog();
+                    var reporteStockForm = reporteStockFormFactory.CrearReporteStock(reposicionCodigo.ToString());
+                    reporteStockForm.ShowDialog();
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Hubo un error al querer imprimir la reposición de stock " + ex.Message);
                 }
             }
+        }
+
+        private void Notificar(string idProducto)
+        {
+            publisherAlerta.Notificar(idProducto);
         }
     }
 }

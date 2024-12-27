@@ -7,15 +7,18 @@ namespace Presentacion.Forms.Stock
 {
     public partial class ReporteStock : Form
     {
-        private readonly string codigoReposicion;
+        private string codigoReposicion;
         private readonly IStockService stockService;
 
-        public ReporteStock(string codigoReposicion,
-            IStockService stockService)
+        public ReporteStock(IStockService stockService)
         {
             InitializeComponent();
-            this.codigoReposicion = codigoReposicion;
             this.stockService = stockService;
+        }
+
+        public void SetCodigoReposicion(string codigoReposicion)
+        {
+            this.codigoReposicion = codigoReposicion;
         }
 
         private void GenerarReporte()

@@ -4,6 +4,7 @@ using Logica.Services.Producto;
 using Logica.Services.Stock;
 using Logica.Services.Validacion;
 using Logica.Services.Venta;
+using Presentacion.Forms.Observer;
 using System;
 using System.Transactions;
 using System.Windows.Forms;
@@ -16,7 +17,6 @@ namespace Presentacion.Forms.Venta
         private int Celda = -1;
         private string IdProducto;
 
-        private readonly Menu Menu;
         private readonly ReporteVenta reporteVenta;
         private readonly IProductoService productoService;
         private readonly IComboService comboService;
@@ -24,18 +24,18 @@ namespace Presentacion.Forms.Venta
         private readonly IAlertaService alertaService;
         private readonly IVentaService ventaService;
         private readonly IStockService stockService;
+        private readonly IPublisherAlerta publisherAlerta;
 
-        public Venta(Menu Menu,
-            ReporteVenta reporteVenta,
+        public Venta(ReporteVenta reporteVenta,
             IProductoService productoService,
             IComboService comboService,
             IValidacionService validacionService,
             IAlertaService alertaService,
             IVentaService ventaService,
-            IStockService stockService)
+            IStockService stockService,
+            IPublisherAlerta publisherAlerta)
         {
             InitializeComponent();
-            this.Menu = Menu;
             this.reporteVenta = reporteVenta;
             this.productoService = productoService;
             this.comboService = comboService;
@@ -43,6 +43,7 @@ namespace Presentacion.Forms.Venta
             this.alertaService = alertaService;
             this.ventaService = ventaService;
             this.stockService = stockService;
+            this.publisherAlerta = publisherAlerta;
         }
 
         private void Venta_Load(object sender, EventArgs e)
@@ -305,12 +306,8 @@ namespace Presentacion.Forms.Venta
                         var precio = grdVentas.Rows[i].Cells[4].Value.ToString();
 
                         ventaService.GuardarItem(codigoVenta, int.Parse(idProducto), decimal.Parse(precio), int.Parse(cantidad));
-
-                        if (stockService.HayQueReponer(idProducto) && !comboService.EsCombo_Id(idProducto))
-                        {
-                            alertaService.EmitirAlertaDeReposicion(idProducto);
-                            Menu.CargarCantidadDeAlertas();
-                        }
+                        alertaService.ActualizarAlertaDeReposicion(idProducto);
+                        Notificar(idProducto);
                     }
                     scope.Complete();
                     MessageBox.Show("La venta ha sido procesada con éxito");
@@ -341,6 +338,11 @@ namespace Presentacion.Forms.Venta
                     MessageBox.Show("Hubo un error al querer imprimir la venta " + ex.Message);
                 }
             }
+        }
+
+        private void Notificar(string idProducto)
+        {
+            publisherAlerta.Notificar(idProducto);
         }
     }
 }
