@@ -1,24 +1,24 @@
-﻿using Persistencia.Helpers;
+﻿using Persistencia.Helpers.Excel;
 
 namespace Logica.Services.Excel
 {
     public class ExcelService : IExcelService
     {
-        private readonly ExcelHelper ExcelHelper;
+        private readonly IExcelHelper excelHelper;
 
-        public ExcelService()
+        public ExcelService(IExcelHelper excelHelper)
         {
-            ExcelHelper = new ExcelHelper();
+            this.excelHelper = excelHelper;
         }
 
         public string ImportarProductos()
         {
-            return ExcelHelper.ImportarProductos();
+            return excelHelper.ImportarProductos();
         }
 
         public string ExportarProductos()
         {
-            return ExcelHelper.ExportarProductos();
+            return excelHelper.ExportarProductos();
         }
     }
 }

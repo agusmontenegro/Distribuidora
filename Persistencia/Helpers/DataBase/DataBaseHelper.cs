@@ -5,9 +5,9 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 
-namespace Persistencia.Helpers
+namespace Persistencia.Helpers.DataBase
 {
-    public class DataBaseHelper
+    public class DataBaseHelper : IDataBaseHelper
     {
         public List<SqlParameter> Parametros { get; set; }
         public string ConnectionString { get; set; }

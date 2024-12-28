@@ -7,6 +7,14 @@ using Logica.Services.Stock;
 using Logica.Services.Validacion;
 using Logica.Services.Venta;
 using Microsoft.Extensions.DependencyInjection;
+using Persistencia.DAOs.Alerta;
+using Persistencia.DAOs.Combo;
+using Persistencia.DAOs.Producto;
+using Persistencia.DAOs.Rubro;
+using Persistencia.DAOs.Stock;
+using Persistencia.DAOs.Venta;
+using Persistencia.Helpers.DataBase;
+using Persistencia.Helpers.Excel;
 using Presentacion.Forms;
 using Presentacion.Forms.Factory.Producto;
 using Presentacion.Forms.Factory.ReporteInfoProductos;
@@ -55,6 +63,18 @@ public static class DependencyInjectionConfig
         services.AddTransient<Estadistica>();
         services.AddTransient<Alerta>();
         services.AddTransient<Estadistica>();
+
+        // DAO
+        services.AddTransient<IDAOAlerta, DAOAlerta>();
+        services.AddTransient<IDAOCombo, DAOCombo>();
+        services.AddTransient<IDAOProducto, DAOProducto>();
+        services.AddTransient<IDAORubro, DAORubro>();
+        services.AddTransient<IDAOStock, DAOStock>();
+        services.AddTransient<IDAOVenta, DAOVenta>();
+
+        // Helper
+        services.AddTransient<IDataBaseHelper, DataBaseHelper>();
+        services.AddTransient<IExcelHelper, ExcelHelper>();
 
         // Devuelve el proveedor configurado
         return services.BuildServiceProvider();

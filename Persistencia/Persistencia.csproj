@@ -117,12 +117,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DAOs\DAOAlerta.cs" />
-    <Compile Include="DAOs\DAOCombo.cs" />
-    <Compile Include="DAOs\DAOProducto.cs" />
-    <Compile Include="DAOs\DAORubro.cs" />
-    <Compile Include="DAOs\DAOStock.cs" />
-    <Compile Include="DAOs\DAOVenta.cs" />
+    <Compile Include="DAOs\Alerta\IDAOAlerta.cs" />
+    <Compile Include="DAOs\Alerta\DAOAlerta.cs" />
+    <Compile Include="DAOs\Combo\IDAOCombo.cs" />
+    <Compile Include="DAOs\Combo\DAOCombo.cs" />
+    <Compile Include="DAOs\Producto\IDAOProducto.cs" />
+    <Compile Include="DAOs\Producto\DAOProducto.cs" />
+    <Compile Include="DAOs\Rubro\IDAORubro.cs" />
+    <Compile Include="DAOs\Rubro\DAORubro.cs" />
+    <Compile Include="DAOs\Stock\IDAOStock.cs" />
+    <Compile Include="DAOs\Stock\DAOStock.cs" />
+    <Compile Include="DAOs\Venta\IDAOVenta.cs" />
+    <Compile Include="DAOs\Venta\DAOVenta.cs" />
     <Compile Include="DTOs\Alerta.cs" />
     <Compile Include="DTOs\Combo.cs" />
     <Compile Include="DTOs\Componente.cs" />
@@ -135,8 +141,10 @@
     <Compile Include="DTOs\Rubro.cs" />
     <Compile Include="DTOs\Stock.cs" />
     <Compile Include="DTOs\TipoAlerta.cs" />
-    <Compile Include="Helpers\DataBaseHelper.cs" />
-    <Compile Include="Helpers\ExcelHelper.cs" />
+    <Compile Include="Helpers\DataBase\IDataBaseHelper.cs" />
+    <Compile Include="Helpers\DataBase\DataBaseHelper.cs" />
+    <Compile Include="Helpers\Excel\IExcelHelper.cs" />
+    <Compile Include="Helpers\Excel\ExcelHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,41 +1,41 @@
 ﻿using Persistencia.DTOs.Reportes;
-using Persistencia.Helpers;
+using Persistencia.Helpers.DataBase;
 using System;
 using System.Collections.Generic;
 using System.Data;
 
-namespace Persistencia.DAOs
+namespace Persistencia.DAOs.Stock
 {
-    public class DAOStock
+    public class DAOStock : IDAOStock
     {
-        private readonly DataBaseHelper DataBaseHelper;
+        private readonly IDataBaseHelper dataBaseHelper;
 
-        public DAOStock()
+        public DAOStock(IDataBaseHelper dataBaseHelper)
         {
-            DataBaseHelper = new DataBaseHelper();
+            this.dataBaseHelper = dataBaseHelper;
         }
 
         public int GuardarReposicion()
         {
-            DataBaseHelper.AgregarParametroSalida("@codigo", SqlDbType.Int);
-            var salidas = DataBaseHelper.ExecStoredProcedure("dbo.GuardarReposicion");
+            dataBaseHelper.AgregarParametroSalida("@codigo", SqlDbType.Int);
+            var salidas = dataBaseHelper.ExecStoredProcedure("dbo.GuardarReposicion");
 
             return int.Parse(salidas[0]);
         }
 
         public void ReponerStock(int reposicionCodigo, string idProducto, string cantidadAReponer)
         {
-            DataBaseHelper.AgregarParametroEntrada(reposicionCodigo.ToString(), "@reposicion", SqlDbType.Int);
-            DataBaseHelper.AgregarParametroEntrada(idProducto, "@idProducto", SqlDbType.Int);
-            DataBaseHelper.AgregarParametroEntrada(cantidadAReponer, "@cantidadAReponer", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroEntrada(reposicionCodigo.ToString(), "@reposicion", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroEntrada(idProducto, "@idProducto", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroEntrada(cantidadAReponer, "@cantidadAReponer", SqlDbType.Int);
 
-            _ = DataBaseHelper.ExecStoredProcedure("dbo.ReponerStock");
+            _ = dataBaseHelper.ExecStoredProcedure("dbo.ReponerStock");
         }
 
         public Reposicion ObtenerReposicion(string codigoReposicion)
         {
             string query = "select * from dbo.Reposicion_View where Codigo = " + codigoReposicion;
-            var result = DataBaseHelper.ExecQuery(query);
+            var result = dataBaseHelper.ExecQuery(query);
 
             var reposicion = MapearReposicion(result.Rows);
 
@@ -65,7 +65,7 @@ namespace Persistencia.DAOs
         public bool HayStock(string codigoProducto, string cantidad)
         {
             var query = "SELECT dbo.HayStockDisponible(" + codigoProducto + "," + cantidad + ");";
-            var result = DataBaseHelper.ExecFunction(query);
+            var result = dataBaseHelper.ExecFunction(query);
 
             return Convert.ToBoolean(result.ToString());
         }
@@ -73,7 +73,7 @@ namespace Persistencia.DAOs
         public bool HayQueReponer(string idProducto)
         {
             var query = "SELECT dbo.LlegoAPuntoDeReposicion(" + idProducto + ");";
-            var result = DataBaseHelper.ExecFunction(query);
+            var result = dataBaseHelper.ExecFunction(query);
 
             return Convert.ToBoolean(result.ToString());
         }

@@ -1,43 +1,44 @@
 ﻿using Logica.Services.Combo;
 using Logica.Services.Stock;
-using Persistencia.DAOs;
+using Persistencia.DAOs.Alerta;
 using System.Collections.Generic;
 
 namespace Logica.Services.Alerta
 {
     public class AlertaService : IAlertaService
     {
-        private readonly DAOAlerta DAOAlerta;
+        private readonly IDAOAlerta dAOAlerta;
         private readonly IComboService comboService;
         private readonly IStockService stockService;
 
-        public AlertaService(IComboService comboService,
+        public AlertaService(IDAOAlerta dAOAlerta,
+            IComboService comboService,
             IStockService stockService)
         {
-            DAOAlerta = new DAOAlerta();
+            this.dAOAlerta = dAOAlerta;
             this.comboService = comboService;
             this.stockService = stockService;
         }
 
         public void EmitirAlertaDeReposicion(string idProducto)
         {
-            DAOAlerta.EmitirAlertaDeReposicion(idProducto);
+            dAOAlerta.EmitirAlertaDeReposicion(idProducto);
         }
 
         public void QuitarAlertaDeReposicion(string idProducto)
         {
-            DAOAlerta.QuitarAlertaDeReposicion(idProducto);
+            dAOAlerta.QuitarAlertaDeReposicion(idProducto);
         }
 
         public int ObtenerCantidadDeAlertas()
         {
-            var cantidad = DAOAlerta.ObtenerCantidadDeAlertas();
+            var cantidad = dAOAlerta.ObtenerCantidadDeAlertas();
             return cantidad;
         }
 
         public List<Persistencia.DTOs.Alerta> ObtenerAlertas()
         {
-            var alertas = DAOAlerta.ObtenerAlertas();
+            var alertas = dAOAlerta.ObtenerAlertas();
             return alertas;
         }
 

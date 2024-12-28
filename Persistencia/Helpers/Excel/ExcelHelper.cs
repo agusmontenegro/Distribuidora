@@ -1,19 +1,19 @@
 ﻿using ClosedXML.Excel;
-using Persistencia.DAOs;
+using Persistencia.DAOs.Producto;
 using System;
 using System.Configuration;
 using System.Data.OleDb;
 using System.Data.SqlClient;
 
-namespace Persistencia.Helpers
+namespace Persistencia.Helpers.Excel
 {
-    public class ExcelHelper
+    public class ExcelHelper : IExcelHelper
     {
-        private readonly DAOProducto DAOProducto;
+        private readonly IDAOProducto dAOProducto;
 
-        public ExcelHelper()
+        public ExcelHelper(IDAOProducto dAOProducto)
         {
-            DAOProducto = new DAOProducto();
+            this.dAOProducto = dAOProducto;
         }
 
         public string ImportarProductos()
@@ -52,7 +52,7 @@ namespace Persistencia.Helpers
             try
             {
                 XLWorkbook wb = new XLWorkbook();
-                var dt = DAOProducto.ObtenerProductosParaExcel();
+                var dt = dAOProducto.ObtenerProductosParaExcel();
                 var path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                 wb.Worksheets.Add(dt, "Productos");
                 wb.SaveAs(path + @"\Productos.xlsx");

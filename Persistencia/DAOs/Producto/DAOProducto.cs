@@ -1,31 +1,31 @@
 ﻿using Persistencia.DTOs;
-using Persistencia.Helpers;
+using Persistencia.Helpers.DataBase;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
-namespace Persistencia.DAOs
+namespace Persistencia.DAOs.Producto
 {
-    public class DAOProducto
+    public class DAOProducto : IDAOProducto
     {
-        private readonly DataBaseHelper DataBaseHelper;
+        private readonly IDataBaseHelper dataBaseHelper;
 
-        public DAOProducto()
+        public DAOProducto(IDataBaseHelper dataBaseHelper)
         {
-            DataBaseHelper = new DataBaseHelper();
+            this.dataBaseHelper = dataBaseHelper;
         }
 
         public bool ExisteProductoSegunCodigo(string codigoProducto)
         {
             var query = "select Codigo from dbo.Producto_View where Codigo = '" + codigoProducto + "'";
-            var result = DataBaseHelper.ExecQuery(query);
+            var result = dataBaseHelper.ExecQuery(query);
             return result.Rows.Count == 1;
         }
 
-        public List<Producto> ObtenerProductos()
+        public List<DTOs.Producto> ObtenerProductos()
         {
             string query = "select * from dbo.Producto_View";
-            var result = DataBaseHelper.ExecQuery(query);
+            var result = dataBaseHelper.ExecQuery(query);
             var productos = MapearProductos(result.Rows);
             return productos;
         }
@@ -33,11 +33,11 @@ namespace Persistencia.DAOs
         public DataTable ObtenerProductosParaExcel()
         {
             string query = "select Codigo, Detalle, Precio from dbo.Producto_View";
-            var result = DataBaseHelper.ExecQuery(query);
+            var result = dataBaseHelper.ExecQuery(query);
             return result;
         }
 
-        public List<Producto> ObtenerProductosSimilares(string detalleProducto)
+        public List<DTOs.Producto> ObtenerProductosSimilares(string detalleProducto)
         {
             var likeQuery = string.Empty;
             var palabras = detalleProducto.Split(' ').Where(pal => pal.Count() > 3).ToList();
@@ -53,45 +53,45 @@ namespace Persistencia.DAOs
             }
 
             string query = "select * from dbo.Producto_View where Detalle like " + likeQuery;
-            var result = DataBaseHelper.ExecQuery(query);
+            var result = dataBaseHelper.ExecQuery(query);
             var productos = MapearProductos(result.Rows);
             return productos;
         }
 
-        public Producto ObtenerProductoPorId(string idProducto)
+        public DTOs.Producto ObtenerProductoPorId(string idProducto)
         {
             string query = "select * from dbo.Producto_View where Id = " + idProducto;
-            var result = DataBaseHelper.ExecQuery(query);
+            var result = dataBaseHelper.ExecQuery(query);
             var productos = MapearProductos(result.Rows);
             return productos[0];
         }
 
-        public List<Producto> ObtenerProductosPorCodigo(string codigoProducto)
+        public List<DTOs.Producto> ObtenerProductosPorCodigo(string codigoProducto)
         {
             string query = "select * from dbo.Producto_View where Codigo = '" + codigoProducto + "'";
-            var result = DataBaseHelper.ExecQuery(query);
+            var result = dataBaseHelper.ExecQuery(query);
             var productos = MapearProductos(result.Rows);
             return productos.Any() ? productos : null;
         }
 
-        private List<Producto> MapearProductos(DataRowCollection rows)
+        private List<DTOs.Producto> MapearProductos(DataRowCollection rows)
         {
-            var productos = new List<Producto>();
+            var productos = new List<DTOs.Producto>();
 
             foreach (DataRow row in rows)
             {
-                var producto = new Producto
+                var producto = new DTOs.Producto
                 {
                     Id = row["Id"].ToString(),
                     Codigo = row["Codigo"].ToString(),
                     Detalle = row["Detalle"].ToString(),
                     PrecioUnitario = (decimal)row["Precio"],
-                    Rubro = new Rubro
+                    Rubro = new DTOs.Rubro
                     {
                         Codigo = row["RubroCodigo"].ToString(),
                         Detalle = row["RubroDetalle"].ToString()
                     },
-                    Stock = new Stock
+                    Stock = new DTOs.Stock
                     {
                         CantidadActual = row["StockActual"].ToString(),
                         CantidadMinima = row["PtoReposicion"].ToString(),
@@ -130,45 +130,45 @@ namespace Persistencia.DAOs
         public void EliminarProducto(string codigoProducto)
         {
             var query = "update dbo.Producto set prod_activo = 0 where prod_id = " + codigoProducto;
-            DataBaseHelper.ExecScript(query);
+            dataBaseHelper.ExecScript(query);
         }
 
         public int GuardarProducto(string codigo, string detalle, string precioUnitario, string codigoRubro, string stockMinimo)
         {
-            DataBaseHelper.AgregarParametroEntrada(codigo, "@codigo", SqlDbType.NVarChar);
-            DataBaseHelper.AgregarParametroEntrada(detalle, "@detalle", SqlDbType.NVarChar);
-            DataBaseHelper.AgregarParametroEntrada(precioUnitario, "@precioUnitario", SqlDbType.Decimal);
-            DataBaseHelper.AgregarParametroEntrada(codigoRubro, "@rubro", SqlDbType.Int);
-            DataBaseHelper.AgregarParametroEntrada(stockMinimo, "@stockMinimo", SqlDbType.Int);
-            DataBaseHelper.AgregarParametroSalida("@id", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroEntrada(codigo, "@codigo", SqlDbType.NVarChar);
+            dataBaseHelper.AgregarParametroEntrada(detalle, "@detalle", SqlDbType.NVarChar);
+            dataBaseHelper.AgregarParametroEntrada(precioUnitario, "@precioUnitario", SqlDbType.Decimal);
+            dataBaseHelper.AgregarParametroEntrada(codigoRubro, "@rubro", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroEntrada(stockMinimo, "@stockMinimo", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroSalida("@id", SqlDbType.Int);
 
-            var salidas = DataBaseHelper.ExecStoredProcedure("dbo.InsertarProducto");
+            var salidas = dataBaseHelper.ExecStoredProcedure("dbo.InsertarProducto");
             return int.Parse(salidas[0]);
         }
 
         public void ActualizarProducto(string id, string codigo, string detalle, string precioUnitario, string codigoRubro, string stockMinimo)
         {
-            DataBaseHelper.AgregarParametroEntrada(id, "@id", SqlDbType.Int);
-            DataBaseHelper.AgregarParametroEntrada(codigo, "@codigo", SqlDbType.NVarChar);
-            DataBaseHelper.AgregarParametroEntrada(detalle, "@detalle", SqlDbType.NVarChar);
-            DataBaseHelper.AgregarParametroEntrada(precioUnitario, "@precioUnitario", SqlDbType.Decimal);
-            DataBaseHelper.AgregarParametroEntrada(codigoRubro, "@rubro", SqlDbType.Int);
-            DataBaseHelper.AgregarParametroEntrada(stockMinimo, "@stockMinimo", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroEntrada(id, "@id", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroEntrada(codigo, "@codigo", SqlDbType.NVarChar);
+            dataBaseHelper.AgregarParametroEntrada(detalle, "@detalle", SqlDbType.NVarChar);
+            dataBaseHelper.AgregarParametroEntrada(precioUnitario, "@precioUnitario", SqlDbType.Decimal);
+            dataBaseHelper.AgregarParametroEntrada(codigoRubro, "@rubro", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroEntrada(stockMinimo, "@stockMinimo", SqlDbType.Int);
 
-            _ = DataBaseHelper.ExecStoredProcedure("dbo.ActualizarProducto");
+            _ = dataBaseHelper.ExecStoredProcedure("dbo.ActualizarProducto");
         }
 
         public void ActualizarProductoLazy(string id, string codigo, string detalle, string precioUnitario)
         {
-            DataBaseHelper.AgregarParametroEntrada(id, "@id", SqlDbType.Int);
-            DataBaseHelper.AgregarParametroEntrada(codigo, "@codigo", SqlDbType.NVarChar);
-            DataBaseHelper.AgregarParametroEntrada(detalle, "@detalle", SqlDbType.NVarChar);
-            DataBaseHelper.AgregarParametroEntrada(precioUnitario, "@precioUnitario", SqlDbType.Decimal);
+            dataBaseHelper.AgregarParametroEntrada(id, "@id", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroEntrada(codigo, "@codigo", SqlDbType.NVarChar);
+            dataBaseHelper.AgregarParametroEntrada(detalle, "@detalle", SqlDbType.NVarChar);
+            dataBaseHelper.AgregarParametroEntrada(precioUnitario, "@precioUnitario", SqlDbType.Decimal);
 
-            _ = DataBaseHelper.ExecStoredProcedure("dbo.ActualizarProductoLazy");
+            _ = dataBaseHelper.ExecStoredProcedure("dbo.ActualizarProductoLazy");
         }
 
-        public List<Producto> Buscar(Producto producto)
+        public List<DTOs.Producto> Buscar(DTOs.Producto producto)
         {
             string query = "select * from dbo.Producto_View ";
 
@@ -190,7 +190,7 @@ namespace Persistencia.DAOs
                 else
                     query += " where RubroCodigo = " + producto.Rubro.Codigo;
 
-            var results = DataBaseHelper.ExecQuery(query);
+            var results = dataBaseHelper.ExecQuery(query);
             var productos = MapearProductos(results.Rows);
             return productos;
         }
@@ -241,7 +241,7 @@ namespace Persistencia.DAOs
 
             query += " order by sum(i.item_cantidad) desc";
 
-            var resultados = DataBaseHelper.ExecQuery(query);
+            var resultados = dataBaseHelper.ExecQuery(query);
             var estadisticas = MapearEstadisticas(resultados.Rows);
 
             return estadisticas;

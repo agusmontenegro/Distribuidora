@@ -1,30 +1,30 @@
-﻿using Persistencia.DAOs;
+﻿using Persistencia.DAOs.Venta;
 
 namespace Logica.Services.Venta
 {
     public class VentaService : IVentaService
     {
-        private readonly DAOVenta DAOVenta;
+        private readonly IDAOVenta dAOVenta;
 
-        public VentaService()
+        public VentaService(IDAOVenta dAOVenta)
         {
-            DAOVenta = new DAOVenta();
+            this.dAOVenta = dAOVenta;
         }
 
         public int GuardarVenta(string precioTotal)
         {
-            var codigoVenta = DAOVenta.GuardarVenta(precioTotal);
+            var codigoVenta = dAOVenta.GuardarVenta(precioTotal);
             return codigoVenta;
         }
 
         public void GuardarItem(int codigoVenta, int IdProducto, decimal precioUnitario, int cantidad)
         {
-            DAOVenta.GuardarItem(codigoVenta, IdProducto, precioUnitario, cantidad);
+            dAOVenta.GuardarItem(codigoVenta, IdProducto, precioUnitario, cantidad);
         }
 
         public Persistencia.DTOs.Reportes.Venta ObtenerVenta(string codigoVenta)
         {
-            var venta = DAOVenta.ObtenerVenta(codigoVenta);
+            var venta = dAOVenta.ObtenerVenta(codigoVenta);
             return venta;
         }
     }

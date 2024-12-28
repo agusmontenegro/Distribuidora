@@ -1,23 +1,23 @@
 ﻿using Persistencia.DTOs;
-using Persistencia.Helpers;
+using Persistencia.Helpers.DataBase;
 using System.Collections.Generic;
 using System.Data;
 
-namespace Persistencia.DAOs
+namespace Persistencia.DAOs.Combo
 {
-    public class DAOCombo
+    public class DAOCombo : IDAOCombo
     {
-        private readonly DataBaseHelper DataBaseHelper;
+        private readonly IDataBaseHelper dataBaseHelper;
 
-        public DAOCombo()
+        public DAOCombo(IDataBaseHelper dataBaseHelper)
         {
-            DataBaseHelper = new DataBaseHelper();
+            this.dataBaseHelper = dataBaseHelper;
         }
 
         public bool EsCombo_Id(string idProducto)
         {
             var query = "select * from dbo.Combo_View where Id = " + idProducto;
-            var result = DataBaseHelper.ExecQuery(query);
+            var result = dataBaseHelper.ExecQuery(query);
 
             return result.Rows.Count > 0;
         }
@@ -25,24 +25,24 @@ namespace Persistencia.DAOs
         public bool EsCombo_Codigo(string codigoProducto)
         {
             var query = "select * from dbo.Combo_View where Codigo = '" + codigoProducto + "'";
-            var result = DataBaseHelper.ExecQuery(query);
+            var result = dataBaseHelper.ExecQuery(query);
 
             return result.Rows.Count > 0;
         }
 
-        public Combo ObtenerCombo(string idProducto)
+        public DTOs.Combo ObtenerCombo(string idProducto)
         {
             string query = "select * from dbo.Combo_View where Id = " + idProducto;
-            var result = DataBaseHelper.ExecQuery(query);
+            var result = dataBaseHelper.ExecQuery(query);
 
             var combo = MapearCombo(result.Rows);
 
             return combo;
         }
 
-        private Combo MapearCombo(DataRowCollection rows)
+        private DTOs.Combo MapearCombo(DataRowCollection rows)
         {
-            var combo = new Combo();
+            var combo = new DTOs.Combo();
             combo.Componentes = new List<Componente>();
             bool flag = true;
 
@@ -50,7 +50,7 @@ namespace Persistencia.DAOs
             {
                 if (flag)
                 {
-                    combo.Producto = new Producto
+                    combo.Producto = new DTOs.Producto
                     {
                         Id = row["Id"].ToString(),
                         Codigo = row["Codigo"].ToString(),
@@ -62,7 +62,7 @@ namespace Persistencia.DAOs
                 }
                 var componente = new Componente
                 {
-                    Producto = new Producto
+                    Producto = new DTOs.Producto
                     {
                         Id = row["IdComponente"].ToString(),
                         Detalle = row["DetalleComponente"].ToString(),
@@ -80,22 +80,22 @@ namespace Persistencia.DAOs
         public void EliminarComponentes(string idProduct)
         {
             var query = "delete from dbo.Combo where comb_id = " + idProduct;
-            DataBaseHelper.ExecScript(query);
+            dataBaseHelper.ExecScript(query);
         }
 
         public void GuardarComponente(int idProducto, string idComponente, string cantidad)
         {
-            DataBaseHelper.AgregarParametroEntrada(idProducto.ToString(), "@idProducto", SqlDbType.Int);
-            DataBaseHelper.AgregarParametroEntrada(idComponente, "@idComponente", SqlDbType.Int);
-            DataBaseHelper.AgregarParametroEntrada(cantidad, "@cantidad", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroEntrada(idProducto.ToString(), "@idProducto", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroEntrada(idComponente, "@idComponente", SqlDbType.Int);
+            dataBaseHelper.AgregarParametroEntrada(cantidad, "@cantidad", SqlDbType.Int);
 
-            _ = DataBaseHelper.ExecStoredProcedure("dbo.InsertarComponente");
+            _ = dataBaseHelper.ExecStoredProcedure("dbo.InsertarComponente");
         }
 
         public string InformarStockFaltante(string idProducto, string cantidad)
         {
             var query = "SELECT dbo.InformarStockFaltante(" + idProducto + "," + cantidad + ");";
-            var result = DataBaseHelper.ExecFunction(query);
+            var result = dataBaseHelper.ExecFunction(query);
 
             return result.ToString();
         }

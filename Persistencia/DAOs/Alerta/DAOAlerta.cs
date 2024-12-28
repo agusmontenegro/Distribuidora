@@ -1,56 +1,56 @@
 ﻿using Persistencia.DTOs;
-using Persistencia.Helpers;
+using Persistencia.Helpers.DataBase;
 using System.Collections.Generic;
 using System.Data;
 
-namespace Persistencia.DAOs
+namespace Persistencia.DAOs.Alerta
 {
-    public class DAOAlerta
+    public class DAOAlerta : IDAOAlerta
     {
-        private readonly DataBaseHelper DataBaseHelper;
+        private readonly IDataBaseHelper dataBaseHelper;
 
-        public DAOAlerta()
+        public DAOAlerta(IDataBaseHelper dataBaseHelper)
         {
-            DataBaseHelper = new DataBaseHelper();
+            this.dataBaseHelper = dataBaseHelper;
         }
 
         public void EmitirAlertaDeReposicion(string idProducto)
         {
-            DataBaseHelper.AgregarParametroEntrada(idProducto, "@producto", SqlDbType.Int);
-            _ = DataBaseHelper.ExecStoredProcedure("dbo.EmitirAlertaDeReposicion");
+            dataBaseHelper.AgregarParametroEntrada(idProducto, "@producto", SqlDbType.Int);
+            _ = dataBaseHelper.ExecStoredProcedure("dbo.EmitirAlertaDeReposicion");
         }
 
         public void QuitarAlertaDeReposicion(string idProducto)
         {
-            DataBaseHelper.AgregarParametroEntrada(idProducto, "@producto", SqlDbType.Int);
-            _ = DataBaseHelper.ExecStoredProcedure("dbo.QuitarAlertaDeReposicion");
+            dataBaseHelper.AgregarParametroEntrada(idProducto, "@producto", SqlDbType.Int);
+            _ = dataBaseHelper.ExecStoredProcedure("dbo.QuitarAlertaDeReposicion");
         }
 
         public int ObtenerCantidadDeAlertas()
         {
             var query = "select * from alerta";
-            var result = DataBaseHelper.ExecQuery(query);
+            var result = dataBaseHelper.ExecQuery(query);
 
             return result.Rows.Count;
         }
 
-        public List<Alerta> ObtenerAlertas()
+        public List<DTOs.Alerta> ObtenerAlertas()
         {
             string query = "select * from dbo.Alerta a join dbo.Tipo_Alerta ta on a.aler_tipo = ta.tale_codigo";
-            var result = DataBaseHelper.ExecQuery(query);
+            var result = dataBaseHelper.ExecQuery(query);
 
             var alertas = MapearAlertas(result.Rows);
 
             return alertas;
         }
 
-        private List<Alerta> MapearAlertas(DataRowCollection rows)
+        private List<DTOs.Alerta> MapearAlertas(DataRowCollection rows)
         {
-            var alertas = new List<Alerta>();
+            var alertas = new List<DTOs.Alerta>();
 
             foreach (DataRow row in rows)
             {
-                var alerta = new Alerta
+                var alerta = new DTOs.Alerta
                 {
                     Codigo = row["aler_codigo"].ToString(),
                     Detalle = row["aler_detalle"].ToString(),

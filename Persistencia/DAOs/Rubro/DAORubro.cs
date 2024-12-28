@@ -1,20 +1,19 @@
-﻿using Persistencia.DTOs;
-using Persistencia.Helpers;
+﻿using Persistencia.Helpers.DataBase;
 using System.Collections.Generic;
 using System.Data;
 
-namespace Persistencia.DAOs
+namespace Persistencia.DAOs.Rubro
 {
-    public class DAORubro
+    public class DAORubro : IDAORubro
     {
-        private readonly DataBaseHelper dataBaseHelper;
+        private readonly IDataBaseHelper dataBaseHelper;
 
-        public DAORubro()
+        public DAORubro(IDataBaseHelper dataBaseHelper)
         {
-            dataBaseHelper = new DataBaseHelper();
+            this.dataBaseHelper = dataBaseHelper;
         }
 
-        public List<Rubro> ObtenerRubros()
+        public List<DTOs.Rubro> ObtenerRubros()
         {
             var query = "select * from dbo.Rubro";
             var result = dataBaseHelper.ExecQuery(query);
@@ -22,13 +21,13 @@ namespace Persistencia.DAOs
             return rubros;
         }
 
-        private List<Rubro> MapearRubros(DataRowCollection rows)
+        private List<DTOs.Rubro> MapearRubros(DataRowCollection rows)
         {
-            var rubros = new List<Rubro>();
+            var rubros = new List<DTOs.Rubro>();
 
             foreach (DataRow row in rows)
             {
-                rubros.Add(new Rubro
+                rubros.Add(new DTOs.Rubro
                 {
                     Codigo = row["rubr_codigo"].ToString(),
                     Detalle = row["rubr_detalle"].ToString(),
