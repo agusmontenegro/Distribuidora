@@ -1,4 +1,7 @@
 ﻿using Persistencia.DAOs.Combo;
+using Persistencia.DTOs;
+using System.Collections.Generic;
+using System.Data;
 
 namespace Logica.Services.Combo
 {
@@ -25,7 +28,8 @@ namespace Logica.Services.Combo
 
         public Persistencia.DTOs.Combo ObtenerCombo(string idProducto)
         {
-            var combo = dAOCombo.ObtenerCombo(idProducto);
+            var result = dAOCombo.ObtenerCombo(idProducto);
+            var combo = MapearCombo(result.Rows);
             return combo;
         }
 
@@ -43,6 +47,43 @@ namespace Logica.Services.Combo
         {
             var stockFaltante = dAOCombo.InformarStockFaltante(idProducto, cantidad);
             return stockFaltante;
+        }
+
+        private Persistencia.DTOs.Combo MapearCombo(DataRowCollection rows)
+        {
+            var combo = new Persistencia.DTOs.Combo();
+            combo.Componentes = new List<Componente>();
+            bool flag = true;
+
+            foreach (DataRow row in rows)
+            {
+                if (flag)
+                {
+                    combo.Producto = new Persistencia.DTOs.Producto
+                    {
+                        Id = row["Id"].ToString(),
+                        Codigo = row["Codigo"].ToString(),
+                        Detalle = row["Detalle"].ToString(),
+                        PrecioUnitario = decimal.Parse(row["Precio"].ToString())
+                    };
+
+                    flag = false;
+                }
+                var componente = new Componente
+                {
+                    Producto = new Persistencia.DTOs.Producto
+                    {
+                        Id = row["IdComponente"].ToString(),
+                        Detalle = row["DetalleComponente"].ToString(),
+                        Codigo = row["CodigoComponente"].ToString(),
+                    },
+                    Cantidad = row["CantidadComponente"].ToString()
+                };
+
+                combo.Componentes.Add(componente);
+            }
+
+            return combo;
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -12,10 +11,10 @@ namespace Persistencia.Helpers.DataBase
         public List<SqlParameter> Parametros { get; set; }
         public string ConnectionString { get; set; }
 
-        public DataBaseHelper()
+        public DataBaseHelper(string ConnectionString)
         {
             Parametros = new List<SqlParameter>();
-            ConnectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
+            this.ConnectionString = ConnectionString;
         }
 
         public void AgregarParametroEntrada(string parametro, string parametroSQL, SqlDbType sqlDbType)
@@ -84,72 +83,80 @@ namespace Persistencia.Helpers.DataBase
             return parametrosOut;
         }
 
-        public object ExecFunction(string query)
+        public object ExecFunction(string query, List<SqlParameter> parameters)
         {
-            var Connection = AbrirConexion();
-            var sqlCommand = Connection.CreateCommand();
-
-            try
+            using (var connection = AbrirConexion())
             {
-                sqlCommand.CommandText = query;
-                return sqlCommand.ExecuteScalar();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
+                using (var sqlCommand = connection.CreateCommand())
+                {
+                    sqlCommand.CommandText = query;
+                    if (parameters != null)
+                        sqlCommand.Parameters.AddRange(parameters.ToArray());
+                    return sqlCommand.ExecuteScalar();
+                }
             }
         }
 
-        public DataTable ExecQuery(string query)
+        public DataTable ExecQuery(string query, List<SqlParameter> parameters)
         {
-            var Connection = AbrirConexion();
-            var sqlCommand = Connection.CreateCommand();
-            var sqlAdapter = new SqlDataAdapter(sqlCommand);
-
-            try
+            using (var connection = AbrirConexion())
+            using (var sqlCommand = connection.CreateCommand())
+            using (var sqlAdapter = new SqlDataAdapter(sqlCommand))
             {
-                var dataSet = new DataSet();
+                try
+                {
+                    var dataSet = new DataSet();
 
-                sqlCommand.CommandText = query;
-                sqlCommand.CommandType = CommandType.Text;
-                sqlAdapter.Fill(dataSet);
+                    sqlCommand.CommandText = query;
+                    sqlCommand.CommandType = CommandType.Text;
 
-                return dataSet.Tables[0];
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                sqlCommand.Dispose();
-                sqlAdapter.Dispose();
-                Connection.Close();
+                    if (parameters != null)
+                        sqlCommand.Parameters.AddRange(parameters.ToArray());
+
+                    sqlAdapter.Fill(dataSet);
+                    return dataSet.Tables[0];
+                }
+                catch (SqlException ex)
+                {
+                    throw new Exception("Hubo un problema al ejecutar la consulta.", ex);
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException("Error desconocido", ex);
+                }
             }
         }
 
-        public void ExecScript(string query)
+        public void ExecNonQuery(string query, List<SqlParameter> parameters)
         {
-            var Connection = AbrirConexion();
-            var sqlCommand = Connection.CreateCommand();
+            using (var connection = AbrirConexion())
+            using (var sqlCommand = connection.CreateCommand())
+            {
+                try
+                {
+                    sqlCommand.CommandText = query;
 
-            try
-            {
-                sqlCommand.CommandText = query;
-                sqlCommand.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
+                    if (parameters != null)
+                        sqlCommand.Parameters.AddRange(parameters.ToArray());
+
+                    sqlCommand.ExecuteNonQuery();
+                }
+                catch (SqlException ex)
+                {
+                    throw new Exception("Hubo un problema al ejecutar la consulta.", ex);
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException("Error desconocido", ex);
+                }
             }
         }
 
         private SqlConnection AbrirConexion()
         {
-            var Connection = new SqlConnection(ConnectionString);
-            Connection.ConnectionString = ConnectionString;
-            Connection.Open();
-            return Connection;
+            var connection = new SqlConnection(ConnectionString);
+            connection.Open();
+            return connection;
         }
     }
 }

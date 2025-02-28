@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Data;
 
 namespace Persistencia.DAOs.Alerta
 {
@@ -7,6 +7,6 @@ namespace Persistencia.DAOs.Alerta
         void EmitirAlertaDeReposicion(string idProducto);
         void QuitarAlertaDeReposicion(string idProducto);
         int ObtenerCantidadDeAlertas();
-        List<DTOs.Alerta> ObtenerAlertas();
+        DataTable ObtenerAlertas();
     }
 }

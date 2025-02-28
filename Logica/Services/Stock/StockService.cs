@@ -1,5 +1,7 @@
 ﻿using Persistencia.DAOs.Stock;
 using Persistencia.DTOs.Reportes;
+using System.Collections.Generic;
+using System.Data;
 
 namespace Logica.Services.Stock
 {
@@ -25,7 +27,8 @@ namespace Logica.Services.Stock
 
         public Reposicion ObtenerReposicion(string codigoReposicion)
         {
-            var reposicion = dAOStock.ObtenerReposicion(codigoReposicion);
+            var result = dAOStock.ObtenerReposicion(codigoReposicion);
+            var reposicion = MapearReposicion(result.Rows);
             return reposicion;
         }
 
@@ -39,6 +42,26 @@ namespace Logica.Services.Stock
         {
             var hayQueReponer = dAOStock.HayQueReponer(idProducto);
             return hayQueReponer;
+        }
+
+        private Reposicion MapearReposicion(DataRowCollection rows)
+        {
+            var reposicion = new Reposicion();
+            reposicion.Fecha = rows[0]["Fecha"].ToString();
+            reposicion.Items = new List<ItemReposicion>();
+
+            foreach (DataRow row in rows)
+            {
+                var item = new ItemReposicion();
+
+                item.Producto = row["Detalle"].ToString();
+                item.CantidadVieja = (int)row["CantidadAnterior"];
+                item.CantidadTotal = (int)row["CantidadActual"];
+
+                reposicion.Items.Add(item);
+            }
+
+            return reposicion;
         }
     }
 }

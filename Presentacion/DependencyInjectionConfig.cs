@@ -25,12 +25,14 @@ using Presentacion.Forms.Producto;
 using Presentacion.Forms.Stock;
 using Presentacion.Forms.Venta;
 using System;
+using System.Configuration;
 
 public static class DependencyInjectionConfig
 {
     public static IServiceProvider ConfigureServices()
     {
         var services = new ServiceCollection();
+        var connectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
 
         // Registrar servicios
         services.AddTransient<IAlertaService, AlertaService>();
@@ -73,7 +75,7 @@ public static class DependencyInjectionConfig
         services.AddTransient<IDAOVenta, DAOVenta>();
 
         // Helper
-        services.AddTransient<IDataBaseHelper, DataBaseHelper>();
+        services.AddScoped<IDataBaseHelper>(provider => new DataBaseHelper(connectionString));
         services.AddTransient<IExcelHelper, ExcelHelper>();
 
         // Devuelve el proveedor configurado

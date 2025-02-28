@@ -1,7 +1,7 @@
-﻿using Persistencia.DTOs.Reportes;
-using Persistencia.Helpers.DataBase;
+﻿using Persistencia.Helpers.DataBase;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 
 namespace Persistencia.DAOs.Venta
 {
@@ -34,37 +34,15 @@ namespace Persistencia.DAOs.Venta
             _ = dataBaseHelper.ExecStoredProcedure("dbo.InsertarItem");
         }
 
-        public DTOs.Reportes.Venta ObtenerVenta(string codigoVenta)
+        public DataTable ObtenerVenta(string codigoVenta)
         {
-            string query = "select * from dbo.Venta_View where Codigo = " + codigoVenta;
-            var result = dataBaseHelper.ExecQuery(query);
-
-            var venta = MapearVenta(result.Rows);
-
-            return venta;
-        }
-
-        private DTOs.Reportes.Venta MapearVenta(DataRowCollection rows)
-        {
-            var venta = new DTOs.Reportes.Venta();
-            venta.Fecha = rows[0]["Fecha"].ToString();
-            venta.Total = (decimal)rows[0]["Total"];
-            venta.Items = new List<ItemVenta>();
-
-            foreach (DataRow row in rows)
+            string query = "select * from dbo.Venta_View where Codigo = @CodigoVenta";
+            var parameters = new List<SqlParameter>
             {
-                var item = new ItemVenta();
-
-                item.Producto = row["Producto"].ToString();
-                item.Detalle = row["Detalle"].ToString();
-                item.PrecioUnitario = (decimal)row["Precio"];
-                item.Cantidad = (int)row["Cantidad"];
-                item.Subtotal = (decimal)row["Subtotal"];
-
-                venta.Items.Add(item);
-            }
-
-            return venta;
+                new SqlParameter("@CodigoVenta", codigoVenta)
+            };
+            var result = dataBaseHelper.ExecQuery(query, parameters);
+            return result;
         }
     }
 }

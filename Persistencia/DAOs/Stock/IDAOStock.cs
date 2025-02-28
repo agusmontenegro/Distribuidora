@@ -1,4 +1,4 @@
-﻿using Persistencia.DTOs.Reportes;
+﻿using System.Data;
 
 namespace Persistencia.DAOs.Stock
 {
@@ -6,7 +6,7 @@ namespace Persistencia.DAOs.Stock
     {
         int GuardarReposicion();
         void ReponerStock(int reposicionCodigo, string idProducto, string cantidadAReponer);
-        Reposicion ObtenerReposicion(string codigoReposicion);
+        DataTable ObtenerReposicion(string codigoReposicion);
         bool HayStock(string codigoProducto, string cantidad);
         bool HayQueReponer(string idProducto);
     }

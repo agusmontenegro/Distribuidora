@@ -2,6 +2,7 @@
 using Persistencia.Helpers.DataBase;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 
 namespace Persistencia.DAOs.Producto
@@ -17,121 +18,86 @@ namespace Persistencia.DAOs.Producto
 
         public bool ExisteProductoSegunCodigo(string codigoProducto)
         {
-            var query = "select Codigo from dbo.Producto_View where Codigo = '" + codigoProducto + "'";
-            var result = dataBaseHelper.ExecQuery(query);
+            var query = "select Codigo from dbo.Producto_View where Codigo = @Codigo";
+            var parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@Codigo", codigoProducto)
+            };
+            var result = dataBaseHelper.ExecQuery(query, parameters);
             return result.Rows.Count == 1;
         }
 
-        public List<DTOs.Producto> ObtenerProductos()
+        public DataTable ObtenerProductos()
         {
             string query = "select * from dbo.Producto_View";
-            var result = dataBaseHelper.ExecQuery(query);
-            var productos = MapearProductos(result.Rows);
-            return productos;
+            var result = dataBaseHelper.ExecQuery(query, null);
+            return result;
         }
 
         public DataTable ObtenerProductosParaExcel()
         {
             string query = "select Codigo, Detalle, Precio from dbo.Producto_View";
-            var result = dataBaseHelper.ExecQuery(query);
+            var result = dataBaseHelper.ExecQuery(query, null);
             return result;
         }
 
-        public List<DTOs.Producto> ObtenerProductosSimilares(string detalleProducto)
+        public DataTable ObtenerProductosSimilares(string detalleProducto)
         {
-            var likeQuery = string.Empty;
-            var palabras = detalleProducto.Split(' ').Where(pal => pal.Count() > 3).ToList();
-            palabras = palabras.Select(pal => pal.Insert(0, "'%")).ToList();
-            palabras = palabras.Select(pal => pal.Insert(pal.Length, "%'")).ToList();
+            var palabras = detalleProducto.Split(' ')
+                                          .Where(pal => pal.Count() > 3)
+                                          .Select(pal => "%" + pal + "%")
+                                          .ToList();
+
+            var query = "SELECT * FROM dbo.Producto_View WHERE ";
+            var whereClauses = new List<string>();
+            var parameters = new List<SqlParameter>();
+
             for (int i = 0;i < palabras.Count;i++)
             {
-                likeQuery += palabras[i];
-                if (i + 1 < palabras.Count)
-                {
-                    likeQuery += " or Detalle like ";
-                }
+                var paramName = "@param" + i;
+                whereClauses.Add($"Detalle LIKE {paramName}");
+                parameters.Add(new SqlParameter(paramName, palabras[i]));
             }
 
-            string query = "select * from dbo.Producto_View where Detalle like " + likeQuery;
-            var result = dataBaseHelper.ExecQuery(query);
-            var productos = MapearProductos(result.Rows);
-            return productos;
+            query += string.Join(" OR ", whereClauses);
+
+            var result = dataBaseHelper.ExecQuery(query, parameters);
+            return result;
         }
 
-        public DTOs.Producto ObtenerProductoPorId(string idProducto)
-        {
-            string query = "select * from dbo.Producto_View where Id = " + idProducto;
-            var result = dataBaseHelper.ExecQuery(query);
-            var productos = MapearProductos(result.Rows);
-            return productos[0];
-        }
 
-        public List<DTOs.Producto> ObtenerProductosPorCodigo(string codigoProducto)
+        public DataTable ObtenerProductoPorId(string idProducto)
         {
-            string query = "select * from dbo.Producto_View where Codigo = '" + codigoProducto + "'";
-            var result = dataBaseHelper.ExecQuery(query);
-            var productos = MapearProductos(result.Rows);
-            return productos.Any() ? productos : null;
-        }
-
-        private List<DTOs.Producto> MapearProductos(DataRowCollection rows)
-        {
-            var productos = new List<DTOs.Producto>();
-
-            foreach (DataRow row in rows)
+            string query = "select * from dbo.Producto_View where Id = @IdProducto";
+            var parameters = new List<SqlParameter>
             {
-                var producto = new DTOs.Producto
-                {
-                    Id = row["Id"].ToString(),
-                    Codigo = row["Codigo"].ToString(),
-                    Detalle = row["Detalle"].ToString(),
-                    PrecioUnitario = (decimal)row["Precio"],
-                    Rubro = new DTOs.Rubro
-                    {
-                        Codigo = row["RubroCodigo"].ToString(),
-                        Detalle = row["RubroDetalle"].ToString()
-                    },
-                    Stock = new DTOs.Stock
-                    {
-                        CantidadActual = row["StockActual"].ToString(),
-                        CantidadMinima = row["PtoReposicion"].ToString(),
-                        UltimaReposicion = row["UltimaReposicion"].ToString()
-                    },
-                    UltimaModificacion = row["UltimaModificacion"].ToString(),
-                };
-
-                productos.Add(producto);
-            }
-
-            return productos;
+                new SqlParameter("@IdProducto", idProducto)
+            };
+            var result = dataBaseHelper.ExecQuery(query, parameters);
+            return result;
         }
 
-        private List<Estadistica> MapearEstadisticas(DataRowCollection rows)
+        public DataTable ObtenerProductosPorCodigo(string codigoProducto)
         {
-            var estadisticas = new List<Estadistica>();
-
-            foreach (DataRow row in rows)
+            string query = "select * from dbo.Producto_View where Codigo = '@CodigoProducto'";
+            var parameters = new List<SqlParameter>
             {
-                var estadistica = new Estadistica
-                {
-                    CodigoProducto = row["Codigo"].ToString(),
-                    DetalleProducto = row["Detalle"].ToString(),
-                    PrecioUnitarioProducto = (decimal)row["Precio"],
-                    StockActualProducto = (int)row["StockActual"],
-                    CantidadTotal = (int)row["CantidadTotal"]
-                };
-
-                estadisticas.Add(estadistica);
-            }
-
-            return estadisticas;
-        }
+                new SqlParameter("@CodigoProducto", codigoProducto)
+            };
+            var result = dataBaseHelper.ExecQuery(query, parameters);
+            return result;
+        }        
 
         public void EliminarProducto(string codigoProducto)
         {
-            var query = "update dbo.Producto set prod_activo = 0 where prod_id = " + codigoProducto;
-            dataBaseHelper.ExecScript(query);
+            var query = "UPDATE dbo.Producto SET prod_activo = 0 WHERE prod_id = @codigoProducto";
+            var parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@codigoProducto", codigoProducto)
+            };
+            dataBaseHelper.ExecNonQuery(query, parameters);
         }
+
 
         public int GuardarProducto(string codigo, string detalle, string precioUnitario, string codigoRubro, string stockMinimo)
         {
@@ -168,83 +134,83 @@ namespace Persistencia.DAOs.Producto
             _ = dataBaseHelper.ExecStoredProcedure("dbo.ActualizarProductoLazy");
         }
 
-        public List<DTOs.Producto> Buscar(DTOs.Producto producto)
+        public DataTable Buscar(DTOs.Producto producto)
         {
-            string query = "select * from dbo.Producto_View ";
+            string query = "select * from dbo.Producto_View where 1=1";  // Base query for where conditions
 
             if (!string.IsNullOrEmpty(producto.Codigo))
-                if (query.Contains("where"))
-                    query += " and Codigo like '%" + producto.Codigo.Trim() + "%' ";
-                else
-                    query += " where Codigo like '%" + producto.Codigo.Trim() + "%' ";
+                query += " and Codigo like @codigo";
 
             if (!string.IsNullOrEmpty(producto.Detalle))
-                if (query.Contains("where"))
-                    query += " and Detalle like '%" + producto.Detalle.Trim() + "%' ";
-                else
-                    query += " where Detalle like '%" + producto.Detalle.Trim() + "%' ";
+                query += " and Detalle like @detalle";
 
             if (producto.Rubro != null)
-                if (query.Contains("where"))
-                    query += " and RubroCodigo = " + producto.Rubro.Codigo;
-                else
-                    query += " where RubroCodigo = " + producto.Rubro.Codigo;
+                query += " and RubroCodigo = @rubroCodigo";
 
-            var results = dataBaseHelper.ExecQuery(query);
-            var productos = MapearProductos(results.Rows);
-            return productos;
+            var parameters = new List<SqlParameter>();
+            if (!string.IsNullOrEmpty(producto.Codigo))
+                parameters.Add(new SqlParameter("@codigo", SqlDbType.NVarChar) { Value = "%" + producto.Codigo.Trim() + "%" });
+
+            if (!string.IsNullOrEmpty(producto.Detalle))
+                parameters.Add(new SqlParameter("@detalle", SqlDbType.NVarChar) { Value = "%" + producto.Detalle.Trim() + "%" });
+
+            if (producto.Rubro != null)
+                parameters.Add(new SqlParameter("@rubroCodigo", SqlDbType.Int) { Value = producto.Rubro.Codigo });
+
+            var results = dataBaseHelper.ExecQuery(query, parameters);
+            return results;
         }
 
-        public List<Estadistica> BuscarParaEstadistica(Estadistica estadistica)
+        public DataTable BuscarParaEstadistica(Estadistica estadistica)
         {
-            string query = "select top 100 p.prod_codigo Codigo," +
-                "                          p.prod_detalle Detalle," +
-                "            			   p.prod_precio Precio," +
-                "            			   s.stoc_cantidad_actual StockActual," +
-                "                          sum(i.item_cantidad) CantidadTotal" +
-                "           from Producto p" +
-                "           join Stock s on p.prod_id = s.stoc_producto" +
-                "           join Item_Venta i on i.item_producto = p.prod_id" +
-                "           join Venta v on i.item_venta = v.vent_codigo ";
+            string query = "select top 100 p.prod_codigo Codigo, " +
+                           "p.prod_detalle Detalle, " +
+                           "p.prod_precio Precio, " +
+                           "s.stoc_cantidad_actual StockActual, " +
+                           "sum(i.item_cantidad) CantidadTotal " +
+                           "from Producto p " +
+                           "join Stock s on p.prod_id = s.stoc_producto " +
+                           "join Item_Venta i on i.item_producto = p.prod_id " +
+                           "join Venta v on i.item_venta = v.vent_codigo ";
+
+            List<SqlParameter> parameters = new List<SqlParameter>();
 
             if (!estadistica.EstaActivoProducto)
-                query += " where p.prod_activo = 1";
+                query += " where p.prod_activo = @activo";
+            else
+                query += " where 1=1";  // No filtro si está activo
 
             if (!string.IsNullOrEmpty(estadistica.Año))
-                if (query.Contains("where"))
-                    query += " and year(v.vent_fecha) = " + estadistica.Año;
-                else
-                    query += " where year(v.vent_fecha) = " + estadistica.Año;
+            {
+                query += " and year(v.vent_fecha) = @anio";
+                parameters.Add(new SqlParameter("@anio", SqlDbType.Int) { Value = estadistica.Año });
+            }
 
             if (!string.IsNullOrEmpty(estadistica.Mes))
-                if (query.Contains("where"))
-                    query += " and MONTH(v.vent_fecha) = " + (estadistica.Mes + 1).ToString();
-                else
-                    query += " where MONTH(v.vent_fecha) = " + (estadistica.Mes + 1).ToString();
+            {
+                query += " and MONTH(v.vent_fecha) = @mes";
+                parameters.Add(new SqlParameter("@mes", SqlDbType.Int) { Value = int.Parse(estadistica.Mes) });
+            }
 
             if (!string.IsNullOrEmpty(estadistica.RubroProducto))
-                if (query.Contains("where"))
-                    query += " and p.prod_rubro = " + estadistica.RubroProducto;
-                else
-                    query += " where p.prod_rubro = " + estadistica.RubroProducto;
+            {
+                query += " and p.prod_rubro = @rubro";
+                parameters.Add(new SqlParameter("@rubro", SqlDbType.Int) { Value = estadistica.RubroProducto });
+            }
 
             query += " group by p.prod_codigo, p.prod_Detalle, p.prod_precio, s.stoc_cantidad_actual";
 
             if (!string.IsNullOrEmpty(estadistica.Año))
-                query += " ,year(v.vent_fecha) ";
-
+                query += ", year(v.vent_fecha)";
             if (!string.IsNullOrEmpty(estadistica.Mes))
-                query += " ,MONTH(v.vent_fecha) ";
-
+                query += ", MONTH(v.vent_fecha)";
             if (!string.IsNullOrEmpty(estadistica.RubroProducto))
-                query += " ,p.prod_rubro";
+                query += ", p.prod_rubro";
 
             query += " order by sum(i.item_cantidad) desc";
 
-            var resultados = dataBaseHelper.ExecQuery(query);
-            var estadisticas = MapearEstadisticas(resultados.Rows);
-
-            return estadisticas;
+            var resultados = dataBaseHelper.ExecQuery(query, parameters);
+            return resultados;
         }
     }
 }
